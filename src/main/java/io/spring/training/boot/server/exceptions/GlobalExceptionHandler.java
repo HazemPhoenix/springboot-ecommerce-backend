@@ -12,7 +12,6 @@ import org.springframework.web.context.request.WebRequest;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BookNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorResponse> handleBookNotFound(BookNotFoundException exception, WebRequest request){
         return new ResponseEntity<>(new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
