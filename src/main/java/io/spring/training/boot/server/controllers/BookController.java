@@ -1,8 +1,10 @@
 package io.spring.training.boot.server.controllers;
 
+import io.spring.training.boot.server.DTOs.BookDto;
 import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.services.BookService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,21 +18,22 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/books")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BookController {
     private final BookService bookService;
 
     @GetMapping("/")
-    public ResponseEntity<List<Book>> getAllBooks(){
-        return new ResponseEntity<List<Book>>(bookService.getAllBooks(), HttpStatus.OK);
+    public ResponseEntity<List<BookDto>> getAllBooks(){
+        return new ResponseEntity<>(bookService.getAllBooks(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getBookById(@PathVariable Long id){
-        Optional<Book> book = bookService.findBookById(id);
-        if(book.isEmpty()) {
+    public ResponseEntity<BookDto> getBookById(@PathVariable Long id){
+        try {
+            BookDto book = bookService.findBookById(id);
+            return new ResponseEntity<>(book, HttpStatus.OK);
+        } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(book.get(), HttpStatus.OK);
     }
 }
