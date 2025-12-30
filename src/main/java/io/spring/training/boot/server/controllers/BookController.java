@@ -3,6 +3,7 @@ package io.spring.training.boot.server.controllers;
 import io.spring.training.boot.server.DTOs.BookDto;
 import io.spring.training.boot.server.DTOs.BookRequestDto;
 import io.spring.training.boot.server.services.BookService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<BookDto> createBook(@RequestBody BookRequestDto bookRequest){
+    public ResponseEntity<BookDto> createBook(@Valid @RequestBody BookRequestDto bookRequest){
         BookDto bookDto = bookService.createBook(bookRequest);
         URI newBookUri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
