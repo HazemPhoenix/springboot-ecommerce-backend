@@ -1,6 +1,7 @@
 package io.spring.training.boot.server.services;
 
 import io.spring.training.boot.server.DTOs.BookDto;
+import io.spring.training.boot.server.exceptions.BookNotFoundException;
 import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.repositories.BookRepo;
 import io.spring.training.boot.server.utils.mappers.BookMapper;
@@ -23,7 +24,7 @@ public class BookService {
     public BookDto findBookById(long id){
         return bookRepo.findById(id)
                 .map(BookMapper::toDto)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+                .orElseThrow(() -> new BookNotFoundException("No book found with the id: " + id));
     }
 
     public @Nullable List<BookDto> getAllBooks() {
