@@ -4,8 +4,10 @@ import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.repositories.BookRepo;
 import lombok.AllArgsConstructor;
 import lombok.Lombok;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,5 +21,9 @@ public class BookService {
 
     public Optional<Book> findBookById(long id){
         return bookRepo.findById(id);
+    }
+
+    public @Nullable List<Book> getAllBooks() {
+        return bookRepo.findAll();
     }
 }
