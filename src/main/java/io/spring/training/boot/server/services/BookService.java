@@ -1,6 +1,7 @@
 package io.spring.training.boot.server.services;
 
 import io.spring.training.boot.server.DTOs.BookDto;
+import io.spring.training.boot.server.DTOs.BookRequestDto;
 import io.spring.training.boot.server.exceptions.BookNotFoundException;
 import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.repositories.BookRepo;
@@ -16,9 +17,9 @@ import java.util.List;
 public class BookService {
     private final BookRepo bookRepo;
 
-    public BookDto createBook(Book book) {
-        Book createdBook = bookRepo.save(book);
-        return BookMapper.toDto(book);
+    public BookDto createBook(BookRequestDto bookRequest) {
+        Book book = BookMapper.fromDto(bookRequest);
+        return BookMapper.toDto(bookRepo.save(book));
     }
 
     public BookDto findBookById(long id){
