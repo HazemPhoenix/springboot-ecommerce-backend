@@ -49,4 +49,8 @@ public class BookService {
 
         return BookMapper.toDto(bookRepo.save(newBook));
     }
+
+    public void deleteBookById(Long id) {
+        bookRepo.deleteById(id);
+    }
 }
