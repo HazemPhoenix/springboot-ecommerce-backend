@@ -5,7 +5,9 @@ import io.spring.training.boot.server.DTOs.BookRequestDto;
 import io.spring.training.boot.server.services.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -38,5 +40,11 @@ public class BookController {
                 .path("/{bookId}")
                 .build(bookDto.id());
         return ResponseEntity.created(newBookUri).body(bookDto);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BookDto> updateBook(@Valid @RequestBody BookRequestDto bookRequest, @PathVariable Long id){
+        BookDto bookDto = bookService.updateBookById(id, bookRequest);
+        return ResponseEntity.ok().body(bookDto);
     }
 }
