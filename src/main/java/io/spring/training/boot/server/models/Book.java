@@ -22,4 +22,11 @@ public class Book {
     @Column(name = "no_of_pages")
     private int numberOfPages;
     private String image;
+    public Book(String title, String description, BigDecimal price, int numberOfPages, String image) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.numberOfPages = numberOfPages;
+        this.image = image;
+    }
 }
