@@ -17,8 +17,7 @@ public class BookService {
         return bookRepo.save(book);
     }
 
-    public Book findBookById(long id){
-        Optional<Book> book = bookRepo.findById(id);
-        return book.orElse(new Book());
+    public Optional<Book> findBookById(long id){
+        return bookRepo.findById(id);
     }
 }
