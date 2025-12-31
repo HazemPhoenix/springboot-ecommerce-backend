@@ -12,7 +12,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -49,5 +52,9 @@ public class AuthorService {
 
     public void deleteAuthorById(Long id) {
         authorRepo.deleteById(id);
+    }
+
+    public Set<Author> findAuthorsByIds(Set<Long> ids) {
+        return new HashSet<>(authorRepo.findAllById(ids));
     }
 }
