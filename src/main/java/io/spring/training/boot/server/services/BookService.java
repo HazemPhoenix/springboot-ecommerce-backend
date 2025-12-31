@@ -8,10 +8,10 @@ import io.spring.training.boot.server.repositories.BookRepo;
 import io.spring.training.boot.server.utils.mappers.BookMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.mapper.Mapper;
 import org.jspecify.annotations.Nullable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,19 +22,19 @@ public class BookService {
     private final BookRepo bookRepo;
 
     public BookDto createBook(BookRequestDto bookRequest) {
-        Book book = BookMapper.fromDto(bookRequest);
-        return BookMapper.toDto(bookRepo.save(book));
+        Book book = BookMapper.fromBookRequestDto(bookRequest);
+        return BookMapper.toBookDto(bookRepo.save(book));
     }
 
     public BookDto findBookById(long id){
         return bookRepo.findById(id)
-                .map(BookMapper::toDto)
+                .map(BookMapper::toBookDto)
                 .orElseThrow(() -> new BookNotFoundException("No book found with the id: " + id));
     }
 
-    public @Nullable List<BookDto> getAllBooks() {
-        List<Book> books = bookRepo.findAll();
-        return books.stream().map(BookMapper::toDto).toList();
+    public @Nullable List<BookDto> getAllBooks(Pageable pageable) {
+        Page<Book> books = bookRepo.findAll(pageable);
+        return books.stream().map(BookMapper::toBookDto).toList();
     }
 
     public BookDto updateBookById(Long id, @Valid BookRequestDto bookRequest) {
@@ -44,10 +44,10 @@ public class BookService {
             throw new BookNotFoundException("No book found with the id: " + id);
         }
 
-        Book newBook = BookMapper.fromDto(bookRequest);
+        Book newBook = BookMapper.fromBookRequestDto(bookRequest);
         newBook.setId(id);
 
-        return BookMapper.toDto(bookRepo.save(newBook));
+        return BookMapper.toBookDto(bookRepo.save(newBook));
     }
 
     public void deleteBookById(Long id) {

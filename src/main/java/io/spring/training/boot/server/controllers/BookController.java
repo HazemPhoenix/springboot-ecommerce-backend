@@ -5,9 +5,8 @@ import io.spring.training.boot.server.DTOs.BookRequestDto;
 import io.spring.training.boot.server.services.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -22,8 +21,8 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    public ResponseEntity<List<BookDto>> getAllBooks(){
-        return new ResponseEntity<>(bookService.getAllBooks(), HttpStatus.OK);
+    public ResponseEntity<List<BookDto>> getAllBooks(Pageable pageable){
+        return new ResponseEntity<>(bookService.getAllBooks(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
