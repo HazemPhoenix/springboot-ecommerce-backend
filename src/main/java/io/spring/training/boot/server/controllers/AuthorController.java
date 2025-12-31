@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,5 +21,10 @@ public class AuthorController {
     @GetMapping
     public ResponseEntity<Page<AuthorDto>> getAllAuthors(@PageableDefault(size = 20) Pageable pageable){
         return ResponseEntity.ok().body(authorService.getAllAuthors(pageable));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AuthorDto> getAuthorById(@PathVariable Long id){
+        return ResponseEntity.ok().body(authorService.getAuthorById(id));
     }
 }

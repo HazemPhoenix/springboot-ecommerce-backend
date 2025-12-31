@@ -1,6 +1,7 @@
 package io.spring.training.boot.server.services;
 
 import io.spring.training.boot.server.DTOs.AuthorDto;
+import io.spring.training.boot.server.exceptions.AuthorNotFoundException;
 import io.spring.training.boot.server.repositories.AuthorRepo;
 import io.spring.training.boot.server.utils.mappers.AuthorMapper;
 import lombok.RequiredArgsConstructor;
@@ -15,5 +16,11 @@ public class AuthorService {
 
     public Page<AuthorDto> getAllAuthors(Pageable pageable){
         return authorRepo.findAll(pageable).map(AuthorMapper::toAuthorDto);
+    }
+
+    public AuthorDto getAuthorById(Long id) {
+        return authorRepo.findById(id)
+                .map(AuthorMapper::toAuthorDto)
+                .orElseThrow(() -> new AuthorNotFoundException("No author found with the id: " + id));
     }
 }

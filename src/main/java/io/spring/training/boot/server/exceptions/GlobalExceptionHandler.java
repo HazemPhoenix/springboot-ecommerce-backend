@@ -18,7 +18,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({BookNotFoundException.class, AuthorNotFoundException.class})
-    public ResponseEntity<ErrorResponse> handleNotFound(BookNotFoundException exception, WebRequest request){
+    public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException exception, WebRequest request){
         return formatErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage(), request);
     }
 
