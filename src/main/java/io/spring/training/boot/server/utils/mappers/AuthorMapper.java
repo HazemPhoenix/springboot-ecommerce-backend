@@ -5,11 +5,11 @@ import io.spring.training.boot.server.DTOs.AuthorRequestDto;
 import io.spring.training.boot.server.models.Author;
 
 public class AuthorMapper {
-    public AuthorDto toAuthorDto(Author author){
+    public static AuthorDto toAuthorDto(Author author){
         return new AuthorDto(author.getId(), author.getName(), author.getBio(), author.getNationality(), author.getPhoto());
     }
 
-    public Author fromAuthorRequestDto(AuthorRequestDto authorRequestDto){
+    public static Author fromAuthorRequestDto(AuthorRequestDto authorRequestDto){
         return new Author(authorRequestDto.name(), authorRequestDto.bio(), authorRequestDto.nationality(), authorRequestDto.photo());
     }
 }
