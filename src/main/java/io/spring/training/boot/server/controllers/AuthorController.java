@@ -2,6 +2,7 @@ package io.spring.training.boot.server.controllers;
 
 import io.spring.training.boot.server.DTOs.AuthorDto;
 import io.spring.training.boot.server.DTOs.AuthorRequestDto;
+import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.services.AuthorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +33,18 @@ public class AuthorController {
     }
 
     @PostMapping
-    public ResponseEntity<AuthorDto> createAuthor(@Valid @RequestBody AuthorRequestDto authorRequestDto, UriComponentsBuilder uriComponentsBuilder){
+    public ResponseEntity<AuthorDto> createAuthor(@Valid @RequestBody AuthorRequestDto authorRequestDto) {
         AuthorDto authorDto = authorService.createAuthor(authorRequestDto);
         URI createdAuthorUri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path("/{authorId}")
                 .build(authorDto.id());
         return ResponseEntity.created(createdAuthorUri).body(authorDto);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AuthorDto> updateAuthor(@PathVariable Long id, @Valid @RequestBody AuthorRequestDto authorRequestDto) {
+        AuthorDto authorDto = authorService.updateAuthor(id, authorRequestDto);
+        return ResponseEntity.ok().body(authorDto);
     }
 }
