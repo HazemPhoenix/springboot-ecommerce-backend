@@ -1,16 +1,18 @@
 package io.spring.training.boot.server.controllers;
 
 import io.spring.training.boot.server.DTOs.AuthorDto;
+import io.spring.training.boot.server.DTOs.AuthorRequestDto;
 import io.spring.training.boot.server.services.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/authors")
@@ -26,5 +28,15 @@ public class AuthorController {
     @GetMapping("/{id}")
     public ResponseEntity<AuthorDto> getAuthorById(@PathVariable Long id){
         return ResponseEntity.ok().body(authorService.getAuthorById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<AuthorDto> createAuthor(@RequestBody AuthorRequestDto authorRequestDto, UriComponentsBuilder uriComponentsBuilder){
+        AuthorDto authorDto = authorService.createAuthor(authorRequestDto);
+        URI createdAuthorUri = ServletUriComponentsBuilder
+                .fromCurrentRequestUri()
+                .path("/{authorId}")
+                .build(authorDto.id());
+        return ResponseEntity.created(createdAuthorUri).body(authorDto);
     }
 }
