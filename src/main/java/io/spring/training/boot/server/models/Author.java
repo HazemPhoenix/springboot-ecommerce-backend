@@ -18,4 +18,11 @@ public class Author {
     private String bio;
     private String nationality;
     private String photo;
+
+    public Author(String name, String bio, String nationality, String photo) {
+        this.name = name;
+        this.bio = bio;
+        this.nationality = nationality;
+        this.photo = photo;
+    }
 }
