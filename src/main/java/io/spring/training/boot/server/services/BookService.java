@@ -32,9 +32,8 @@ public class BookService {
                 .orElseThrow(() -> new BookNotFoundException("No book found with the id: " + id));
     }
 
-    public @Nullable List<BookDto> getAllBooks(Pageable pageable) {
-        Page<Book> books = bookRepo.findAll(pageable);
-        return books.stream().map(BookMapper::toBookDto).toList();
+    public Page<BookDto> getAllBooks(Pageable pageable) {
+        return bookRepo.findAll(pageable).map(BookMapper::toBookDto);
     }
 
     public BookDto updateBookById(Long id, @Valid BookRequestDto bookRequest) {
