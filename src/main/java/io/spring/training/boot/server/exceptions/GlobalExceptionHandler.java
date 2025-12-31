@@ -1,6 +1,7 @@
 package io.spring.training.boot.server.exceptions;
 
 import io.spring.training.boot.server.DTOs.ErrorResponse;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,8 +17,8 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(BookNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleBookNotFound(BookNotFoundException exception, WebRequest request){
+    @ExceptionHandler({BookNotFoundException.class, AuthorNotFoundException.class})
+    public ResponseEntity<ErrorResponse> handleNotFound(BookNotFoundException exception, WebRequest request){
         return formatErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage(), request);
     }
 
