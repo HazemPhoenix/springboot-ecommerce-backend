@@ -46,4 +46,8 @@ public class AuthorService {
 
         return AuthorMapper.toAuthorDto(authorRepo.save(newAuthor));
     }
+
+    public void deleteAuthorById(Long id) {
+        authorRepo.deleteById(id);
+    }
 }

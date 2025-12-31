@@ -6,6 +6,7 @@ import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.services.AuthorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -46,5 +47,11 @@ public class AuthorController {
     public ResponseEntity<AuthorDto> updateAuthor(@PathVariable Long id, @Valid @RequestBody AuthorRequestDto authorRequestDto) {
         AuthorDto authorDto = authorService.updateAuthor(id, authorRequestDto);
         return ResponseEntity.ok().body(authorDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAuthor(@PathVariable Long id){
+        authorService.deleteAuthorById(id);
+        return ResponseEntity.noContent().build();
     }
 }
