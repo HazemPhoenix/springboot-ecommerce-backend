@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "authors")
 @Data
@@ -18,6 +21,8 @@ public class Author {
     private String bio;
     private String nationality;
     private String photo;
+    @ManyToMany(mappedBy = "authors")
+    private Set<Book> books = new HashSet<>();
 
     public Author(String name, String bio, String nationality, String photo) {
         this.name = name;
