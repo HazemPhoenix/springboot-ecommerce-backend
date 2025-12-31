@@ -3,6 +3,7 @@ package io.spring.training.boot.server.controllers;
 import io.spring.training.boot.server.DTOs.AuthorDto;
 import io.spring.training.boot.server.DTOs.AuthorRequestDto;
 import io.spring.training.boot.server.services.AuthorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +32,7 @@ public class AuthorController {
     }
 
     @PostMapping
-    public ResponseEntity<AuthorDto> createAuthor(@RequestBody AuthorRequestDto authorRequestDto, UriComponentsBuilder uriComponentsBuilder){
+    public ResponseEntity<AuthorDto> createAuthor(@Valid @RequestBody AuthorRequestDto authorRequestDto, UriComponentsBuilder uriComponentsBuilder){
         AuthorDto authorDto = authorService.createAuthor(authorRequestDto);
         URI createdAuthorUri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()

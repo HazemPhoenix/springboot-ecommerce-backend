@@ -1,4 +1,9 @@
 package io.spring.training.boot.server.DTOs;
 
-public record AuthorRequestDto(String name, String bio, String nationality, String photo) {
+import jakarta.validation.constraints.NotBlank;
+
+public record AuthorRequestDto(@NotBlank(message = "Author name is required") String name,
+                               String bio,
+                               String nationality,
+                               String photo) {
 }
