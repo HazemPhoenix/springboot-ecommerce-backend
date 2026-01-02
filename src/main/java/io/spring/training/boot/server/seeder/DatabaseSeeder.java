@@ -77,8 +77,8 @@ public class DatabaseSeeder implements CommandLineRunner {
             }
             // image
             String img = faker.lorem().characters(10);
-            BookRequestDto bookRequestDto = new BookRequestDto(title, desc, price, pages, authorIds, img);
-            bookService.createBook(bookRequestDto, bookImage);
+            BookRequestDto bookRequestDto = new BookRequestDto(title, desc, price, pages, authorIds);
+//            bookService.createBook(bookRequestDto, img);
         }
     }
 }

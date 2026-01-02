@@ -17,6 +17,6 @@ public class BookMapper {
     }
 
     public static Book fromBookRequestDto(BookRequestDto bookRequestDto){
-        return new Book(bookRequestDto.title(), bookRequestDto.description(), bookRequestDto.price(), bookRequestDto.numberOfPages(), bookRequestDto.image());
+        return new Book(bookRequestDto.title(), bookRequestDto.description(), bookRequestDto.price(), bookRequestDto.numberOfPages());
     }
 }

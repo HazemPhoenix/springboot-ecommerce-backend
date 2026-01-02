@@ -8,7 +8,6 @@ import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.repositories.BookRepo;
 import io.spring.training.boot.server.utils.mappers.BookMapper;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,15 +17,27 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-@RequiredArgsConstructor
 public class BookService {
     private final BookRepo bookRepo;
     private final AuthorService authorService;
 
+    public BookService(BookRepo bookRepo, AuthorService authorService, FileSystemImageStorageService imageStorageService) {
+        this.bookRepo = bookRepo;
+        this.authorService = authorService;
+        this.imageStorageService = imageStorageService;
+    }
+
+    private final ImageStorageService imageStorageService;
+
     public BookDto createBook(BookRequestDto bookRequest, MultipartFile bookImage) {
         Book book = BookMapper.fromBookRequestDto(bookRequest);
+
         Set<Author> authors = authorService.findAuthorsByIds(bookRequest.authorIDs());
         book.setAuthors(authors);
+
+        String imageName = imageStorageService.uploadBookImage(bookImage);
+        book.setImage(imageName);
+
         return BookMapper.toBookDto(bookRepo.save(book));
     }
 
@@ -49,6 +60,9 @@ public class BookService {
 
         Book newBook = BookMapper.fromBookRequestDto(bookRequest);
         newBook.setId(id);
+
+        String imageName = imageStorageService.updateBookImage(id, bookImage);
+        newBook.setImage(imageName);
 
         return BookMapper.toBookDto(bookRepo.save(newBook));
     }

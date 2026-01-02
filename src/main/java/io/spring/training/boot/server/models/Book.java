@@ -30,7 +30,7 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "author_id")
     )
     private Set<Author> authors;
-    public Book(String title, String description, BigDecimal price, int numberOfPages, String image) {
+    public Book(String title, String description, BigDecimal price, int numberOfPages) {
         this.title = title;
         this.description = description;
         this.price = price;
