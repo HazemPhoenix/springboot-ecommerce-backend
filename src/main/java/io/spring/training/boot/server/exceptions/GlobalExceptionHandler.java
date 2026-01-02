@@ -1,6 +1,7 @@
 package io.spring.training.boot.server.exceptions;
 
 import io.spring.training.boot.server.DTOs.ErrorResponse;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,7 +15,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({BookNotFoundException.class, AuthorNotFoundException.class})
+    @ExceptionHandler({BookNotFoundException.class, AuthorNotFoundException.class, ImageNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException exception, WebRequest request){
         return formatErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage(), request);
     }
@@ -36,6 +37,11 @@ public class GlobalExceptionHandler {
         String message = messageBuilder.substring(0, messageBuilder.lastIndexOf(","));
 
         return formatErrorResponse(HttpStatus.UNPROCESSABLE_CONTENT, message, request);
+    }
+
+    @ExceptionHandler(StorageException.class)
+    public ResponseEntity<ErrorResponse> handleStorageExceptions(StorageException exception, WebRequest request){
+        return formatErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), request);
     }
 
     private ResponseEntity<ErrorResponse> formatErrorResponse(HttpStatus status, String message, WebRequest request){
