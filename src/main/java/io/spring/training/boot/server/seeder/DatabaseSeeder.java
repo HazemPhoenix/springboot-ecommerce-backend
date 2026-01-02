@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Component;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -30,9 +29,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final int AUTHOR_COUNT = 100;
     private final int BOOK_COUNT = 50000;
     private final LocalContainerEntityManagerFactoryBean entityManagerFactory2;
-    private final DataSource dataSource;
     private final JdbcTemplate jdbcTemplate;
-
 
     @Override
     public void run(String... args) throws Exception {
@@ -81,7 +78,7 @@ public class DatabaseSeeder implements CommandLineRunner {
             // image
             String img = faker.lorem().characters(10);
             BookRequestDto bookRequestDto = new BookRequestDto(title, desc, price, pages, authorIds, img);
-            bookService.createBook(bookRequestDto);
+            bookService.createBook(bookRequestDto, bookImage);
         }
     }
 }

@@ -5,22 +5,17 @@ import io.spring.training.boot.server.DTOs.BookRequestDto;
 import io.spring.training.boot.server.exceptions.BookNotFoundException;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
-import io.spring.training.boot.server.repositories.AuthorRepo;
 import io.spring.training.boot.server.repositories.BookRepo;
-import io.spring.training.boot.server.utils.mappers.AuthorMapper;
 import io.spring.training.boot.server.utils.mappers.BookMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +23,7 @@ public class BookService {
     private final BookRepo bookRepo;
     private final AuthorService authorService;
 
-    public BookDto createBook(BookRequestDto bookRequest) {
+    public BookDto createBook(BookRequestDto bookRequest, MultipartFile bookImage) {
         Book book = BookMapper.fromBookRequestDto(bookRequest);
         Set<Author> authors = authorService.findAuthorsByIds(bookRequest.authorIDs());
         book.setAuthors(authors);
@@ -45,7 +40,7 @@ public class BookService {
         return bookRepo.findAll(pageable).map(BookMapper::toBookDto);
     }
 
-    public BookDto updateBookById(Long id, @Valid BookRequestDto bookRequest) {
+    public BookDto updateBookById(Long id, @Valid BookRequestDto bookRequest, MultipartFile bookImage) {
         Optional<Book> oldBook = bookRepo.findById(id);
 
         if(oldBook.isEmpty()){

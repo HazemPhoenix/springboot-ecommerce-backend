@@ -11,6 +11,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -34,8 +35,8 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<BookDto> createBook(@Valid @RequestBody BookRequestDto bookRequest){
-        BookDto bookDto = bookService.createBook(bookRequest);
+    public ResponseEntity<BookDto> createBook(@Valid @RequestPart BookRequestDto bookData, @RequestPart MultipartFile bookImage){
+        BookDto bookDto = bookService.createBook(bookData, bookImage);
         URI newBookUri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path("/{bookId}")
@@ -44,8 +45,8 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookDto> updateBook(@Valid @RequestBody BookRequestDto bookRequest, @PathVariable Long id){
-        BookDto bookDto = bookService.updateBookById(id, bookRequest);
+    public ResponseEntity<BookDto> updateBook(@Valid @RequestPart BookRequestDto bookData, @RequestPart MultipartFile bookImage, @PathVariable Long id){
+        BookDto bookDto = bookService.updateBookById(id, bookData, bookImage);
         return ResponseEntity.ok().body(bookDto);
     }
 
