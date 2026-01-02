@@ -20,6 +20,7 @@ import java.util.Set;
 public class BookService {
     private final BookRepo bookRepo;
     private final AuthorService authorService;
+    private final ImageStorageService imageStorageService;
 
     public BookService(BookRepo bookRepo, AuthorService authorService, FileSystemImageStorageService imageStorageService) {
         this.bookRepo = bookRepo;
@@ -27,24 +28,25 @@ public class BookService {
         this.imageStorageService = imageStorageService;
     }
 
-    private final ImageStorageService imageStorageService;
-
     public BookDto createBook(BookRequestDto bookRequest, MultipartFile bookImage) {
         Book book = BookMapper.fromBookRequestDto(bookRequest);
 
         Set<Author> authors = authorService.findAuthorsByIds(bookRequest.authorIDs());
         book.setAuthors(authors);
 
-        String imageName = imageStorageService.uploadBookImage(bookImage);
-        book.setImage(imageName);
+        if(!bookImage.isEmpty()){
+            String imageName = imageStorageService.storeBookImage(bookImage);
+            book.setImage(imageName);
+        }
 
         return BookMapper.toBookDto(bookRepo.save(book));
     }
 
     public BookDto findBookById(long id){
-        return bookRepo.findById(id)
-                .map(BookMapper::toBookDto)
-                .orElseThrow(() -> new BookNotFoundException("No book found with the id: " + id));
+        Book book = bookRepo.findById(id).orElseThrow(() -> new BookNotFoundException("No book found with the id: " + id));
+        String imageUrl = imageStorageService.getBookImage(book.getImage());
+        book.setImage(imageUrl);
+        return BookMapper.toBookDto(book);
     }
 
     public Page<BookDto> getAllBooks(Pageable pageable) {
@@ -61,8 +63,10 @@ public class BookService {
         Book newBook = BookMapper.fromBookRequestDto(bookRequest);
         newBook.setId(id);
 
-        String imageName = imageStorageService.updateBookImage(id, bookImage);
-        newBook.setImage(imageName);
+        if(!bookImage.isEmpty()){
+            String imageName = imageStorageService.storeBookImage(bookImage);
+            newBook.setImage(imageName);
+        }
 
         return BookMapper.toBookDto(bookRepo.save(newBook));
     }

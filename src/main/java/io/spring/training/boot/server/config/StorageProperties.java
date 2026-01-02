@@ -5,8 +5,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties("storage")
+@ConfigurationProperties("storage.image")
 @Data
 public class StorageProperties {
-    private String location;
+    private String authorLocation;
+    private String bookLocation;
 }
