@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
 import java.util.List;
@@ -33,12 +34,18 @@ public class AuthorService {
                 .orElseThrow(() -> new AuthorNotFoundException("No author found with the id: " + id));
     }
 
-    public AuthorDto createAuthor(AuthorRequestDto authorRequestDto) {
-        Author author = authorRepo.save(AuthorMapper.fromAuthorRequestDto(authorRequestDto));
-        return AuthorMapper.toAuthorDto(author);
+    public AuthorDto createAuthor(AuthorRequestDto authorRequestDto, MultipartFile authorImage) {
+        Author author = AuthorMapper.fromAuthorRequestDto(authorRequestDto);
+
+        if(!authorImage.isEmpty()) {
+            String imageName = imageStorageService.storeAuthorImage(authorImage);
+            author.setPhoto(imageName);
+        }
+
+        return AuthorMapper.toAuthorDto(authorRepo.save(author));
     }
 
-    public AuthorDto updateAuthor(Long id, @Valid AuthorRequestDto authorRequestDto) {
+    public AuthorDto updateAuthor(Long id, @Valid AuthorRequestDto authorRequestDto, MultipartFile authorImage) {
         Optional<Author> oldAuthor = authorRepo.findById(id);
 
         if(oldAuthor.isEmpty()) {
@@ -48,11 +55,28 @@ public class AuthorService {
         Author newAuthor = AuthorMapper.fromAuthorRequestDto(authorRequestDto);
         newAuthor.setId(id);
 
+        if(!authorImage.isEmpty()) {
+            String oldImageName = oldAuthor.get().getPhoto();
+            if(oldImageName != null && !oldImageName.trim().isEmpty()){
+                imageStorageService.deleteAuthorImage(oldImageName);
+            }
+            String newImageName = imageStorageService.storeAuthorImage(authorImage);
+            newAuthor.setPhoto(newImageName);
+        } else {
+            imageStorageService.deleteAuthorImage(oldAuthor.get().getPhoto());
+        }
+
         return AuthorMapper.toAuthorDto(authorRepo.save(newAuthor));
     }
 
     public void deleteAuthorById(Long id) {
-        authorRepo.deleteById(id);
+        authorRepo.findById(id).ifPresent(author -> {
+            String authorImage = author.getPhoto();
+            if(!authorImage.trim().isEmpty()) {
+                imageStorageService.deleteAuthorImage(authorImage);
+            }
+            authorRepo.delete(author);
+        });
     }
 
     public Set<Author> findAuthorsByIds(Set<Long> ids) {

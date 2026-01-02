@@ -23,10 +23,9 @@ public class Author {
     @ManyToMany(mappedBy = "authors")
     private Set<Book> books;
 
-    public Author(String name, String bio, String nationality, String photo) {
+    public Author(String name, String bio, String nationality) {
         this.name = name;
         this.bio = bio;
         this.nationality = nationality;
-        this.photo = photo;
     }
 }

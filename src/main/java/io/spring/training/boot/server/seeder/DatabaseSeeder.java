@@ -50,8 +50,8 @@ public class DatabaseSeeder implements CommandLineRunner {
             String bio = faker.lorem().fixedString(250);
             String nat = faker.nation().nationality();
             String photo = faker.lorem().fixedString(10);
-            AuthorRequestDto authorRequestDto = new AuthorRequestDto(name, bio, nat, photo);
-            authorService.createAuthor(authorRequestDto);
+            AuthorRequestDto authorRequestDto = new AuthorRequestDto(name, bio, nat);
+//            authorService.createAuthor(authorRequestDto);
         }
     }
 

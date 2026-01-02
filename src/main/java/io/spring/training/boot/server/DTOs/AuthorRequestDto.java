@@ -4,6 +4,5 @@ import jakarta.validation.constraints.NotBlank;
 
 public record AuthorRequestDto(@NotBlank(message = "Author name is required") String name,
                                String bio,
-                               String nationality,
-                               String photo) {
+                               String nationality) {
 }

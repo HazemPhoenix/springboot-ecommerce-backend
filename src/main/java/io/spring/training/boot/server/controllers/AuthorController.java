@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -34,8 +35,8 @@ public class AuthorController {
     }
 
     @PostMapping
-    public ResponseEntity<AuthorDto> createAuthor(@Valid @RequestBody AuthorRequestDto authorRequestDto) {
-        AuthorDto authorDto = authorService.createAuthor(authorRequestDto);
+    public ResponseEntity<AuthorDto> createAuthor(@Valid @RequestPart AuthorRequestDto authorData, @RequestPart MultipartFile authorImage) {
+        AuthorDto authorDto = authorService.createAuthor(authorData, authorImage);
         URI createdAuthorUri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path("/{authorId}")
@@ -44,8 +45,8 @@ public class AuthorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AuthorDto> updateAuthor(@PathVariable Long id, @Valid @RequestBody AuthorRequestDto authorRequestDto) {
-        AuthorDto authorDto = authorService.updateAuthor(id, authorRequestDto);
+    public ResponseEntity<AuthorDto> updateAuthor(@PathVariable Long id, @Valid @RequestPart AuthorRequestDto authorData, @RequestPart MultipartFile authorImage) {
+        AuthorDto authorDto = authorService.updateAuthor(id, authorData, authorImage);
         return ResponseEntity.ok().body(authorDto);
     }
 
