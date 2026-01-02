@@ -18,14 +18,9 @@ import java.util.UUID;
 
 @Service
 public class FileSystemImageStorageService implements ImageStorageService {
-    private final StorageProperties storageProperties;
-    private final BookRepo bookRepo;
     private final Path rootBookLocation;
 
-    public FileSystemImageStorageService(StorageProperties storageProperties, BookRepo bookRepo) {
-        this.storageProperties = storageProperties;
-        this.bookRepo = bookRepo;
-
+    public FileSystemImageStorageService(StorageProperties storageProperties) {
         if(storageProperties.getBookLocation().trim().isEmpty()) {
             throw new StorageException("Image upload location cannot be empty.");
         }
