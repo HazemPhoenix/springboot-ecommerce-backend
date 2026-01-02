@@ -5,6 +5,7 @@ import io.spring.training.boot.server.exceptions.StorageException;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,12 +24,6 @@ public class FileSystemImageStorageService implements ImageStorageService {
         }
 
         this.rootBookLocation = Path.of(storageProperties.getBookLocation());
-    }
-
-
-    @Override
-    public String getBookImage(String imageName) {
-        return imageName;
     }
 
     private Path getBookImagePath(String imageName) {
@@ -61,5 +56,15 @@ public class FileSystemImageStorageService implements ImageStorageService {
         } catch (IOException e) {
             // no action needed, the book image does not exist
         }
+    }
+
+    @Override
+    public String storeAuthorImage(MultipartFile image) {
+        return "";
+    }
+
+    @Override
+    public void deleteAuthorImage(String imageName) {
+
     }
 }

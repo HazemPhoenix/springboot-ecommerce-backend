@@ -21,6 +21,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AuthorService {
     private final AuthorRepo authorRepo;
+    private final ImageStorageService imageStorageService;
 
     public Page<AuthorDto> getAllAuthors(Pageable pageable){
         return authorRepo.findAll(pageable).map(AuthorMapper::toAuthorDto);
