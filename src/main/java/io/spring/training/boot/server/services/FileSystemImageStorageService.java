@@ -1,9 +1,7 @@
 package io.spring.training.boot.server.services;
 
 import io.spring.training.boot.server.config.StorageProperties;
-import io.spring.training.boot.server.exceptions.BookNotFoundException;
 import io.spring.training.boot.server.exceptions.StorageException;
-import io.spring.training.boot.server.repositories.BookRepo;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
@@ -58,6 +55,11 @@ public class FileSystemImageStorageService implements ImageStorageService {
     }
 
     @Override
-    public void deleteBookImage(Long bookId) {
+    public void deleteBookImage(String imageName) {
+        try {
+            Files.delete(rootBookLocation.resolve(imageName));
+        } catch (IOException e) {
+            // no action needed, the book image does not exist
+        }
     }
 }

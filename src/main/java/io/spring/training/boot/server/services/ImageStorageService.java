@@ -7,5 +7,5 @@ public interface ImageStorageService {
 
     String storeBookImage(MultipartFile image);
 
-    void deleteBookImage(Long bookId);
+    void deleteBookImage(String imageName);
 }

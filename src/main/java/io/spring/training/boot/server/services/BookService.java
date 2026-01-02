@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.Optional;
 import java.util.Set;
@@ -45,7 +46,9 @@ public class BookService {
     public BookDto findBookById(long id){
         Book book = bookRepo.findById(id).orElseThrow(() -> new BookNotFoundException("No book found with the id: " + id));
         String imageUrl = imageStorageService.getBookImage(book.getImage());
-        book.setImage(imageUrl);
+        if(!imageUrl.trim().isEmpty()) {
+            book.setImage(ServletUriComponentsBuilder.fromCurrentContextPath().build() + "/uploads/" + imageUrl);
+        }
         return BookMapper.toBookDto(book);
     }
 
@@ -63,6 +66,10 @@ public class BookService {
         Book newBook = BookMapper.fromBookRequestDto(bookRequest);
         newBook.setId(id);
 
+        Set<Long> newAuthorIds = bookRequest.authorIDs();
+        Set<Author> newAuthors = authorService.findAuthorsByIds(newAuthorIds);
+        newBook.setAuthors(newAuthors);
+
         if(!bookImage.isEmpty()){
             String imageName = imageStorageService.storeBookImage(bookImage);
             newBook.setImage(imageName);
@@ -72,6 +79,11 @@ public class BookService {
     }
 
     public void deleteBookById(Long id) {
-        bookRepo.deleteById(id);
+        bookRepo.findById(id).ifPresent(book -> {
+            if(!book.getImage().trim().isEmpty()){
+                imageStorageService.deleteBookImage(book.getImage());
+            }
+            bookRepo.delete(book);
+        });
     }
 }
