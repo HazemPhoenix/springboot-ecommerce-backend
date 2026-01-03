@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
@@ -28,6 +29,7 @@ public class BookServiceImpl implements BookService {
     private final GenreService genreService;
 
     @Override
+    @Transactional
     public BookResponseDto createBook(BookRequestDto bookRequest, MultipartFile bookImage) {
         Book book = BookMapper.fromBookRequestDto(bookRequest);
 
@@ -57,6 +59,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public BookResponseDto updateBookById(Long id, @Valid BookRequestDto bookRequest, MultipartFile bookImage) {
         Optional<Book> oldBook = bookRepo.findById(id);
 

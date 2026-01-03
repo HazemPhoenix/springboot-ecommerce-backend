@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
@@ -38,6 +39,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @Transactional
     public AuthorResponseDto createAuthor(AuthorRequestDto authorRequestDto, MultipartFile authorImage) {
         Author author = AuthorMapper.fromAuthorRequestDto(authorRequestDto);
 
@@ -53,6 +55,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @Transactional
     public AuthorResponseDto updateAuthor(Long id, @Valid AuthorRequestDto authorRequestDto, MultipartFile authorImage) {
         Optional<Author> oldAuthor = authorRepo.findById(id);
 
