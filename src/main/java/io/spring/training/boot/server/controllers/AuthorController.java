@@ -25,8 +25,8 @@ public class AuthorController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<AuthorResponseDto>> getAllAuthors(@PageableDefault(size = 20) Pageable pageable){
-        return ResponseEntity.ok().body(authorService.getAllAuthors(pageable));
+    public ResponseEntity<Page<AuthorResponseDto>> getAllAuthors(@PageableDefault(size = 20) Pageable pageable, @RequestParam String keyword){
+        return ResponseEntity.ok().body(authorService.getAllAuthors(pageable, keyword));
     }
 
     @GetMapping("/{id}")

@@ -54,8 +54,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Page<BookSummaryDto> getAllBooks(Pageable pageable) {
-        return bookRepo.findAll(pageable).map(BookMapper::toBookSummaryDto);
+    public Page<BookSummaryDto> getAllBooks(Pageable pageable, String keyword) {
+        if(keyword == null || keyword.trim().isEmpty())
+            return bookRepo.findAll(pageable).map(BookMapper::toBookSummaryDto);
+        else
+            return bookRepo.findAllContainingKeyword(pageable, keyword).map(BookMapper::toBookSummaryDto);
     }
 
     @Override

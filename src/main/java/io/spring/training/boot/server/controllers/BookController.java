@@ -25,8 +25,8 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<BookSummaryDto>> getAllBooks(@PageableDefault(size = 20) Pageable pageable){
-        return new ResponseEntity<>(bookService.getAllBooks(pageable), HttpStatus.OK);
+    public ResponseEntity<Page<BookSummaryDto>> getAllBooks(@PageableDefault(size = 20) Pageable pageable, @RequestParam(required = false) String keyword){
+        return new ResponseEntity<>(bookService.getAllBooks(pageable, keyword), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

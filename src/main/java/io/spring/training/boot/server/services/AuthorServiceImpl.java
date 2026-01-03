@@ -27,8 +27,11 @@ public class AuthorServiceImpl implements AuthorService {
     private final GenreService genreService;
 
     @Override
-    public Page<AuthorResponseDto> getAllAuthors(Pageable pageable){
-        return authorRepo.findAll(pageable).map(AuthorMapper::toAuthorResponseDto);
+    public Page<AuthorResponseDto> getAllAuthors(Pageable pageable, String keyword){
+        if(keyword == null || keyword.trim().isEmpty())
+            return authorRepo.findAll(pageable).map(AuthorMapper::toAuthorResponseDto);
+        else
+            return authorRepo.findAllContainingKeyword(pageable, keyword).map(AuthorMapper::toAuthorResponseDto);
     }
 
     @Override

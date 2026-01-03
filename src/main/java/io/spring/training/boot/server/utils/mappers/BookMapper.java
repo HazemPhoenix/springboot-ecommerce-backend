@@ -1,6 +1,7 @@
 package io.spring.training.boot.server.utils.mappers;
 
 import io.spring.training.boot.server.DTOs.*;
+import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -17,7 +18,7 @@ public class BookMapper {
     }
 
     public static BookSummaryDto toBookSummaryDto(Book book) {
-        List<SimpleAuthorDto> authorDtos = book.getAuthors().stream().map(AuthorMapper::toSimpleAuthorDto).toList();
+        List<String> authorDtos = book.getAuthors().stream().map(Author::getName).toList();
         String bookImage = ServletUriComponentsBuilder.fromCurrentContextPath().build() + "/uploads/" + (book.getImage() != null ? book.getImage() : "");
         return new BookSummaryDto(book.getId(), book.getTitle(), book.getPrice(), bookImage, authorDtos);
     }

@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Set;
 
 public interface AuthorService {
-    Page<AuthorResponseDto> getAllAuthors(Pageable pageable);
+    Page<AuthorResponseDto> getAllAuthors(Pageable pageable, String keyword);
 
     AuthorResponseDto getAuthorById(Long id);
 

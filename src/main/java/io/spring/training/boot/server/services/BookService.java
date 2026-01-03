@@ -11,7 +11,7 @@ public interface BookService {
 
     BookResponseDto findBookById(long id);
 
-    Page<BookSummaryDto> getAllBooks(Pageable pageable);
+    Page<BookSummaryDto> getAllBooks(Pageable pageable, String keyword);
 
     BookResponseDto updateBookById(Long id, @Valid BookRequestDto bookRequest, MultipartFile bookImage);
 
