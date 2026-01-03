@@ -9,8 +9,10 @@ import io.spring.training.boot.server.utils.mappers.GenreMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -57,5 +59,10 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public void deleteGenreById(Long id) {
         genreRepo.deleteById(id);
+    }
+
+    @Override
+    public Set<Genre> findGenresByIds(Set<Long> ids) {
+        return new HashSet<>(genreRepo.findAllById(ids));
     }
 }

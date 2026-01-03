@@ -4,6 +4,7 @@ import io.spring.training.boot.server.DTOs.AuthorResponseDto;
 import io.spring.training.boot.server.DTOs.AuthorRequestDto;
 import io.spring.training.boot.server.exceptions.AuthorNotFoundException;
 import io.spring.training.boot.server.models.Author;
+import io.spring.training.boot.server.models.Genre;
 import io.spring.training.boot.server.repositories.AuthorRepo;
 import io.spring.training.boot.server.utils.mappers.AuthorMapper;
 import jakarta.validation.Valid;
@@ -22,6 +23,7 @@ import java.util.Set;
 public class AuthorServiceImpl implements AuthorService {
     private final AuthorRepo authorRepo;
     private final ImageStorageService imageStorageService;
+    private final GenreService genreService;
 
     @Override
     public Page<AuthorResponseDto> getAllAuthors(Pageable pageable){
@@ -39,10 +41,13 @@ public class AuthorServiceImpl implements AuthorService {
     public AuthorResponseDto createAuthor(AuthorRequestDto authorRequestDto, MultipartFile authorImage) {
         Author author = AuthorMapper.fromAuthorRequestDto(authorRequestDto);
 
-        if(!authorImage.isEmpty()) {
+        if(authorImage != null && !authorImage.isEmpty()) {
             String imageName = imageStorageService.storeAuthorImage(authorImage);
             author.setPhoto(imageName);
         }
+
+        Set<Genre> authorGenres = genreService.findGenresByIds(authorRequestDto.genreIDs());
+        author.setGenres(authorGenres);
 
         return AuthorMapper.toAuthorResponseDto(authorRepo.save(author));
     }
@@ -57,6 +62,9 @@ public class AuthorServiceImpl implements AuthorService {
 
         Author newAuthor = AuthorMapper.fromAuthorRequestDto(authorRequestDto);
         newAuthor.setId(id);
+
+        Set<Genre> authorGenres = genreService.findGenresByIds(authorRequestDto.genreIDs());
+        newAuthor.setGenres(authorGenres);
 
         if(!authorImage.isEmpty()) {
             String oldImageName = oldAuthor.get().getPhoto();

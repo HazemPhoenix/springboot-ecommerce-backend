@@ -3,10 +3,16 @@ package io.spring.training.boot.server.seeder;
 import com.github.javafaker.Faker;
 import io.spring.training.boot.server.DTOs.AuthorRequestDto;
 import io.spring.training.boot.server.DTOs.BookRequestDto;
+import io.spring.training.boot.server.DTOs.GenreRequestDto;
+import io.spring.training.boot.server.models.Author;
+import io.spring.training.boot.server.models.Book;
+import io.spring.training.boot.server.models.Genre;
 import io.spring.training.boot.server.repositories.AuthorRepo;
 import io.spring.training.boot.server.repositories.BookRepo;
+import io.spring.training.boot.server.repositories.GenreRepo;
 import io.spring.training.boot.server.services.AuthorService;
 import io.spring.training.boot.server.services.BookService;
+import io.spring.training.boot.server.services.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,14 +31,21 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final AuthorService authorService;
     private final BookRepo bookRepo;
     private final AuthorRepo authorRepo;
+    private final GenreRepo genreRepo;
 
     private final int AUTHOR_COUNT = 100;
     private final int BOOK_COUNT = 50000;
+    private final int GENRE_COUNT = 50;
     private final LocalContainerEntityManagerFactoryBean entityManagerFactory2;
     private final JdbcTemplate jdbcTemplate;
+    private final GenreService genreService;
 
     @Override
     public void run(String... args) throws Exception {
+        if(genreRepo.count() == 0) {
+            System.out.println("Running genre seeder");
+            seedGenres();
+        }
         if(authorRepo.count() == 0) {
             System.out.println("Running author seeder");
             seedAuthors();
@@ -50,8 +63,22 @@ public class DatabaseSeeder implements CommandLineRunner {
             String bio = faker.lorem().fixedString(250);
             String nat = faker.nation().nationality();
             String photo = faker.lorem().fixedString(10);
-            AuthorRequestDto authorRequestDto = new AuthorRequestDto(name, bio, nat);
-//            authorService.createAuthor(authorRequestDto);
+
+            Set<Long> genreIds = new HashSet<>();
+            int genreCount = faker.number().numberBetween(1, 10);
+
+            int minGenreId = jdbcTemplate.queryForObject("select min(id) from genres", Integer.class);
+            int maxGenreId = jdbcTemplate.queryForObject("select max(id) from genres", Integer.class);
+            for(int j = 0; j < genreCount; j++) {
+                Long genreId = (long) faker.number().numberBetween(minGenreId, maxGenreId + 1);
+                genreIds.add(genreId);
+            }
+
+            AuthorRequestDto authorRequestDto = new AuthorRequestDto(name, bio, nat, genreIds);
+            Author author = new Author(name, bio, nat);
+            Set<Genre> genres = genreService.findGenresByIds(genreIds);
+            author.setGenres(genres);
+            authorRepo.save(author);
         }
     }
 
@@ -72,13 +99,41 @@ public class DatabaseSeeder implements CommandLineRunner {
 
             int minAuthorId = jdbcTemplate.queryForObject("select min(id) from authors", Integer.class);
             int maxAuthorId = jdbcTemplate.queryForObject("select max(id) from authors", Integer.class);
+
             for(int j = 0; j < authorCount; j++){
-                authorIds.add((long) faker.number().numberBetween(minAuthorId, maxAuthorId));
+                authorIds.add((long) faker.number().numberBetween(minAuthorId, maxAuthorId + 1));
             }
+
+            Set<Long> genreIds = new HashSet<>();
+            int genreCount = faker.number().numberBetween(1, 10);
+
+            int minGenreId = jdbcTemplate.queryForObject("select min(id) from genres", Integer.class);
+            int maxGenreId = jdbcTemplate.queryForObject("select max(id) from genres", Integer.class);
+            for(int j = 0; j < genreCount; j++) {
+                Long genreId = (long) faker.number().numberBetween(minGenreId, maxGenreId + 1);
+                genreIds.add(genreId);
+            }
+
             // image
-            String img = faker.lorem().characters(10);
-            BookRequestDto bookRequestDto = new BookRequestDto(title, desc, price, pages, authorIds);
-//            bookService.createBook(bookRequestDto, img);
+//            String img = faker.lorem().characters(10);
+            Book book = new Book(title, desc, price, pages);
+            Set<Author> authors = authorService.findAuthorsByIds(authorIds);
+            Set<Genre> genres = genreService.findGenresByIds(genreIds);
+            book.setAuthors(authors);
+            book.setGenres(genres);
+            bookRepo.save(book);
+        }
+    }
+
+    private void seedGenres(){
+        Faker faker = new Faker();
+        Set<String> names = new HashSet<>();
+        for(int i = 0; i < GENRE_COUNT; i++) {
+            String name = faker.book().genre();
+            if(names.add(name)){
+                GenreRequestDto genreRequestDto = new GenreRequestDto(name);
+                genreService.createGenre(genreRequestDto);
+            }
         }
     }
 }

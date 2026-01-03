@@ -5,6 +5,7 @@ import io.spring.training.boot.server.DTOs.BookRequestDto;
 import io.spring.training.boot.server.exceptions.BookNotFoundException;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
+import io.spring.training.boot.server.models.Genre;
 import io.spring.training.boot.server.repositories.BookRepo;
 import io.spring.training.boot.server.utils.mappers.BookMapper;
 import jakarta.validation.Valid;
@@ -23,6 +24,7 @@ public class BookServiceImpl implements BookService {
     private final BookRepo bookRepo;
     private final AuthorService authorService;
     private final ImageStorageService imageStorageService;
+    private final GenreService genreService;
 
     @Override
     public BookResponseDto createBook(BookRequestDto bookRequest, MultipartFile bookImage) {
@@ -31,7 +33,10 @@ public class BookServiceImpl implements BookService {
         Set<Author> authors = authorService.findAuthorsByIds(bookRequest.authorIDs());
         book.setAuthors(authors);
 
-        if(!bookImage.isEmpty()){
+        Set<Genre> genres = genreService.findGenresByIds(bookRequest.genreIDs());
+        book.setGenres(genres);
+
+        if(bookImage != null && !bookImage.isEmpty()){
             String imageName = imageStorageService.storeBookImage(bookImage);
             book.setImage(imageName);
         }
@@ -61,11 +66,13 @@ public class BookServiceImpl implements BookService {
         Book newBook = BookMapper.fromBookRequestDto(bookRequest);
         newBook.setId(id);
 
-        Set<Long> newAuthorIds = bookRequest.authorIDs();
-        Set<Author> newAuthors = authorService.findAuthorsByIds(newAuthorIds);
+        Set<Author> newAuthors = authorService.findAuthorsByIds(bookRequest.authorIDs());
         newBook.setAuthors(newAuthors);
 
-        if(!bookImage.isEmpty()){
+        Set<Genre> newGenres = genreService.findGenresByIds(bookRequest.genreIDs());
+        newBook.setGenres(newGenres);
+
+        if(bookImage != null && !bookImage.isEmpty()){
             String oldImageName = oldBook.get().getImage();
             if(oldImageName != null && !oldImageName.trim().isEmpty())
                 imageStorageService.deleteBookImage(oldImageName);
