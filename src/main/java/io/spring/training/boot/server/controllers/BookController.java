@@ -2,6 +2,7 @@ package io.spring.training.boot.server.controllers;
 
 import io.spring.training.boot.server.DTOs.BookResponseDto;
 import io.spring.training.boot.server.DTOs.BookRequestDto;
+import io.spring.training.boot.server.DTOs.BookSummaryDto;
 import io.spring.training.boot.server.services.BookService;
 import io.spring.training.boot.server.services.BookServiceImpl;
 import jakarta.validation.Valid;
@@ -26,7 +27,7 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<BookResponseDto>> getAllBooks(@PageableDefault(size = 20) Pageable pageable){
+    public ResponseEntity<Page<BookSummaryDto>> getAllBooks(@PageableDefault(size = 20) Pageable pageable){
         return new ResponseEntity<>(bookService.getAllBooks(pageable), HttpStatus.OK);
     }
 

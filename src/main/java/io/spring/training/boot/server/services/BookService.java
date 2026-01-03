@@ -2,6 +2,7 @@ package io.spring.training.boot.server.services;
 
 import io.spring.training.boot.server.DTOs.BookResponseDto;
 import io.spring.training.boot.server.DTOs.BookRequestDto;
+import io.spring.training.boot.server.DTOs.BookSummaryDto;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,7 @@ public interface BookService {
 
     BookResponseDto findBookById(long id);
 
-    Page<BookResponseDto> getAllBooks(Pageable pageable);
+    Page<BookSummaryDto> getAllBooks(Pageable pageable);
 
     BookResponseDto updateBookById(Long id, @Valid BookRequestDto bookRequest, MultipartFile bookImage);
 

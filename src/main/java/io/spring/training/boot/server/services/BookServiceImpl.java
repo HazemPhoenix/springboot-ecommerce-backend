@@ -2,6 +2,7 @@ package io.spring.training.boot.server.services;
 
 import io.spring.training.boot.server.DTOs.BookResponseDto;
 import io.spring.training.boot.server.DTOs.BookRequestDto;
+import io.spring.training.boot.server.DTOs.BookSummaryDto;
 import io.spring.training.boot.server.exceptions.BookNotFoundException;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
@@ -51,8 +52,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Page<BookResponseDto> getAllBooks(Pageable pageable) {
-        return bookRepo.findAll(pageable).map(BookMapper::toBookResponseDto);
+    public Page<BookSummaryDto> getAllBooks(Pageable pageable) {
+        return bookRepo.findAll(pageable).map(BookMapper::toBookSummaryDto);
     }
 
     @Override

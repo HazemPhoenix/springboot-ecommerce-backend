@@ -3,6 +3,7 @@ package io.spring.training.boot.server.utils.mappers;
 import io.spring.training.boot.server.DTOs.AuthorResponseDto;
 import io.spring.training.boot.server.DTOs.AuthorRequestDto;
 import io.spring.training.boot.server.DTOs.GenreResponseDto;
+import io.spring.training.boot.server.DTOs.SimpleAuthorDto;
 import io.spring.training.boot.server.models.Author;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -17,5 +18,9 @@ public class AuthorMapper {
 
     public static Author fromAuthorRequestDto(AuthorRequestDto authorRequestDto){
         return new Author(authorRequestDto.name(), authorRequestDto.bio(), authorRequestDto.nationality());
+    }
+
+    public static SimpleAuthorDto toSimpleAuthorDto(Author author) {
+        return new SimpleAuthorDto(author.getName());
     }
 }

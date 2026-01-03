@@ -1,9 +1,6 @@
 package io.spring.training.boot.server.seeder;
 
 import com.github.javafaker.Faker;
-import io.spring.training.boot.server.DTOs.AuthorRequestDto;
-import io.spring.training.boot.server.DTOs.BookRequestDto;
-import io.spring.training.boot.server.DTOs.GenreRequestDto;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.models.Genre;
@@ -11,12 +8,10 @@ import io.spring.training.boot.server.repositories.AuthorRepo;
 import io.spring.training.boot.server.repositories.BookRepo;
 import io.spring.training.boot.server.repositories.GenreRepo;
 import io.spring.training.boot.server.services.AuthorService;
-import io.spring.training.boot.server.services.BookService;
 import io.spring.training.boot.server.services.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -27,7 +22,6 @@ import java.util.Set;
 @Component
 @RequiredArgsConstructor
 public class DatabaseSeeder implements CommandLineRunner {
-    private final BookService bookService;
     private final AuthorService authorService;
     private final BookRepo bookRepo;
     private final AuthorRepo authorRepo;
@@ -36,7 +30,6 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final int AUTHOR_COUNT = 100;
     private final int BOOK_COUNT = 50000;
     private final int GENRE_COUNT = 50;
-    private final LocalContainerEntityManagerFactoryBean entityManagerFactory2;
     private final JdbcTemplate jdbcTemplate;
     private final GenreService genreService;
 
@@ -74,7 +67,6 @@ public class DatabaseSeeder implements CommandLineRunner {
                 genreIds.add(genreId);
             }
 
-            AuthorRequestDto authorRequestDto = new AuthorRequestDto(name, bio, nat, genreIds);
             Author author = new Author(name, bio, nat);
             Set<Genre> genres = genreService.findGenresByIds(genreIds);
             author.setGenres(genres);
@@ -82,7 +74,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         }
     }
 
-    private void seedBooks() throws SQLException {
+    private void seedBooks() {
         Faker faker = new Faker();
         for(int i = 0; i < BOOK_COUNT; i++){
             // title
@@ -131,8 +123,8 @@ public class DatabaseSeeder implements CommandLineRunner {
         for(int i = 0; i < GENRE_COUNT; i++) {
             String name = faker.book().genre();
             if(names.add(name)){
-                GenreRequestDto genreRequestDto = new GenreRequestDto(name);
-                genreService.createGenre(genreRequestDto);
+                Genre genre = new Genre(name);
+                genreRepo.save(genre);
             }
         }
     }
