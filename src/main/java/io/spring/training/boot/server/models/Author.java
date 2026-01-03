@@ -23,6 +23,14 @@ public class Author {
     @ManyToMany(mappedBy = "authors")
     private Set<Book> books;
 
+    @ManyToMany
+    @JoinTable(
+            name = "author_genres",
+            joinColumns = @JoinColumn(name = "author_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private Set<Genre> genres;
+
     public Author(String name, String bio, String nationality) {
         this.name = name;
         this.bio = bio;
