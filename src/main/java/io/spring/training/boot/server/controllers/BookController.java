@@ -3,6 +3,7 @@ package io.spring.training.boot.server.controllers;
 import io.spring.training.boot.server.DTOs.BookDto;
 import io.spring.training.boot.server.DTOs.BookRequestDto;
 import io.spring.training.boot.server.services.BookService;
+import io.spring.training.boot.server.services.BookServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,9 +20,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/books")
-@RequiredArgsConstructor
 public class BookController {
     private final BookService bookService;
+
+    public BookController(BookServiceImpl bookService) {
+        this.bookService = bookService;
+    }
 
     @GetMapping
     public ResponseEntity<Page<BookDto>> getAllBooks(@PageableDefault(size = 20) Pageable pageable){

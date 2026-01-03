@@ -4,6 +4,7 @@ import io.spring.training.boot.server.DTOs.AuthorDto;
 import io.spring.training.boot.server.DTOs.AuthorRequestDto;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.services.AuthorService;
+import io.spring.training.boot.server.services.AuthorServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
@@ -20,9 +21,12 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/authors")
-@RequiredArgsConstructor
 public class AuthorController {
     private final AuthorService authorService;
+
+    public AuthorController(AuthorServiceImpl authorService) {
+        this.authorService = authorService;
+    }
 
     @GetMapping
     public ResponseEntity<Page<AuthorDto>> getAllAuthors(@PageableDefault(size = 20) Pageable pageable){

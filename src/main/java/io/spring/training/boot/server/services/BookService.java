@@ -2,86 +2,19 @@ package io.spring.training.boot.server.services;
 
 import io.spring.training.boot.server.DTOs.BookDto;
 import io.spring.training.boot.server.DTOs.BookRequestDto;
-import io.spring.training.boot.server.exceptions.BookNotFoundException;
-import io.spring.training.boot.server.models.Author;
-import io.spring.training.boot.server.models.Book;
-import io.spring.training.boot.server.repositories.BookRepo;
-import io.spring.training.boot.server.utils.mappers.BookMapper;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.Optional;
-import java.util.Set;
+public interface BookService {
+    BookDto createBook(BookRequestDto bookRequest, MultipartFile bookImage);
 
-@Service
-@RequiredArgsConstructor
-public class BookService {
-    private final BookRepo bookRepo;
-    private final AuthorService authorService;
-    private final ImageStorageService imageStorageService;
+    BookDto findBookById(long id);
 
-    public BookDto createBook(BookRequestDto bookRequest, MultipartFile bookImage) {
-        Book book = BookMapper.fromBookRequestDto(bookRequest);
+    Page<BookDto> getAllBooks(Pageable pageable);
 
-        Set<Author> authors = authorService.findAuthorsByIds(bookRequest.authorIDs());
-        book.setAuthors(authors);
+    BookDto updateBookById(Long id, @Valid BookRequestDto bookRequest, MultipartFile bookImage);
 
-        if(!bookImage.isEmpty()){
-            String imageName = imageStorageService.storeBookImage(bookImage);
-            book.setImage(imageName);
-        }
-
-        return BookMapper.toBookDto(bookRepo.save(book));
-    }
-
-    public BookDto findBookById(long id){
-        Book book = bookRepo.findById(id).orElseThrow(() -> new BookNotFoundException("No book found with the id: " + id));
-        return BookMapper.toBookDto(book);
-    }
-
-    public Page<BookDto> getAllBooks(Pageable pageable) {
-        return bookRepo.findAll(pageable).map(BookMapper::toBookDto);
-    }
-
-    public BookDto updateBookById(Long id, @Valid BookRequestDto bookRequest, MultipartFile bookImage) {
-        Optional<Book> oldBook = bookRepo.findById(id);
-
-        if(oldBook.isEmpty()){
-            throw new BookNotFoundException("No book found with the id: " + id);
-        }
-
-        Book newBook = BookMapper.fromBookRequestDto(bookRequest);
-        newBook.setId(id);
-
-        Set<Long> newAuthorIds = bookRequest.authorIDs();
-        Set<Author> newAuthors = authorService.findAuthorsByIds(newAuthorIds);
-        newBook.setAuthors(newAuthors);
-
-        if(!bookImage.isEmpty()){
-            String oldImageName = oldBook.get().getImage();
-            if(oldImageName != null && !oldImageName.trim().isEmpty())
-                imageStorageService.deleteBookImage(oldImageName);
-
-            String newImageName = imageStorageService.storeBookImage(bookImage);
-            newBook.setImage(newImageName);
-        } else {
-            imageStorageService.deleteBookImage(oldBook.get().getImage());
-        }
-
-        return BookMapper.toBookDto(bookRepo.save(newBook));
-    }
-
-    public void deleteBookById(Long id) {
-        bookRepo.findById(id).ifPresent(book -> {
-            if(!book.getImage().trim().isEmpty()){
-                imageStorageService.deleteBookImage(book.getImage());
-            }
-            bookRepo.delete(book);
-        });
-    }
+    void deleteBookById(Long id);
 }
