@@ -6,6 +6,7 @@ import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.models.Genre;
 import io.spring.training.boot.server.repositories.BookRepo;
+import io.spring.training.boot.server.repositories.ReviewRepo;
 import io.spring.training.boot.server.utils.mappers.BookMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class BookServiceImpl implements BookService {
     private final AuthorService authorService;
     private final ImageStorageService imageStorageService;
     private final GenreService genreService;
+    private final ReviewRepo reviewRepo;
 
     @Override
     @Transactional
