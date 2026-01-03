@@ -1,8 +1,6 @@
 package io.spring.training.boot.server.services;
 
-import io.spring.training.boot.server.DTOs.BookResponseDto;
-import io.spring.training.boot.server.DTOs.BookRequestDto;
-import io.spring.training.boot.server.DTOs.BookSummaryDto;
+import io.spring.training.boot.server.DTOs.*;
 import io.spring.training.boot.server.exceptions.BookNotFoundException;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
@@ -98,5 +96,20 @@ public class BookServiceImpl implements BookService {
             }
             bookRepo.delete(book);
         });
+    }
+
+    @Override
+    public ReviewResponseDto createReviewForBook(Long bookId, ReviewRequestDto reviewRequestDto) {
+        return null;
+    }
+
+    @Override
+    public Page<ReviewResponseDto> getReviewsForBook(Long bookId, Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public void deleteReview(Long bookId, Long reviewId) {
+
     }
 }

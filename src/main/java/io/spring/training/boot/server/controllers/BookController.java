@@ -59,7 +59,7 @@ public class BookController {
 
     @PostMapping("/{bookId}/reviews")
     public ResponseEntity<ReviewResponseDto> createReview(@Valid @RequestBody ReviewRequestDto reviewRequestDto, @PathVariable Long bookId){
-        ReviewResponseDto reviewResponseDto = bookService.createReview(bookId, reviewRequestDto);
+        ReviewResponseDto reviewResponseDto = bookService.createReviewForBook(bookId, reviewRequestDto);
         URI newReviewUri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path("/{reviewId}")
