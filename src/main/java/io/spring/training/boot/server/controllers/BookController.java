@@ -1,8 +1,6 @@
 package io.spring.training.boot.server.controllers;
 
-import io.spring.training.boot.server.DTOs.BookResponseDto;
-import io.spring.training.boot.server.DTOs.BookRequestDto;
-import io.spring.training.boot.server.DTOs.BookSummaryDto;
+import io.spring.training.boot.server.DTOs.*;
 import io.spring.training.boot.server.services.BookService;
 import io.spring.training.boot.server.services.BookServiceImpl;
 import jakarta.validation.Valid;
@@ -56,6 +54,28 @@ public class BookController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id){
         bookService.deleteBookById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{bookId}/reviews")
+    public ResponseEntity<ReviewResponseDto> createReview(@Valid @RequestBody ReviewRequestDto reviewRequestDto, @PathVariable Long bookId){
+        ReviewResponseDto reviewResponseDto = bookService.createReview(bookId, reviewRequestDto);
+        URI newReviewUri = ServletUriComponentsBuilder
+                .fromCurrentRequestUri()
+                .path("/{reviewId}")
+                .build(reviewResponseDto.userId());
+        return ResponseEntity.created(newReviewUri).body(reviewResponseDto);
+    }
+
+    @GetMapping("/{bookId}/reviews")
+    public ResponseEntity<Page<ReviewResponseDto>> getReviewsForBook(@PathVariable Long bookId, @PageableDefault(size = 20) Pageable pageable){
+        Page<ReviewResponseDto> reviews = bookService.getReviewsForBook(bookId, pageable);
+        return ResponseEntity.ok(reviews);
+    }
+
+    @DeleteMapping("/{bookId}/reviews/{reviewId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable Long bookId, @PathVariable Long reviewId){
+        bookService.deleteReview(bookId, reviewId);
         return ResponseEntity.noContent().build();
     }
 }
