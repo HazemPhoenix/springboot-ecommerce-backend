@@ -6,7 +6,7 @@ import io.spring.training.boot.server.models.Author;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 public class AuthorMapper {
-    public static AuthorResponseDto toAuthorDto(Author author){
+    public static AuthorResponseDto toAuthorResponseDto(Author author){
         String imageName = ServletUriComponentsBuilder.fromCurrentContextPath().build() + "/uploads/" + author.getPhoto();
         return new AuthorResponseDto(author.getId(), author.getName(), author.getBio(), author.getNationality(), imageName);
     }

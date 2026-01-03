@@ -25,13 +25,13 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Page<AuthorResponseDto> getAllAuthors(Pageable pageable){
-        return authorRepo.findAll(pageable).map(AuthorMapper::toAuthorDto);
+        return authorRepo.findAll(pageable).map(AuthorMapper::toAuthorResponseDto);
     }
 
     @Override
     public AuthorResponseDto getAuthorById(Long id) {
         return authorRepo.findById(id)
-                .map(AuthorMapper::toAuthorDto)
+                .map(AuthorMapper::toAuthorResponseDto)
                 .orElseThrow(() -> new AuthorNotFoundException("No author found with the id: " + id));
     }
 
@@ -44,7 +44,7 @@ public class AuthorServiceImpl implements AuthorService {
             author.setPhoto(imageName);
         }
 
-        return AuthorMapper.toAuthorDto(authorRepo.save(author));
+        return AuthorMapper.toAuthorResponseDto(authorRepo.save(author));
     }
 
     @Override
@@ -69,7 +69,7 @@ public class AuthorServiceImpl implements AuthorService {
             imageStorageService.deleteAuthorImage(oldAuthor.get().getPhoto());
         }
 
-        return AuthorMapper.toAuthorDto(authorRepo.save(newAuthor));
+        return AuthorMapper.toAuthorResponseDto(authorRepo.save(newAuthor));
     }
 
     @Override

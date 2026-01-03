@@ -9,8 +9,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.List;
 
 public class BookMapper {
-    public static BookResponseDto toBookDto(Book book){
-        List<AuthorResponseDto> authorResponseDtos = book.getAuthors().stream().map(AuthorMapper::toAuthorDto).toList();
+    public static BookResponseDto toBookResponseDto(Book book){
+        List<AuthorResponseDto> authorResponseDtos = book.getAuthors().stream().map(AuthorMapper::toAuthorResponseDto).toList();
         String bookImage = ServletUriComponentsBuilder.fromCurrentContextPath().build() + "/uploads/" + book.getImage();
         return new BookResponseDto(book.getId(), book.getTitle(), book.getDescription(), book.getPrice(), book.getNumberOfPages(), bookImage, authorResponseDtos);
     }

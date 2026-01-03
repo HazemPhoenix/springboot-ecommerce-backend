@@ -36,18 +36,18 @@ public class BookServiceImpl implements BookService {
             book.setImage(imageName);
         }
 
-        return BookMapper.toBookDto(bookRepo.save(book));
+        return BookMapper.toBookResponseDto(bookRepo.save(book));
     }
 
     @Override
     public BookResponseDto findBookById(long id){
         Book book = bookRepo.findById(id).orElseThrow(() -> new BookNotFoundException("No book found with the id: " + id));
-        return BookMapper.toBookDto(book);
+        return BookMapper.toBookResponseDto(book);
     }
 
     @Override
     public Page<BookResponseDto> getAllBooks(Pageable pageable) {
-        return bookRepo.findAll(pageable).map(BookMapper::toBookDto);
+        return bookRepo.findAll(pageable).map(BookMapper::toBookResponseDto);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class BookServiceImpl implements BookService {
             imageStorageService.deleteBookImage(oldBook.get().getImage());
         }
 
-        return BookMapper.toBookDto(bookRepo.save(newBook));
+        return BookMapper.toBookResponseDto(bookRepo.save(newBook));
     }
 
     @Override
