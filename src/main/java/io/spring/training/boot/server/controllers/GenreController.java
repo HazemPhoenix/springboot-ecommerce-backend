@@ -1,5 +1,7 @@
 package io.spring.training.boot.server.controllers;
 
+import io.spring.training.boot.server.DTOs.GenreResponseDto;
+import io.spring.training.boot.server.DTOs.GenreRequestDto;
 import io.spring.training.boot.server.services.GenreService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,18 +20,18 @@ public class GenreController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GenreDto>> getAllGenres(){
+    public ResponseEntity<List<GenreResponseDto>> getAllGenres(){
         return ResponseEntity.ok(genreService.getAllGenres());
     }
 
     @GetMapping("/{genreId}")
-    public ResponseEntity<GenreDto> getGenreById(@PathVariable Long genreId) {
+    public ResponseEntity<GenreResponseDto> getGenreById(@PathVariable Long genreId) {
         return ResponseEntity.ok(genreService.findGenreById(genreId));
     }
 
     @PostMapping
-    public ResponseEntity<GenreDto> createGenre(@RequestBody GenreRequestDto genreRequestDto){
-        GenreDto newGenre = genreService.createGenre(genreRequestDto);
+    public ResponseEntity<GenreResponseDto> createGenre(@RequestBody GenreRequestDto genreRequestDto){
+        GenreResponseDto newGenre = genreService.createGenre(genreRequestDto);
         URI newGenreLocation = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path("/{genreId}")
@@ -38,8 +40,8 @@ public class GenreController {
     }
 
     @PutMapping("/{genreId}")
-    public ResponseEntity<GenreDto> updateGenre(@PathVariable Long id, GenreRequestDto genreRequestDto){
-        GenreDto newGenre = genreService.updateGenre(id, genreRequestDto);
+    public ResponseEntity<GenreResponseDto> updateGenre(@PathVariable Long id, GenreRequestDto genreRequestDto){
+        GenreResponseDto newGenre = genreService.updateGenre(id, genreRequestDto);
         return ResponseEntity.ok(newGenre);
     }
 

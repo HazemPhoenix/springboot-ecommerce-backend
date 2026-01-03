@@ -1,17 +1,18 @@
 package io.spring.training.boot.server.services;
 
-import io.spring.training.boot.server.models.Genre;
+import io.spring.training.boot.server.DTOs.GenreResponseDto;
+import io.spring.training.boot.server.DTOs.GenreRequestDto;
 
 import java.util.List;
 
 public interface GenreService {
-    GenreDto findGenreById(Long id);
+    GenreResponseDto findGenreById(Long id);
 
-    List<GenreDto> getAllGenres();
+    List<GenreResponseDto> getAllGenres();
 
-    GenreDto createGenre(GenreRequestDto genreRequestDto);
+    GenreResponseDto createGenre(GenreRequestDto genreRequestDto);
 
-    GenreDto updateGenre(Long id, GenreRequestDto genreRequestDto);
+    GenreResponseDto updateGenre(Long id, GenreRequestDto genreRequestDto);
 
     void deleteGenreById(Long id);
 }

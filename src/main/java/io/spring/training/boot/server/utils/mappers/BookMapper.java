@@ -1,21 +1,18 @@
 package io.spring.training.boot.server.utils.mappers;
 
-import io.spring.training.boot.server.DTOs.AuthorDto;
-import io.spring.training.boot.server.DTOs.BookDto;
+import io.spring.training.boot.server.DTOs.AuthorResponseDto;
+import io.spring.training.boot.server.DTOs.BookResponseDto;
 import io.spring.training.boot.server.DTOs.BookRequestDto;
-import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.security.Security;
 import java.util.List;
-import java.util.Set;
 
 public class BookMapper {
-    public static BookDto toBookDto(Book book){
-        List<AuthorDto> authorDtos = book.getAuthors().stream().map(AuthorMapper::toAuthorDto).toList();
+    public static BookResponseDto toBookDto(Book book){
+        List<AuthorResponseDto> authorResponseDtos = book.getAuthors().stream().map(AuthorMapper::toAuthorDto).toList();
         String bookImage = ServletUriComponentsBuilder.fromCurrentContextPath().build() + "/uploads/" + book.getImage();
-        return new BookDto(book.getId(), book.getTitle(), book.getDescription(), book.getPrice(), book.getNumberOfPages(), bookImage, authorDtos);
+        return new BookResponseDto(book.getId(), book.getTitle(), book.getDescription(), book.getPrice(), book.getNumberOfPages(), bookImage, authorResponseDtos);
     }
 
     public static Book fromBookRequestDto(BookRequestDto bookRequestDto){

@@ -1,6 +1,6 @@
 package io.spring.training.boot.server.services;
 
-import io.spring.training.boot.server.DTOs.AuthorDto;
+import io.spring.training.boot.server.DTOs.AuthorResponseDto;
 import io.spring.training.boot.server.DTOs.AuthorRequestDto;
 import io.spring.training.boot.server.exceptions.AuthorNotFoundException;
 import io.spring.training.boot.server.models.Author;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,19 +24,19 @@ public class AuthorServiceImpl implements AuthorService {
     private final ImageStorageService imageStorageService;
 
     @Override
-    public Page<AuthorDto> getAllAuthors(Pageable pageable){
+    public Page<AuthorResponseDto> getAllAuthors(Pageable pageable){
         return authorRepo.findAll(pageable).map(AuthorMapper::toAuthorDto);
     }
 
     @Override
-    public AuthorDto getAuthorById(Long id) {
+    public AuthorResponseDto getAuthorById(Long id) {
         return authorRepo.findById(id)
                 .map(AuthorMapper::toAuthorDto)
                 .orElseThrow(() -> new AuthorNotFoundException("No author found with the id: " + id));
     }
 
     @Override
-    public AuthorDto createAuthor(AuthorRequestDto authorRequestDto, MultipartFile authorImage) {
+    public AuthorResponseDto createAuthor(AuthorRequestDto authorRequestDto, MultipartFile authorImage) {
         Author author = AuthorMapper.fromAuthorRequestDto(authorRequestDto);
 
         if(!authorImage.isEmpty()) {
@@ -49,7 +48,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorDto updateAuthor(Long id, @Valid AuthorRequestDto authorRequestDto, MultipartFile authorImage) {
+    public AuthorResponseDto updateAuthor(Long id, @Valid AuthorRequestDto authorRequestDto, MultipartFile authorImage) {
         Optional<Author> oldAuthor = authorRepo.findById(id);
 
         if(oldAuthor.isEmpty()) {

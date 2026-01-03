@@ -1,6 +1,6 @@
 package io.spring.training.boot.server.services;
 
-import io.spring.training.boot.server.DTOs.BookDto;
+import io.spring.training.boot.server.DTOs.BookResponseDto;
 import io.spring.training.boot.server.DTOs.BookRequestDto;
 import io.spring.training.boot.server.exceptions.BookNotFoundException;
 import io.spring.training.boot.server.models.Author;
@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.Optional;
 import java.util.Set;
@@ -26,7 +25,7 @@ public class BookServiceImpl implements BookService {
     private final ImageStorageService imageStorageService;
 
     @Override
-    public BookDto createBook(BookRequestDto bookRequest, MultipartFile bookImage) {
+    public BookResponseDto createBook(BookRequestDto bookRequest, MultipartFile bookImage) {
         Book book = BookMapper.fromBookRequestDto(bookRequest);
 
         Set<Author> authors = authorService.findAuthorsByIds(bookRequest.authorIDs());
@@ -41,18 +40,18 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto findBookById(long id){
+    public BookResponseDto findBookById(long id){
         Book book = bookRepo.findById(id).orElseThrow(() -> new BookNotFoundException("No book found with the id: " + id));
         return BookMapper.toBookDto(book);
     }
 
     @Override
-    public Page<BookDto> getAllBooks(Pageable pageable) {
+    public Page<BookResponseDto> getAllBooks(Pageable pageable) {
         return bookRepo.findAll(pageable).map(BookMapper::toBookDto);
     }
 
     @Override
-    public BookDto updateBookById(Long id, @Valid BookRequestDto bookRequest, MultipartFile bookImage) {
+    public BookResponseDto updateBookById(Long id, @Valid BookRequestDto bookRequest, MultipartFile bookImage) {
         Optional<Book> oldBook = bookRepo.findById(id);
 
         if(oldBook.isEmpty()){
