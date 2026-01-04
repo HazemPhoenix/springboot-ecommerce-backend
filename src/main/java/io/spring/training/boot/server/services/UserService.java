@@ -5,4 +5,6 @@ import io.spring.training.boot.server.DTOs.UserResponseDto;
 
 public interface UserService {
     UserResponseDto registerUser(UserRequestDto requestDto);
+
+    UserResponseDto getUserProfile(Long userId);
 }

@@ -6,6 +6,6 @@ public record UserResponseDto(Long id,
                               String username,
                               String email,
                               String phone,
-                              List<AddressResponseDto> addresses,
+                              AddressResponseDto address,
                               boolean verified) {
 }

@@ -112,10 +112,11 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public ReviewResponseDto createOrUpdateReviewForBook(Long bookId, ReviewRequestDto reviewRequestDto) {
+        if(!bookRepo.existsById(bookId)) throw new BookNotFoundException("No book found with the id: " + bookId);
         Review review = new Review(reviewRequestDto.rating(), reviewRequestDto.title(), reviewRequestDto.content());
         // TODO: the user id should be the actual principal id when i add security
         review.setId(new ReviewId(1L, bookId));
-        review.setEdited(reviewRepo.findById(new ReviewId(1L, bookId)).isPresent());
+        review.setEdited(reviewRepo.findById(new ReviewId(16L, bookId)).isPresent());
         reviewRepo.save(review);
         return ReviewMapper.toReviewResponseDto(review);
     }

@@ -11,14 +11,23 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class UserAddress {
-    @ManyToOne
-    @JoinColumn(name = "user_id")
     @Id
+    private Long id;
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "user_id")
     private User user;
     private String street;
     private String city;
     private String country;
     private String zip;
+
+    public UserAddress(User user, String street, String city, String country, String zip) {
+        this.user = user;
+        this.street = street;
+        this.city = city;
+        this.country = country;
+        this.zip = zip;
+    }
 }

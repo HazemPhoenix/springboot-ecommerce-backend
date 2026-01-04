@@ -21,7 +21,6 @@ public record UserRequestDto(@NotBlank(message = "Username is required")
                              @NotBlank(message = "Phone number is required")
                              @Pattern(regexp = "^\\d{12}$", message = "Phone number must be exactly 12 digits")
                              String phone,
-                             @NotNull(message = "Address list is required")
-                             @Size(min = 1, max = 5, message = "Address list must contain at least 1 address and a maximum of 5")
-                             List<AddressRequestDto> addresses) {
+                             @NotNull(message = "Address is required")
+                             AddressRequestDto address) {
 }
