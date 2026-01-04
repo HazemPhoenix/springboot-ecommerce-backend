@@ -107,17 +107,21 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public ReviewResponseDto createReviewForBook(Long bookId, ReviewRequestDto reviewRequestDto) {
+    public ReviewResponseDto createOrUpdateReviewForBook(Long bookId, ReviewRequestDto reviewRequestDto) {
         Review review = new Review(reviewRequestDto.rating(), reviewRequestDto.title(), reviewRequestDto.content());
-        review.setId(new ReviewId(5L, bookId));
-        review.setEdited(false);
+        // TODO: the user id should be the actual principal id when i add security
+        review.setId(new ReviewId(1L, bookId));
+        review.setEdited(reviewRepo.findById(new ReviewId(1L, bookId)).isPresent());
         reviewRepo.save(review);
         return ReviewMapper.toReviewResponseDto(review);
     }
 
     @Override
-    public Page<ReviewResponseDto> getReviewsForBook(Long bookId, Pageable pageable) {
-        return null;
+    public Page<ReviewResponseDto> getReviewsForBook(Long bookId, Pageable pageable, String keyword) {
+        if(keyword == null || keyword.trim().isEmpty())
+            return reviewRepo.findById_BookId(pageable, bookId).map(ReviewMapper::toReviewResponseDto);
+        else
+            return reviewRepo.findById_BookIdAndKeyword(pageable, bookId, keyword).map(ReviewMapper::toReviewResponseDto);
     }
 
     @Override

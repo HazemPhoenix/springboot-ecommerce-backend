@@ -17,9 +17,9 @@ public interface BookService {
 
     void deleteBookById(Long id);
 
-    ReviewResponseDto createReviewForBook(Long bookId, ReviewRequestDto reviewRequestDto);
+    ReviewResponseDto createOrUpdateReviewForBook(Long bookId, ReviewRequestDto reviewRequestDto);
 
-    Page<ReviewResponseDto> getReviewsForBook(Long bookId, Pageable pageable);
+    Page<ReviewResponseDto> getReviewsForBook(Long bookId, Pageable pageable, String keyword);
 
     void deleteReview(Long bookId, Long reviewId);
 }
