@@ -4,9 +4,12 @@ import com.github.javafaker.Faker;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.models.Genre;
+import io.spring.training.boot.server.models.Role;
+import io.spring.training.boot.server.models.enums.RoleType;
 import io.spring.training.boot.server.repositories.AuthorRepo;
 import io.spring.training.boot.server.repositories.BookRepo;
 import io.spring.training.boot.server.repositories.GenreRepo;
+import io.spring.training.boot.server.repositories.RoleRepo;
 import io.spring.training.boot.server.services.AuthorService;
 import io.spring.training.boot.server.services.GenreService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final BookRepo bookRepo;
     private final AuthorRepo authorRepo;
     private final GenreRepo genreRepo;
+    private final RoleRepo roleRepo;
 
     private final int AUTHOR_COUNT = 100;
     private final int BOOK_COUNT = 50000;
@@ -35,6 +39,10 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        if(roleRepo.count() == 0) {
+            System.out.println("Running role seeder");
+            seedRoles();
+        }
         if(genreRepo.count() == 0) {
             System.out.println("Running genre seeder");
             seedGenres();
@@ -47,6 +55,10 @@ public class DatabaseSeeder implements CommandLineRunner {
             System.out.println("Running book seeder");
             seedBooks();
         }
+    }
+    private void seedRoles() {
+        roleRepo.save(new Role(RoleType.ROLE_ADMIN));
+        roleRepo.save(new Role(RoleType.ROLE_USER));
     }
 
     private void seedAuthors(){
