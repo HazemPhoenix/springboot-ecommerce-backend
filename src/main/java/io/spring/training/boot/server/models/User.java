@@ -23,6 +23,8 @@ public class User {
     @Column(name = "phone")
     private String phoneNumber;
     private boolean verified;
+    @OneToMany(mappedBy = "user")
+    private Set<UserAddress> addresses;
     @ManyToMany
     @JoinTable(
             name = "user_roles",
