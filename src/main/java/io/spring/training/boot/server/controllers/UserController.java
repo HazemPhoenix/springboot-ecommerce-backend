@@ -4,6 +4,7 @@ import io.spring.training.boot.server.DTOs.UserRequestDto;
 import io.spring.training.boot.server.DTOs.UserResponseDto;
 import io.spring.training.boot.server.models.User;
 import io.spring.training.boot.server.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,13 +21,13 @@ import java.net.URI;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> registerUser(@RequestBody UserRequestDto requestDto){
+    @PostMapping
+    public ResponseEntity<UserResponseDto> registerUser(@Valid @RequestBody UserRequestDto requestDto){
         UserResponseDto responseDto = userService.registerUser(requestDto);
         URI userUri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path("/{userId}")
                 .build(responseDto.id());
-        ResponseEntity.created(userUri).body(responseDto);
+        return ResponseEntity.created(userUri).body(responseDto);
     }
 }

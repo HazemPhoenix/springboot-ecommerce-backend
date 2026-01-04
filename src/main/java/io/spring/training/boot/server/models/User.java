@@ -19,6 +19,7 @@ public class User {
     private String username;
     private String password;
     private String email;
+    @Column(name = "is_active")
     private boolean active;
     @Column(name = "phone")
     private String phoneNumber;
