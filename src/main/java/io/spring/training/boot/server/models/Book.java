@@ -38,6 +38,10 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
     private Set<Genre> genres;
+
+    @OneToMany(mappedBy = "book")
+    private Set<Review> reviews;
+
     public Book(String title, String description, BigDecimal price, int numberOfPages) {
         this.title = title;
         this.description = description;

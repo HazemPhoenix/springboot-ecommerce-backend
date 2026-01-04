@@ -15,6 +15,16 @@ public class Review {
     @EmbeddedId
     private ReviewId id;
     private int rating;
+    private String title;
     private String content;
-    private boolean wasEdited;
+    private boolean edited;
+    @ManyToOne
+    @JoinColumn(name = "book_id", insertable = false, updatable = false)
+    private Book book;
+
+    public Review(int rating, String title, String content) {
+        this.rating = rating;
+        this.title = title;
+        this.content = content;
+    }
 }

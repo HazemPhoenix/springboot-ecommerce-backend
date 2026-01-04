@@ -10,5 +10,6 @@ public record BookResponseDto(Long id,
                               int numberOfPages,
                               String image,
                               List<AuthorResponseDto> authors,
-                              List<GenreResponseDto> genres) {
+                              List<GenreResponseDto> genres,
+                              List<ReviewResponseDto> reviews) {
 }

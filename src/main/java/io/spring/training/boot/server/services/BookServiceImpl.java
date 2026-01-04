@@ -56,9 +56,9 @@ public class BookServiceImpl implements BookService {
     @Override
     public Page<BookSummaryDto> getAllBooks(Pageable pageable, String keyword) {
         if(keyword == null || keyword.trim().isEmpty())
-            return bookRepo.findAll(pageable).map(BookMapper::toBookSummaryDto);
+            return bookRepo.findAllBooksWithStats(pageable).map(book -> BookMapper.toBookSummaryDto(book.getBook(), book.getTotalReviews(), book.getAverageRating()));
         else
-            return bookRepo.findAllContainingKeyword(pageable, keyword).map(BookMapper::toBookSummaryDto);
+            return bookRepo.findAllBooksWithStatsContaining(pageable, keyword).map(book -> BookMapper.toBookSummaryDto(book.getBook(), book.getTotalReviews(), book.getAverageRating()));
     }
 
     @Override
