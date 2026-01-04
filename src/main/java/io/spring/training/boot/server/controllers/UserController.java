@@ -3,6 +3,7 @@ package io.spring.training.boot.server.controllers;
 import io.spring.training.boot.server.DTOs.UserRequestDto;
 import io.spring.training.boot.server.DTOs.UserResponseDto;
 import io.spring.training.boot.server.models.User;
+import io.spring.training.boot.server.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
