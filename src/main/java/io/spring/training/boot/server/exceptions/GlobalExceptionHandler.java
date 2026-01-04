@@ -2,6 +2,7 @@ package io.spring.training.boot.server.exceptions;
 
 import io.spring.training.boot.server.DTOs.ErrorResponse;
 import org.apache.coyote.Response;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -42,6 +43,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(StorageException.class)
     public ResponseEntity<ErrorResponse> handleStorageExceptions(StorageException exception, WebRequest request){
         return formatErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), request);
+    }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateResourceException(DuplicateResourceException exception, WebRequest request){
+        return formatErrorResponse(HttpStatus.CONFLICT, exception.getMessage(), request);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException exception, WebRequest request){
+        return formatErrorResponse(HttpStatus.CONFLICT, exception.getMostSpecificCause().getMessage(), request);
     }
 
     private ResponseEntity<ErrorResponse> formatErrorResponse(HttpStatus status, String message, WebRequest request){

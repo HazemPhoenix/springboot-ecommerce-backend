@@ -1,8 +1,8 @@
 package io.spring.training.boot.server.services.implementations;
 
-import io.spring.training.boot.server.DTOs.AddressRequestDto;
 import io.spring.training.boot.server.DTOs.UserRequestDto;
 import io.spring.training.boot.server.DTOs.UserResponseDto;
+import io.spring.training.boot.server.exceptions.DuplicateResourceException;
 import io.spring.training.boot.server.models.User;
 import io.spring.training.boot.server.models.UserAddress;
 import io.spring.training.boot.server.repositories.UserRepo;
@@ -22,6 +22,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto registerUser(UserRequestDto requestDto) {
+        if(userRepo.existsByUsername(requestDto.username())){
+            throw new DuplicateResourceException("Username already exists");
+        }
+        if(userRepo.existsByEmail(requestDto.email())){
+            throw new DuplicateResourceException("Email already exists");
+        }
         User user = UserMapper.fromUserRequestDto(requestDto);
         List<UserAddress> addresses = requestDto.addresses().stream().map(address ->
             AddressMapper.fromAddressRequestDto(address, user)
