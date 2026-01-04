@@ -1,5 +1,6 @@
 package io.spring.training.boot.server.models;
 
+import io.spring.training.boot.server.models.enums.RoleType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,11 +17,11 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private RoleType name;
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 
-    public Role(String name) {
+    public Role(RoleType name) {
         this.name = name;
     }
 }
