@@ -125,7 +125,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void deleteReview(Long bookId, Long reviewId) {
-
+    public void deleteReview(Long bookId, Long userId) {
+        reviewRepo.deleteById(new ReviewId(userId, bookId));
     }
 }

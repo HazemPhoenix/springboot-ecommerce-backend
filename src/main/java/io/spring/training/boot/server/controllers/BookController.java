@@ -75,9 +75,9 @@ public class BookController {
         return ResponseEntity.ok(reviews);
     }
 
-    @DeleteMapping("/{bookId}/reviews/{reviewId}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Long bookId, @PathVariable Long reviewId){
-        bookService.deleteReview(bookId, reviewId);
+    @DeleteMapping("/{bookId}/reviews/{userId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable Long bookId, @PathVariable Long userId){
+        bookService.deleteReview(bookId, userId);
         return ResponseEntity.noContent().build();
     }
 }
