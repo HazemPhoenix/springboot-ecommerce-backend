@@ -60,11 +60,11 @@ public class BookController {
     @PostMapping("/{bookId}/reviews")
     public ResponseEntity<ReviewResponseDto> createReview(@Valid @RequestBody ReviewRequestDto reviewRequestDto, @PathVariable Long bookId){
         ReviewResponseDto reviewResponseDto = bookService.createOrUpdateReviewForBook(bookId, reviewRequestDto);
-//        URI newReviewUri = ServletUriComponentsBuilder
-//                .fromCurrentRequestUri()
-//                .path("/{reviewId}")
-//                .build(reviewResponseDto.userId());
-        return ResponseEntity.ok(reviewResponseDto);
+        URI newReviewUri = ServletUriComponentsBuilder
+                .fromCurrentRequestUri()
+                .path("/{userId}")
+                .build(reviewResponseDto.userId());
+        return ResponseEntity.created(newReviewUri).body(reviewResponseDto);
     }
 
     @GetMapping("/{bookId}/reviews")
