@@ -20,14 +20,14 @@ public interface BookRepo extends JpaRepository<Book, Long> {
             "or lower(b.description) like concat('%', lower(:keyword), '%')")
     Page<Book> findAllContainingKeyword(Pageable pageable, String keyword);
 
-    @Query("select b as book, coalesce(count(r.rating), 0) as totalReviews, coalesce(avg(r.rating), 0.0) as averageRating " +
+    @Query("select b as book, coalesce(count(r.rating), 0) as totalReviews,  round(coalesce(avg(r.rating), 0.0), 2) as averageRating " +
             "from Book b " +
             "left join Review r " +
             "on b.id = r.id.bookId " +
             "group by b ")
     Page<BookWithStats> findAllBooksWithStats(Pageable pageable);
 
-    @Query("select b as book, coalesce(count(r.rating),0) as totalReviews, coalesce(avg(r.rating),0.0) as averageRating " +
+    @Query("select b as book, coalesce(count(r.rating),0) as totalReviews, round(coalesce(avg(r.rating),0.0), 2) as averageRating " +
             "from Book b " +
             "left join Review r " +
             "on b.id = r.id.bookId " +

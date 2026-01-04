@@ -5,9 +5,12 @@ import io.spring.training.boot.server.exceptions.BookNotFoundException;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.models.Genre;
+import io.spring.training.boot.server.models.Review;
+import io.spring.training.boot.server.models.embeddables.ReviewId;
 import io.spring.training.boot.server.repositories.BookRepo;
 import io.spring.training.boot.server.repositories.ReviewRepo;
 import io.spring.training.boot.server.utils.mappers.BookMapper;
+import io.spring.training.boot.server.utils.mappers.ReviewMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -105,7 +108,11 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public ReviewResponseDto createReviewForBook(Long bookId, ReviewRequestDto reviewRequestDto) {
-        return null;
+        Review review = new Review(reviewRequestDto.rating(), reviewRequestDto.title(), reviewRequestDto.content());
+        review.setId(new ReviewId(5L, bookId));
+        review.setEdited(false);
+        reviewRepo.save(review);
+        return ReviewMapper.toReviewResponseDto(review);
     }
 
     @Override
