@@ -2,7 +2,7 @@ package io.spring.training.boot.server.controllers;
 
 import io.spring.training.boot.server.DTOs.*;
 import io.spring.training.boot.server.services.BookService;
-import io.spring.training.boot.server.services.BookServiceImpl;
+import io.spring.training.boot.server.services.implementations.BookServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

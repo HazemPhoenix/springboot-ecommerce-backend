@@ -1,10 +1,11 @@
-package io.spring.training.boot.server.services;
+package io.spring.training.boot.server.services.implementations;
 
 import io.spring.training.boot.server.DTOs.GenreRequestDto;
 import io.spring.training.boot.server.DTOs.GenreResponseDto;
 import io.spring.training.boot.server.exceptions.GenreNotFoundException;
 import io.spring.training.boot.server.models.Genre;
 import io.spring.training.boot.server.repositories.GenreRepo;
+import io.spring.training.boot.server.services.GenreService;
 import io.spring.training.boot.server.utils.mappers.GenreMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

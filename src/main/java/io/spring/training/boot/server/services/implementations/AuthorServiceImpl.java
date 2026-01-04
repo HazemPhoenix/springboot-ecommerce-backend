@@ -1,4 +1,4 @@
-package io.spring.training.boot.server.services;
+package io.spring.training.boot.server.services.implementations;
 
 import io.spring.training.boot.server.DTOs.AuthorResponseDto;
 import io.spring.training.boot.server.DTOs.AuthorRequestDto;
@@ -6,6 +6,9 @@ import io.spring.training.boot.server.exceptions.AuthorNotFoundException;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Genre;
 import io.spring.training.boot.server.repositories.AuthorRepo;
+import io.spring.training.boot.server.services.AuthorService;
+import io.spring.training.boot.server.services.GenreService;
+import io.spring.training.boot.server.services.ImageStorageService;
 import io.spring.training.boot.server.utils.mappers.AuthorMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

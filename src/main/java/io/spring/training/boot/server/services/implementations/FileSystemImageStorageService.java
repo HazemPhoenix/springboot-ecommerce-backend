@@ -1,11 +1,11 @@
-package io.spring.training.boot.server.services;
+package io.spring.training.boot.server.services.implementations;
 
 import io.spring.training.boot.server.config.StorageProperties;
 import io.spring.training.boot.server.exceptions.StorageException;
+import io.spring.training.boot.server.services.ImageStorageService;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;

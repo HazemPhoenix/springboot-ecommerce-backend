@@ -1,4 +1,4 @@
-package io.spring.training.boot.server.services;
+package io.spring.training.boot.server.services.implementations;
 
 import io.spring.training.boot.server.DTOs.*;
 import io.spring.training.boot.server.exceptions.BookNotFoundException;
@@ -9,6 +9,10 @@ import io.spring.training.boot.server.models.Review;
 import io.spring.training.boot.server.models.embeddables.ReviewId;
 import io.spring.training.boot.server.repositories.BookRepo;
 import io.spring.training.boot.server.repositories.ReviewRepo;
+import io.spring.training.boot.server.services.AuthorService;
+import io.spring.training.boot.server.services.BookService;
+import io.spring.training.boot.server.services.GenreService;
+import io.spring.training.boot.server.services.ImageStorageService;
 import io.spring.training.boot.server.utils.mappers.BookMapper;
 import io.spring.training.boot.server.utils.mappers.ReviewMapper;
 import jakarta.validation.Valid;

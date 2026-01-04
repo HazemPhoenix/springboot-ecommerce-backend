@@ -3,7 +3,7 @@ package io.spring.training.boot.server.controllers;
 import io.spring.training.boot.server.DTOs.AuthorResponseDto;
 import io.spring.training.boot.server.DTOs.AuthorRequestDto;
 import io.spring.training.boot.server.services.AuthorService;
-import io.spring.training.boot.server.services.AuthorServiceImpl;
+import io.spring.training.boot.server.services.implementations.AuthorServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
