@@ -33,5 +33,6 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderItem> orderItems;
 
+    @Column(name = "total_amount")
     private BigDecimal totalAmount;
 }
