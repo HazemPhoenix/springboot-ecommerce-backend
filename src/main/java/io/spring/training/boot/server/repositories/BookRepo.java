@@ -38,4 +38,12 @@ public interface BookRepo extends JpaRepository<Book, Long> {
 
     @EntityGraph(attributePaths = {"authors"})
     Optional<Book> findById(Long id);
+
+    @Query("select b as book, coalesce(count(r.rating), 0) as totalReviews, round(coalesce(avg(r.rating), 0.0), 2) as averageRating " +
+            "from Book b " +
+            "left join Review r " +
+            "on r.id.bookId = b.id " +
+            "group by b " +
+            "having b.id = :id")
+    Optional<BookWithStats> findBookByIdWithStats(Long id);
 }

@@ -3,14 +3,13 @@ package io.spring.training.boot.server.utils.mappers;
 import io.spring.training.boot.server.DTOs.*;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
+import io.spring.training.boot.server.models.projections.BookWithStats;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class BookMapper {
-    public static BookResponseDto toBookResponseDto(Book book){
+    public static BookCreationResponseDto toBookResponseDto(Book book){
         List<AuthorResponseDto> authorResponseDtos = book.getAuthors().stream().map(AuthorMapper::toAuthorResponseDto).toList();
         List<GenreResponseDto> genreResponseDtos = book.getGenres().stream().map(GenreMapper::toGenreResponseDto).toList();
         List<ReviewResponseDto> reviewResponseDtos = null;
@@ -18,7 +17,29 @@ public class BookMapper {
           reviewResponseDtos = book.getReviews().stream().map(ReviewMapper::toReviewResponseDto).toList();
         }
         String bookImage = ServletUriComponentsBuilder.fromCurrentContextPath().build() + "/uploads/" + (book.getImage() != null ? book.getImage() : "");
-        return new BookResponseDto(book.getId(), book.getTitle(), book.getDescription(), book.getPrice(), book.getNumberOfPages(), book.getStock(),bookImage, authorResponseDtos, genreResponseDtos, reviewResponseDtos);
+        return new BookCreationResponseDto(book.getId(), book.getTitle(), book.getDescription(), book.getPrice(), book.getNumberOfPages(), book.getStock(),bookImage, authorResponseDtos, genreResponseDtos, reviewResponseDtos);
+    }
+
+    public static BookResponseWithStats toBookResponseWithStats(BookWithStats bookWithStats){
+        List<AuthorResponseDto> authorResponseDtos = bookWithStats.getBook().getAuthors().stream().map(AuthorMapper::toAuthorResponseDto).toList();
+        List<GenreResponseDto> genreResponseDtos = bookWithStats.getBook().getGenres().stream().map(GenreMapper::toGenreResponseDto).toList();
+        List<ReviewResponseDto> reviewResponseDtos = null;
+        if(bookWithStats.getBook().getReviews() != null) {
+            reviewResponseDtos = bookWithStats.getBook().getReviews().stream().map(ReviewMapper::toReviewResponseDto).toList();
+        }
+        String bookImage = ServletUriComponentsBuilder.fromCurrentContextPath().build() + "/uploads/" + (bookWithStats.getBook().getImage() != null ? bookWithStats.getBook().getImage() : "");
+        return new BookResponseWithStats(bookWithStats.getBook().getId(),
+                bookWithStats.getBook().getTitle(),
+                bookWithStats.getBook().getDescription(),
+                bookWithStats.getBook().getPrice(),
+                bookWithStats.getBook().getNumberOfPages(),
+                bookWithStats.getBook().getStock(),
+                bookImage,
+                bookWithStats.getTotalReviews(),
+                bookWithStats.getAverageRating(),
+                authorResponseDtos,
+                genreResponseDtos,
+                reviewResponseDtos);
     }
 
     public static BookSummaryDto toBookSummaryDto(Book book, int totalReviews, double averageRating) {

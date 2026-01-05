@@ -8,6 +8,7 @@ import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.models.Genre;
 import io.spring.training.boot.server.models.Review;
 import io.spring.training.boot.server.models.embeddables.ReviewId;
+import io.spring.training.boot.server.models.projections.BookWithStats;
 import io.spring.training.boot.server.repositories.BookRepo;
 import io.spring.training.boot.server.repositories.ReviewRepo;
 import io.spring.training.boot.server.services.AuthorService;
@@ -38,7 +39,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookResponseDto createBook(BookRequestDto bookRequest, MultipartFile bookImage) {
+    public BookCreationResponseDto createBook(BookRequestDto bookRequest, MultipartFile bookImage) {
         Book book = BookMapper.fromBookRequestDto(bookRequest);
 
         Set<Author> authors = authorService.findAuthorsByIds(bookRequest.authorIDs());
@@ -56,9 +57,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookResponseDto findBookById(long id){
-        Book book = bookRepo.findById(id).orElseThrow(() -> new BookNotFoundException("No book found with the id: " + id));
-        return BookMapper.toBookResponseDto(book);
+    public BookResponseWithStats findBookById(long id){
+        BookWithStats book = bookRepo.findBookByIdWithStats(id).orElseThrow(() -> new BookNotFoundException("No book found with the id: " + id));
+        return BookMapper.toBookResponseWithStats(book);
     }
 
     @Override
@@ -71,7 +72,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookResponseDto updateBookById(Long id, @Valid BookRequestDto bookRequest, MultipartFile bookImage) {
+    public BookCreationResponseDto updateBookById(Long id, @Valid BookRequestDto bookRequest, MultipartFile bookImage) {
         Optional<Book> oldBook = bookRepo.findById(id);
 
         if(oldBook.isEmpty()){

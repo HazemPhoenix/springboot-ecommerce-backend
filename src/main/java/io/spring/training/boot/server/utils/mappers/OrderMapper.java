@@ -24,4 +24,8 @@ public class OrderMapper {
     public static Order fromOrderRequestDto(OrderRequestDto orderRequestDto){
         return new Order(orderRequestDto.paymentMethod());
     }
+
+    public static Order fromOrderUpdateRequestDto(OrderUpdateRequestDto orderUpdateRequestDto) {
+        return new Order();
+    }
 }

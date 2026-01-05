@@ -1,9 +1,6 @@
 package io.spring.training.boot.server.services;
 
-import io.spring.training.boot.server.DTOs.OrderRequestDto;
-import io.spring.training.boot.server.DTOs.OrderAdminResponseDto;
-import io.spring.training.boot.server.DTOs.OrderSummaryDto;
-import io.spring.training.boot.server.DTOs.OrderUserResponseDto;
+import io.spring.training.boot.server.DTOs.*;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +11,7 @@ public interface OrderService {
 
     @Nullable Page<OrderSummaryDto> getUserOrders(Pageable pageable);
 
-    OrderUserResponseDto updateOrderById(Long orderId, OrderRequestDto orderRequestDto);
+    OrderUserResponseDto updateOrderById(Long orderId, OrderUpdateRequestDto orderRequestDto);
 
     void cancelOrderById(Long orderId);
 

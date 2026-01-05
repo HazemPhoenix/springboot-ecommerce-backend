@@ -30,25 +30,25 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookResponseDto> getBookById(@PathVariable Long id){
-        BookResponseDto book = bookService.findBookById(id);
+    public ResponseEntity<BookResponseWithStats> getBookById(@PathVariable Long id){
+        BookResponseWithStats book = bookService.findBookById(id);
         return new ResponseEntity<>(book, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<BookResponseDto> createBook(@Valid @RequestPart BookRequestDto bookData, @RequestPart MultipartFile bookImage){
-        BookResponseDto bookResponseDto = bookService.createBook(bookData, bookImage);
+    public ResponseEntity<BookCreationResponseDto> createBook(@Valid @RequestPart BookRequestDto bookData, @RequestPart MultipartFile bookImage){
+        BookCreationResponseDto bookCreationResponseDto = bookService.createBook(bookData, bookImage);
         URI newBookUri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path("/{bookId}")
-                .build(bookResponseDto.id());
-        return ResponseEntity.created(newBookUri).body(bookResponseDto);
+                .build(bookCreationResponseDto.id());
+        return ResponseEntity.created(newBookUri).body(bookCreationResponseDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookResponseDto> updateBook(@Valid @RequestPart BookRequestDto bookData, @RequestPart MultipartFile bookImage, @PathVariable Long id){
-        BookResponseDto bookResponseDto = bookService.updateBookById(id, bookData, bookImage);
-        return ResponseEntity.ok().body(bookResponseDto);
+    public ResponseEntity<BookCreationResponseDto> updateBook(@Valid @RequestPart BookRequestDto bookData, @RequestPart MultipartFile bookImage, @PathVariable Long id){
+        BookCreationResponseDto bookCreationResponseDto = bookService.updateBookById(id, bookData, bookImage);
+        return ResponseEntity.ok().body(bookCreationResponseDto);
     }
 
     @DeleteMapping("/{id}")

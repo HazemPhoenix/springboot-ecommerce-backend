@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -75,14 +76,14 @@ public class OrderServiceImpl implements OrderService {
 
     private List<OrderItem> constructOrderItems(List<OrderItemRequestDto> orderItemRequestDtos, Order order) {
         return orderItemRequestDtos.stream().map(orderItemRequestDto -> {
-            Long bookId = orderItemRequestDto.bookId();
-            Book book = bookRepo.findById(bookId).orElseThrow(() -> new BookNotFoundException("No book found with the id: " + bookId));
-            OrderItem orderItem = OrderItemMapper.fromOrderItemRequestDto(orderItemRequestDto);
-            orderItem.setBook(book);
-            orderItem.setOrder(order);
-            orderItem.setTotalItemPrice(book.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
-            System.out.println("order item price: " + orderItem.getTotalItemPrice());
-            return orderItem;
+                Long bookId = orderItemRequestDto.bookId();
+                Book book = bookRepo.findById(bookId).orElseThrow(() -> new BookNotFoundException("No book found with the id: " + bookId));
+                OrderItem orderItem = OrderItemMapper.fromOrderItemRequestDto(orderItemRequestDto);
+                orderItem.setBook(book);
+                orderItem.setOrder(order);
+                orderItem.setTotalItemPrice(book.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
+                System.out.println("order item price: " + orderItem.getTotalItemPrice());
+                return orderItem;
             }).toList();
     }
 
@@ -104,8 +105,10 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new OrderNotFoundException("No order found with the id: " + orderId));
     }
 
+    // TODO: PreAuthorize this
     @Override
-    public OrderUserResponseDto updateOrderById(Long orderId, OrderRequestDto orderRequestDto) {
+    @Transactional
+    public OrderUserResponseDto updateOrderById(Long orderId, OrderUpdateRequestDto orderUpdateRequestDto) {
         return null;
     }
 
