@@ -27,6 +27,10 @@ public class BookMapper {
         return new BookSummaryDto(book.getId(), book.getTitle(), book.getPrice(), bookImage, authorDtos, totalReviews, averageRating);
     }
 
+    public static BookOrderSummaryDto toBookOrderSummaryDto(Book b){
+        return new BookOrderSummaryDto(b.getId(), b.getTitle(), b.getPrice());
+    }
+
     public static Book fromBookRequestDto(BookRequestDto bookRequestDto){
         return new Book(bookRequestDto.title(), bookRequestDto.description(), bookRequestDto.price(), bookRequestDto.numberOfPages(), bookRequestDto.stock());
     }

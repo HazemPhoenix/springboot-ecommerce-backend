@@ -35,4 +35,9 @@ public class Order {
 
     @Column(name = "total_amount")
     private BigDecimal totalAmount;
+
+    public Order(PaymentMethod paymentMethod, Set<OrderItem> orderItems) {
+        this.paymentMethod = paymentMethod;
+        this.orderItems = orderItems;
+    }
 }
