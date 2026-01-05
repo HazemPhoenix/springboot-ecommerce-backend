@@ -2,6 +2,7 @@ package io.spring.training.boot.server.controllers;
 
 import io.spring.training.boot.server.DTOs.OrderRequestDto;
 import io.spring.training.boot.server.DTOs.OrderResponseDto;
+import io.spring.training.boot.server.DTOs.OrderSummaryDto;
 import io.spring.training.boot.server.services.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<OrderResponseDto>> getUserOrders(@PageableDefault(size = 20, sort = "") Pageable pageable){
+    public ResponseEntity<Page<OrderSummaryDto>> getUserOrders(@PageableDefault(size = 20, sort = "date") Pageable pageable){
         return ResponseEntity.ok(orderService.getUserOrders(pageable));
     }
 

@@ -3,6 +3,7 @@ package io.spring.training.boot.server.services.implementations;
 import io.spring.training.boot.server.DTOs.OrderItemRequestDto;
 import io.spring.training.boot.server.DTOs.OrderRequestDto;
 import io.spring.training.boot.server.DTOs.OrderResponseDto;
+import io.spring.training.boot.server.DTOs.OrderSummaryDto;
 import io.spring.training.boot.server.exceptions.BookNotFoundException;
 import io.spring.training.boot.server.exceptions.InsufficientStockException;
 import io.spring.training.boot.server.models.Book;
@@ -92,8 +93,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public @Nullable Page<OrderResponseDto> getUserOrders(Pageable pageable) {
-        return Page.empty();
+    public @Nullable Page<OrderSummaryDto> getUserOrders(Pageable pageable) {
+        // TODO: get the current principal's user id
+        Long userId = 17L;
+        return orderRepo.findByUserId(userId, pageable).map(OrderMapper::toOrderSummaryDto);
     }
 
     @Override
