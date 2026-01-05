@@ -1,5 +1,6 @@
 package io.spring.training.boot.server.DTOs;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -12,7 +13,7 @@ public record BookRequestDto(@NotBlank(message = "Title is required") String tit
                              @NotNull(message = "Price is required") @Positive(message = "Price cannot be a negative value") BigDecimal price,
                              @NotNull(message = "Number of pages is required") @Positive(message = "Number of pages cannot be negative") Integer numberOfPages,
                              @NotNull(message = "Stock is required") @Positive(message = "Stock cannot be a negative number") Integer stock,
-                             @NotNull(message = "Author IDs are required") Set<Long> authorIDs,
-                             @NotNull(message = "Genre IDs are required") Set<Long> genreIDs
+                             @NotNull(message = "Author IDs are required")  Set<@Positive Long> authorIDs,
+                             @NotNull(message = "Genre IDs are required") Set<@Positive Long> genreIDs
                              ) {
 }

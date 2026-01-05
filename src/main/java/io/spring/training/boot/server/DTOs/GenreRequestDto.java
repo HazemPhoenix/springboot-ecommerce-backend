@@ -1,4 +1,6 @@
 package io.spring.training.boot.server.DTOs;
 
-public record GenreRequestDto(String name) {
+import jakarta.validation.constraints.NotBlank;
+
+public record GenreRequestDto(@NotBlank(message = "Genre name is required") String name) {
 }
