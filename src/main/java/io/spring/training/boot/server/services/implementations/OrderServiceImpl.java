@@ -11,7 +11,7 @@ import io.spring.training.boot.server.models.User;
 import io.spring.training.boot.server.models.enums.OrderStatus;
 import io.spring.training.boot.server.repositories.BookRepo;
 import io.spring.training.boot.server.repositories.UserRepo;
-import io.spring.training.boot.server.services.OrderRepo;
+import io.spring.training.boot.server.repositories.OrderRepo;
 import io.spring.training.boot.server.services.OrderService;
 import io.spring.training.boot.server.utils.mappers.OrderItemMapper;
 import io.spring.training.boot.server.utils.mappers.OrderMapper;

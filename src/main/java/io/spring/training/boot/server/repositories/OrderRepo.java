@@ -1,4 +1,4 @@
-package io.spring.training.boot.server.services;
+package io.spring.training.boot.server.repositories;
 
 import io.spring.training.boot.server.models.Order;
 import io.spring.training.boot.server.models.enums.OrderStatus;
@@ -7,8 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface OrderRepo extends JpaRepository<Order, Long> {
