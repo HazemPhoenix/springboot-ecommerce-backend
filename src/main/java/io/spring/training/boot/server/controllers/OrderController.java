@@ -18,7 +18,7 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<OrderResponseDto> createOrder(@RequestBody OrderRequestDto orderRequestDto){
-        OrderResponseDto orderResponseDto = orderRequestDto.createOrder(orderRequestDto);
+        OrderResponseDto orderResponseDto = orderService.createOrder(orderRequestDto);
         URI orderURI = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path("/{orderId}")
