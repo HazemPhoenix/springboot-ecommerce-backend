@@ -118,9 +118,9 @@ public class DatabaseSeeder implements CommandLineRunner {
                 genreIds.add(genreId);
             }
 
-            // image
-//            String img = faker.lorem().characters(10);
-            Book book = new Book(title, desc, price, pages);
+            int stock = faker.number().numberBetween(0, 100);
+
+            Book book = new Book(title, desc, price, pages, stock);
             Set<Author> authors = authorService.findAuthorsByIds(authorIds);
             Set<Genre> genres = genreService.findGenresByIds(genreIds);
             book.setAuthors(authors);

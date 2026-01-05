@@ -13,9 +13,12 @@ public class BookMapper {
     public static BookResponseDto toBookResponseDto(Book book){
         List<AuthorResponseDto> authorResponseDtos = book.getAuthors().stream().map(AuthorMapper::toAuthorResponseDto).toList();
         List<GenreResponseDto> genreResponseDtos = book.getGenres().stream().map(GenreMapper::toGenreResponseDto).toList();
-        List<ReviewResponseDto> reviewResponseDtos = book.getReviews().stream().map(ReviewMapper::toReviewResponseDto).toList();
+        List<ReviewResponseDto> reviewResponseDtos = null;
+        if(book.getReviews() != null) {
+          reviewResponseDtos = book.getReviews().stream().map(ReviewMapper::toReviewResponseDto).toList();
+        }
         String bookImage = ServletUriComponentsBuilder.fromCurrentContextPath().build() + "/uploads/" + (book.getImage() != null ? book.getImage() : "");
-        return new BookResponseDto(book.getId(), book.getTitle(), book.getDescription(), book.getPrice(), book.getNumberOfPages(), bookImage, authorResponseDtos, genreResponseDtos, reviewResponseDtos);
+        return new BookResponseDto(book.getId(), book.getTitle(), book.getDescription(), book.getPrice(), book.getNumberOfPages(), book.getStock(),bookImage, authorResponseDtos, genreResponseDtos, reviewResponseDtos);
     }
 
     public static BookSummaryDto toBookSummaryDto(Book book, int totalReviews, double averageRating) {
@@ -25,6 +28,6 @@ public class BookMapper {
     }
 
     public static Book fromBookRequestDto(BookRequestDto bookRequestDto){
-        return new Book(bookRequestDto.title(), bookRequestDto.description(), bookRequestDto.price(), bookRequestDto.numberOfPages());
+        return new Book(bookRequestDto.title(), bookRequestDto.description(), bookRequestDto.price(), bookRequestDto.numberOfPages(), bookRequestDto.stock());
     }
 }

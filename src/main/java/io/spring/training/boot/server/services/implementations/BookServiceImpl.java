@@ -113,12 +113,30 @@ public class BookServiceImpl implements BookService {
     @Override
     public ReviewResponseDto createOrUpdateReviewForBook(Long bookId, ReviewRequestDto reviewRequestDto) {
         if(!bookRepo.existsById(bookId)) throw new BookNotFoundException("No book found with the id: " + bookId);
-        Review review = new Review(reviewRequestDto.rating(), reviewRequestDto.title(), reviewRequestDto.content());
+        Review newReview = new Review(reviewRequestDto.rating(), reviewRequestDto.title(), reviewRequestDto.content());
         // TODO: the user id should be the actual principal id when i add security
-        review.setId(new ReviewId(1L, bookId));
-        review.setEdited(reviewRepo.findById(new ReviewId(16L, bookId)).isPresent());
-        reviewRepo.save(review);
-        return ReviewMapper.toReviewResponseDto(review);
+        ReviewId reviewId = new ReviewId(17L, bookId);
+        newReview.setId(reviewId);
+        // check if the review already exists to determine whether it's a create or update operation
+        Optional<Review> oldReview = reviewRepo.findById(reviewId);
+        if(oldReview.isPresent()) { // review exists, this is an update operation, need to authorize
+            updateBookReview(newReview);
+        } else { // review does not exist, it is a create operation
+            createBookReview(newReview);
+        }
+
+        return ReviewMapper.toReviewResponseDto(newReview);
+    }
+
+    private void createBookReview(Review newReview) {
+        newReview.setEdited(false);
+        reviewRepo.save(newReview);
+    }
+
+    // TODO: authorize this method, make sure the current user principal is the owner of the review before updating
+    private void updateBookReview(Review newReview) {
+        newReview.setEdited(true);
+        reviewRepo.save(newReview);
     }
 
     @Override

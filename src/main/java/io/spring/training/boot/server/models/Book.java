@@ -18,10 +18,12 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
+    @Column(columnDefinition = "TEXT")
     private String description;
     private BigDecimal price;
     @Column(name = "no_of_pages")
     private int numberOfPages;
+    private int stock;
     private String image;
     @ManyToMany
     @JoinTable(
@@ -42,11 +44,12 @@ public class Book {
     @OneToMany(mappedBy = "book")
     private Set<Review> reviews;
 
-    public Book(String title, String description, BigDecimal price, int numberOfPages) {
+    public Book(String title, String description, BigDecimal price, int numberOfPages, int stock) {
         this.title = title;
         this.description = description;
         this.price = price;
         this.numberOfPages = numberOfPages;
+        this.stock = stock;
         this.image = image;
     }
 }
