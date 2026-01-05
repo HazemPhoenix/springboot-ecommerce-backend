@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -36,8 +37,9 @@ public class Order {
     @Column(name = "total_amount")
     private BigDecimal totalAmount;
 
-    public Order(PaymentMethod paymentMethod, Set<OrderItem> orderItems) {
+    private LocalDate date;
+
+    public Order(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
-        this.orderItems = orderItems;
     }
 }

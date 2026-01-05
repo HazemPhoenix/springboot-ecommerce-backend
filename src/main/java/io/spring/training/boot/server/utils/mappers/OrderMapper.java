@@ -21,7 +21,6 @@ public class OrderMapper {
     }
 
     public static Order fromOrderRequestDto(OrderRequestDto orderRequestDto){
-        Set<OrderItem> orderItems = orderRequestDto.orderItems().stream().map(OrderItemMapper::fromOrderItemRequestDto).collect(Collectors.toSet());
-        return new Order(orderRequestDto.paymentMethod(), orderItems);
+        return new Order(orderRequestDto.paymentMethod());
     }
 }

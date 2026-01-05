@@ -25,11 +25,11 @@ public class OrderItem {
     @JoinColumn(name = "book_id")
     private Book book;
 
+    private int quantity;
+    @Column(name = "total_price")
+    private BigDecimal totalItemPrice;
+
     public OrderItem(int quantity) {
         this.quantity = quantity;
     }
-
-    private int quantity;
-
-    private BigDecimal totalItemPrice;
 }

@@ -62,6 +62,11 @@ public class GlobalExceptionHandler {
         return formatErrorResponse(HttpStatus.CONFLICT, exception.getMostSpecificCause().getMessage(), request);
     }
 
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ErrorResponse> handleInsufficientStockException(InsufficientStockException exception, WebRequest request) {
+        return formatErrorResponse(HttpStatus.CONFLICT, exception.getMessage(), request);
+    }
+
     private ResponseEntity<ErrorResponse> formatErrorResponse(HttpStatus status, String message, WebRequest request){
         return new ResponseEntity<>(new ErrorResponse(
                 status.value(),

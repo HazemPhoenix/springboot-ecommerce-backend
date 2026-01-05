@@ -3,7 +3,11 @@ package io.spring.training.boot.server.controllers;
 import io.spring.training.boot.server.DTOs.OrderRequestDto;
 import io.spring.training.boot.server.DTOs.OrderResponseDto;
 import io.spring.training.boot.server.services.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -18,7 +22,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<OrderResponseDto> createOrder(@RequestBody OrderRequestDto orderRequestDto){
+    public ResponseEntity<OrderResponseDto> createOrder(@Valid @RequestBody OrderRequestDto orderRequestDto){
         OrderResponseDto orderResponseDto = orderService.createOrder(orderRequestDto);
         URI orderURI = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
@@ -28,8 +32,8 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderResponseDto>> getUserOrders(){
-        return ResponseEntity.ok(orderService.getUserOrders());
+    public ResponseEntity<Page<OrderResponseDto>> getUserOrders(@PageableDefault(size = 20, sort = "") Pageable pageable){
+        return ResponseEntity.ok(orderService.getUserOrders(pageable));
     }
 
     @PutMapping("/{orderId}")
