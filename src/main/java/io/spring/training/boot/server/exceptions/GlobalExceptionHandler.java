@@ -16,14 +16,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({
-            BookNotFoundException.class,
-            AuthorNotFoundException.class,
-            ImageNotFoundException.class,
-            GenreNotFoundException.class,
-            UserNotFoundException.class,
-            ReviewNotFoundException.class
-    })
+    @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException exception, WebRequest request){
         return formatErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage(), request);
     }

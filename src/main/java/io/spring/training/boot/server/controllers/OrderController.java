@@ -1,8 +1,9 @@
 package io.spring.training.boot.server.controllers;
 
 import io.spring.training.boot.server.DTOs.OrderRequestDto;
-import io.spring.training.boot.server.DTOs.OrderResponseDto;
+import io.spring.training.boot.server.DTOs.OrderAdminResponseDto;
 import io.spring.training.boot.server.DTOs.OrderSummaryDto;
+import io.spring.training.boot.server.DTOs.OrderUserResponseDto;
 import io.spring.training.boot.server.services.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -23,8 +23,8 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<OrderResponseDto> createOrder(@Valid @RequestBody OrderRequestDto orderRequestDto){
-        OrderResponseDto orderResponseDto = orderService.createOrder(orderRequestDto);
+    public ResponseEntity<OrderUserResponseDto> createOrder(@Valid @RequestBody OrderRequestDto orderRequestDto){
+        OrderUserResponseDto orderResponseDto = orderService.createOrder(orderRequestDto);
         URI orderURI = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path("/{orderId}")
@@ -37,9 +37,14 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getUserOrders(pageable));
     }
 
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderUserResponseDto> getOrderDetails(@PathVariable Long orderId){
+        return ResponseEntity.ok(orderService.getOrderById(orderId));
+    }
+
     @PutMapping("/{orderId}")
-    public ResponseEntity<OrderResponseDto> updateOrder(@RequestBody OrderRequestDto orderRequestDto, @PathVariable Long orderId){
-        OrderResponseDto orderResponseDto = orderService.updateOrderById(orderId, orderRequestDto);
+    public ResponseEntity<OrderUserResponseDto> updateOrder(@RequestBody OrderRequestDto orderRequestDto, @PathVariable Long orderId){
+        OrderUserResponseDto orderResponseDto = orderService.updateOrderById(orderId, orderRequestDto);
         return ResponseEntity.ok(orderResponseDto);
     }
 

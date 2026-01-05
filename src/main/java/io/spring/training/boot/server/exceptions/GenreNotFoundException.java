@@ -1,6 +1,6 @@
 package io.spring.training.boot.server.exceptions;
 
-public class GenreNotFoundException extends RuntimeException {
+public class GenreNotFoundException extends ResourceNotFoundException {
     public GenreNotFoundException(String message) {
         super(message);
     }

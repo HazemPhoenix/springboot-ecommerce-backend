@@ -1,11 +1,9 @@
 package io.spring.training.boot.server.services.implementations;
 
-import io.spring.training.boot.server.DTOs.OrderItemRequestDto;
-import io.spring.training.boot.server.DTOs.OrderRequestDto;
-import io.spring.training.boot.server.DTOs.OrderResponseDto;
-import io.spring.training.boot.server.DTOs.OrderSummaryDto;
+import io.spring.training.boot.server.DTOs.*;
 import io.spring.training.boot.server.exceptions.BookNotFoundException;
 import io.spring.training.boot.server.exceptions.InsufficientStockException;
+import io.spring.training.boot.server.exceptions.OrderNotFoundException;
 import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.models.Order;
 import io.spring.training.boot.server.models.OrderItem;
@@ -39,7 +37,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderResponseDto createOrder(OrderRequestDto orderRequestDto) {
+    public OrderUserResponseDto createOrder(OrderRequestDto orderRequestDto) {
         // create the order object and set the status to PROCESSING
         Order order = OrderMapper.fromOrderRequestDto(orderRequestDto);
         order.setStatus(OrderStatus.PROCESSING);
@@ -56,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
         order.setTotalAmount(totalAmount);
         order.setOrderItems(new HashSet<>(orderItems));
         // save the order
-        return OrderMapper.toOrderResponseDto(orderRepo.save(order));
+        return OrderMapper.toOrderUserResponseDto(orderRepo.save(order));
     }
 
     private BigDecimal processOrderItems(List<OrderItem> orderItems){
@@ -100,7 +98,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponseDto updateOrderById(Long orderId, OrderRequestDto orderRequestDto) {
+    public OrderUserResponseDto getOrderById(Long orderId){
+        return orderRepo.findById(orderId)
+                .map(OrderMapper::toOrderUserResponseDto)
+                .orElseThrow(() -> new OrderNotFoundException("No order found with the id: " + orderId));
+    }
+
+    @Override
+    public OrderUserResponseDto updateOrderById(Long orderId, OrderRequestDto orderRequestDto) {
         return null;
     }
 
