@@ -56,28 +56,4 @@ public class BookController {
         bookService.deleteBookById(id);
         return ResponseEntity.noContent().build();
     }
-
-    @PostMapping("/{bookId}/reviews")
-    public ResponseEntity<ReviewResponseDto> createReview(@Valid @RequestBody ReviewRequestDto reviewRequestDto, @PathVariable Long bookId){
-        ReviewResponseDto reviewResponseDto = bookService.createOrUpdateReviewForBook(bookId, reviewRequestDto);
-        URI newReviewUri = ServletUriComponentsBuilder
-                .fromCurrentRequestUri()
-                .path("/{userId}")
-                .build(reviewResponseDto.userId());
-        return ResponseEntity.created(newReviewUri).body(reviewResponseDto);
-    }
-
-    @GetMapping("/{bookId}/reviews")
-    public ResponseEntity<Page<ReviewResponseDto>> getReviewsForBook(@PathVariable Long bookId,
-                                                                     @PageableDefault(size = 20) Pageable pageable,
-                                                                     @RequestParam(required = false) String keyword){
-        Page<ReviewResponseDto> reviews = bookService.getReviewsForBook(bookId, pageable, keyword);
-        return ResponseEntity.ok(reviews);
-    }
-
-    @DeleteMapping("/{bookId}/reviews/{userId}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Long bookId, @PathVariable Long userId){
-        bookService.deleteReview(bookId, userId);
-        return ResponseEntity.noContent().build();
-    }
 }
