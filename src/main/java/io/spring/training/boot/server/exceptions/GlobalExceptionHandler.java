@@ -21,7 +21,8 @@ public class GlobalExceptionHandler {
             AuthorNotFoundException.class,
             ImageNotFoundException.class,
             GenreNotFoundException.class,
-            UserNotFoundException.class
+            UserNotFoundException.class,
+            ReviewNotFoundException.class
     })
     public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException exception, WebRequest request){
         return formatErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage(), request);

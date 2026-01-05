@@ -22,7 +22,7 @@ public class BookReviewController {
 
     @PostMapping
     public ResponseEntity<ReviewResponseDto> createReview(@Valid @RequestBody ReviewRequestDto reviewRequestDto, @PathVariable Long bookId){
-        ReviewResponseDto reviewResponseDto = bookService.createOrUpdateReviewForBook(bookId, reviewRequestDto);
+        ReviewResponseDto reviewResponseDto = bookService.createReviewForBook(bookId, reviewRequestDto);
         URI newReviewUri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path("/{userId}")
@@ -36,6 +36,16 @@ public class BookReviewController {
                                                                      @RequestParam(required = false) String keyword){
         Page<ReviewResponseDto> reviews = bookService.getReviewsForBook(bookId, pageable, keyword);
         return ResponseEntity.ok(reviews);
+    }
+
+    @PutMapping
+    public ResponseEntity<ReviewResponseDto> updateReview(@Valid @RequestBody ReviewRequestDto requestDto, @PathVariable Long bookId){
+        ReviewResponseDto reviewResponseDto = bookService.updateReviewForBook(bookId, requestDto);
+        URI newReviewUri = ServletUriComponentsBuilder
+                .fromCurrentRequestUri()
+                .path("/{userId}")
+                .build(reviewResponseDto.userId());
+        return ResponseEntity.created(newReviewUri).body(reviewResponseDto);
     }
 
     @DeleteMapping
