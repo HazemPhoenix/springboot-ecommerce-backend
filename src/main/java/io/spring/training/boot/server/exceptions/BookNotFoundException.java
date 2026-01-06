@@ -5,4 +5,8 @@ public class BookNotFoundException extends ResourceNotFoundException {
     public BookNotFoundException(String message) {
         super(message);
     }
+
+    public BookNotFoundException(Long bookId){
+        super("No book found with the id: " + bookId);
+    }
 }

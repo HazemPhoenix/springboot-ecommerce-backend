@@ -10,6 +10,7 @@ import io.spring.training.boot.server.models.OrderItem;
 import io.spring.training.boot.server.models.User;
 import io.spring.training.boot.server.models.enums.OrderStatus;
 import io.spring.training.boot.server.repositories.BookRepo;
+import io.spring.training.boot.server.repositories.OrderItemRepo;
 import io.spring.training.boot.server.repositories.UserRepo;
 import io.spring.training.boot.server.repositories.OrderRepo;
 import io.spring.training.boot.server.services.OrderService;
@@ -24,10 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +34,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepo orderRepo;
     private final BookRepo bookRepo;
     private final UserRepo userRepo;
+    private final OrderItemRepo orderItemRepo;
 
     @Override
     @Transactional
@@ -49,8 +49,6 @@ public class OrderServiceImpl implements OrderService {
         order.setDate(LocalDate.now());
         // map the list of OrderItemDtos to OrderItems
         List<OrderItem> orderItems = constructOrderItems(orderRequestDto.orderItems(), order);
-        // iterate over the list of items and check if the quantity is valid
-        // update book quantities and calculate total amount
         BigDecimal totalAmount = processOrderItems(orderItems);
         order.setTotalAmount(totalAmount);
         order.setOrderItems(new HashSet<>(orderItems));
@@ -61,6 +59,8 @@ public class OrderServiceImpl implements OrderService {
     private BigDecimal processOrderItems(List<OrderItem> orderItems){
         List<Book> updatedBooks = new ArrayList<>();
         BigDecimal totalPrice = BigDecimal.ZERO;
+        // iterate over the list of items and check if the quantity is valid
+        // update book quantities and calculate total amount
         for(OrderItem orderItem : orderItems){
             Book book = orderItem.getBook();
             if(!validateQuantity(orderItem.getQuantity(), book.getStock())) {
@@ -82,7 +82,6 @@ public class OrderServiceImpl implements OrderService {
                 orderItem.setBook(book);
                 orderItem.setOrder(order);
                 orderItem.setTotalItemPrice(book.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
-                System.out.println("order item price: " + orderItem.getTotalItemPrice());
                 return orderItem;
             }).toList();
     }
@@ -109,7 +108,66 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderUserResponseDto updateOrderById(Long orderId, OrderUpdateRequestDto orderUpdateRequestDto) {
-        return null;
+        Order oldOrder = orderRepo.findById(orderId).orElseThrow(() -> new OrderNotFoundException("No order found with the id: " + orderId));
+
+        Order newOrder = OrderMapper.fromOrderUpdateRequestDto(orderUpdateRequestDto);
+
+        newOrder.setId(orderId);
+        newOrder.setStatus(OrderStatus.PROCESSING);
+        newOrder.setPaymentMethod(oldOrder.getPaymentMethod());
+
+        List<OrderItem> orderItems = updateItemsForOrder(newOrder, orderUpdateRequestDto.orderItems());
+
+        newOrder.setOrderItems(new HashSet<>(orderItems));
+
+        // TODO: get the user from the current principal
+        User user = userRepo.findById(17L).get();
+        newOrder.setUser(user);
+        newOrder.setDate(oldOrder.getDate());
+
+        BigDecimal totalAmount = orderItems.stream().map(OrderItem::getTotalItemPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        newOrder.setTotalAmount(totalAmount);
+
+        return OrderMapper.toOrderUserResponseDto(orderRepo.save(newOrder));
+    }
+
+    public List<OrderItem> updateItemsForOrder(Order newOrder, List<OrderItemRequestDto> orderItemRequests){
+        List<OrderItem> oldOrderItems = orderItemRepo.findAllByOrderId(newOrder.getId());
+        List<Book> updatedBooks = new ArrayList<>();
+        List<Long> oldBookIds = oldOrderItems.stream().mapToLong(oi -> oi.getBook().getId()).boxed().toList();
+        List<Book> oldBooks = bookRepo.findAllById(oldBookIds);
+        for(OrderItem item : oldOrderItems){
+            Long bookId = item.getBook().getId();
+            Book book = oldBooks.stream().filter(b -> Objects.equals(b.getId(), bookId)).findFirst().orElseThrow(() -> new BookNotFoundException(bookId));
+            book.setStock(book.getStock() + item.getQuantity());
+            updatedBooks.add(book);
+        }
+        orderItemRepo.deleteAll(oldOrderItems);
+
+        List<OrderItem> newOrderItems = new ArrayList<>();
+        for(OrderItemRequestDto orderItemRequestDto : orderItemRequests){
+            OrderItem orderItem = OrderItemMapper.fromOrderItemRequestDto(orderItemRequestDto);
+            Long bookId = orderItemRequestDto.bookId();
+            Book book = updatedBooks.stream()
+                    .filter(b -> Objects.equals(b.getId(), bookId))
+                    .findFirst()
+                    .orElseThrow(() -> new BookNotFoundException(bookId));
+
+            if(!validateQuantity(orderItemRequestDto.quantity(), book.getStock())) {
+                throw new InsufficientStockException("Required quantity (" + orderItem.getQuantity() + ") is more than the available stock (" + book.getStock() + ")");
+            }
+
+            book.setStock(book.getStock() - orderItemRequestDto.quantity());
+
+            orderItem.setBook(book);
+            orderItem.setOrder(newOrder);
+            orderItem.setTotalItemPrice(book.getPrice().multiply(BigDecimal.valueOf(orderItemRequestDto.quantity())));
+            newOrderItems.add(orderItem);
+        }
+        orderItemRepo.saveAll(newOrderItems);
+        bookRepo.saveAll(updatedBooks);
+        return newOrderItems;
     }
 
     @Override
