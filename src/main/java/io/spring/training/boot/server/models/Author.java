@@ -10,6 +10,7 @@ import java.util.Set;
 @Table(name = "authors")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Author {
@@ -24,7 +25,7 @@ public class Author {
     @ManyToMany(mappedBy = "authors")
     private Set<Book> books;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "author_genres",
             joinColumns = @JoinColumn(name = "author_id"),
