@@ -133,15 +133,9 @@ public class OrderServiceImpl implements OrderService {
 
     public List<OrderItem> updateItemsForOrder(Order newOrder, List<OrderItemRequestDto> orderItemRequests){
         List<OrderItem> oldOrderItems = orderItemRepo.findAllByOrderId(newOrder.getId());
-        List<Book> updatedBooks = new ArrayList<>();
         List<Long> oldBookIds = oldOrderItems.stream().mapToLong(oi -> oi.getBook().getId()).boxed().toList();
         List<Book> oldBooks = bookRepo.findAllById(oldBookIds);
-        for(OrderItem item : oldOrderItems){
-            Long bookId = item.getBook().getId();
-            Book book = oldBooks.stream().filter(b -> Objects.equals(b.getId(), bookId)).findFirst().orElseThrow(() -> new BookNotFoundException(bookId));
-            book.setStock(book.getStock() + item.getQuantity());
-            updatedBooks.add(book);
-        }
+        List<Book> updatedBooks = returnBookStocks(oldOrderItems, oldBooks);
         orderItemRepo.deleteAll(oldOrderItems);
 
         List<OrderItem> newOrderItems = new ArrayList<>();
@@ -169,8 +163,29 @@ public class OrderServiceImpl implements OrderService {
         return newOrderItems;
     }
 
+    private List<Book> returnBookStocks(List<OrderItem> oldOrderItems, List<Book> oldBooks) {
+        List<Book> updatedBooks = new ArrayList<>();
+        for(OrderItem item : oldOrderItems){
+            Long bookId = item.getBook().getId();
+            Book book = oldBooks.stream().filter(b -> Objects.equals(b.getId(), bookId)).findFirst().orElseThrow(() -> new BookNotFoundException(bookId));
+            book.setStock(book.getStock() + item.getQuantity());
+            updatedBooks.add(book);
+        }
+        return updatedBooks;
+    }
+
+    // TODO: PreAuthorize this, only admins and the order's owner should be able to cancel
     @Override
     public void cancelOrderById(Long orderId) {
-
+        // TODO: check the order status, if the user is not an admin they can only cancel if the status is still OrderStatus.PROCESSING
+        Order order = orderRepo.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
+        order.setStatus(OrderStatus.CANCELLED);
+        // update the inventory
+        List<OrderItem> orderItems = new ArrayList<>(order.getOrderItems());
+        List<Long> oldBookIds = orderItems.stream().mapToLong(oi -> oi.getBook().getId()).boxed().toList();
+        List<Book> oldBooks = bookRepo.findAllById(oldBookIds);
+        List<Book> updatedBooks = returnBookStocks(orderItems , oldBooks);
+        bookRepo.saveAll(updatedBooks);
+        orderItemRepo.deleteAll(orderItems);
     }
 }
