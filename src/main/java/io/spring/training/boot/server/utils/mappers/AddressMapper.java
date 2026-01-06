@@ -1,7 +1,7 @@
 package io.spring.training.boot.server.utils.mappers;
 
-import io.spring.training.boot.server.DTOs.AddressRequestDto;
-import io.spring.training.boot.server.DTOs.AddressResponseDto;
+import io.spring.training.boot.server.DTOs.address.AddressRequestDto;
+import io.spring.training.boot.server.DTOs.address.AddressResponseDto;
 import io.spring.training.boot.server.models.User;
 import io.spring.training.boot.server.models.UserAddress;
 

@@ -1,6 +1,6 @@
-package io.spring.training.boot.server.DTOs;
+package io.spring.training.boot.server.DTOs.user;
 
-import java.util.List;
+import io.spring.training.boot.server.DTOs.address.AddressResponseDto;
 
 public record UserResponseDto(Long id,
                               String username,

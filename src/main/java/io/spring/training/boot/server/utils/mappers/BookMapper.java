@@ -1,6 +1,9 @@
 package io.spring.training.boot.server.utils.mappers;
 
-import io.spring.training.boot.server.DTOs.*;
+import io.spring.training.boot.server.DTOs.author.AuthorResponseDto;
+import io.spring.training.boot.server.DTOs.book.*;
+import io.spring.training.boot.server.DTOs.genre.GenreResponseDto;
+import io.spring.training.boot.server.DTOs.review.ReviewResponseDto;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.models.projections.BookWithStats;

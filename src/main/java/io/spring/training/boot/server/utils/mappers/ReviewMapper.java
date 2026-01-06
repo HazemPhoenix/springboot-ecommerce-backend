@@ -1,7 +1,7 @@
 package io.spring.training.boot.server.utils.mappers;
 
-import io.spring.training.boot.server.DTOs.ReviewRequestDto;
-import io.spring.training.boot.server.DTOs.ReviewResponseDto;
+import io.spring.training.boot.server.DTOs.review.ReviewRequestDto;
+import io.spring.training.boot.server.DTOs.review.ReviewResponseDto;
 import io.spring.training.boot.server.models.Review;
 
 public class ReviewMapper {

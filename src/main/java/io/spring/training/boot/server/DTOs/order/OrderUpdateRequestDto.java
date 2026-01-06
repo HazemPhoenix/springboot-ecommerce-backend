@@ -1,8 +1,6 @@
-package io.spring.training.boot.server.DTOs;
+package io.spring.training.boot.server.DTOs.order;
 
-import io.spring.training.boot.server.models.enums.PaymentMethod;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;

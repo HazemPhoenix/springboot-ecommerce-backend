@@ -1,6 +1,11 @@
 package io.spring.training.boot.server.services.implementations;
 
-import io.spring.training.boot.server.DTOs.*;
+import io.spring.training.boot.server.DTOs.book.BookCreationResponseDto;
+import io.spring.training.boot.server.DTOs.book.BookRequestDto;
+import io.spring.training.boot.server.DTOs.book.BookResponseWithStats;
+import io.spring.training.boot.server.DTOs.book.BookSummaryDto;
+import io.spring.training.boot.server.DTOs.review.ReviewRequestDto;
+import io.spring.training.boot.server.DTOs.review.ReviewResponseDto;
 import io.spring.training.boot.server.exceptions.BookNotFoundException;
 import io.spring.training.boot.server.exceptions.ReviewNotFoundException;
 import io.spring.training.boot.server.models.Author;

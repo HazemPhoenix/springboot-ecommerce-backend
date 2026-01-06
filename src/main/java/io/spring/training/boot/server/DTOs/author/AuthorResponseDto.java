@@ -1,4 +1,6 @@
-package io.spring.training.boot.server.DTOs;
+package io.spring.training.boot.server.DTOs.author;
+
+import io.spring.training.boot.server.DTOs.genre.GenreResponseDto;
 
 import java.util.List;
 

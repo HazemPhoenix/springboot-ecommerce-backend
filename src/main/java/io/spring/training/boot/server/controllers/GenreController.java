@@ -1,7 +1,7 @@
 package io.spring.training.boot.server.controllers;
 
-import io.spring.training.boot.server.DTOs.GenreResponseDto;
-import io.spring.training.boot.server.DTOs.GenreRequestDto;
+import io.spring.training.boot.server.DTOs.genre.GenreResponseDto;
+import io.spring.training.boot.server.DTOs.genre.GenreRequestDto;
 import io.spring.training.boot.server.services.GenreService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

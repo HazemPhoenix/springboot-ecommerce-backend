@@ -1,12 +1,10 @@
 package io.spring.training.boot.server.utils.mappers;
 
-import io.spring.training.boot.server.DTOs.AddressResponseDto;
-import io.spring.training.boot.server.DTOs.UserRequestDto;
-import io.spring.training.boot.server.DTOs.UserResponseDto;
-import io.spring.training.boot.server.DTOs.UserSummaryAdminDto;
+import io.spring.training.boot.server.DTOs.address.AddressResponseDto;
+import io.spring.training.boot.server.DTOs.user.UserRequestDto;
+import io.spring.training.boot.server.DTOs.user.UserResponseDto;
+import io.spring.training.boot.server.DTOs.user.UserSummaryAdminDto;
 import io.spring.training.boot.server.models.User;
-
-import java.util.List;
 
 public class UserMapper {
     public static UserResponseDto toUserResponseDto(User user) {

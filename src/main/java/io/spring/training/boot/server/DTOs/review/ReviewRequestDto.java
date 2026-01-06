@@ -1,4 +1,4 @@
-package io.spring.training.boot.server.DTOs;
+package io.spring.training.boot.server.DTOs.review;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

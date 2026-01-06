@@ -1,8 +1,8 @@
 package io.spring.training.boot.server.utils.mappers;
 
-import io.spring.training.boot.server.DTOs.BookOrderSummaryDto;
-import io.spring.training.boot.server.DTOs.OrderItemRequestDto;
-import io.spring.training.boot.server.DTOs.OrderItemResponseDto;
+import io.spring.training.boot.server.DTOs.book.BookOrderSummaryDto;
+import io.spring.training.boot.server.DTOs.order.OrderItemRequestDto;
+import io.spring.training.boot.server.DTOs.order.OrderItemResponseDto;
 import io.spring.training.boot.server.models.OrderItem;
 
 public class OrderItemMapper {

@@ -1,9 +1,8 @@
 package io.spring.training.boot.server.services;
 
-import io.spring.training.boot.server.DTOs.GenreResponseDto;
-import io.spring.training.boot.server.DTOs.GenreRequestDto;
+import io.spring.training.boot.server.DTOs.genre.GenreResponseDto;
+import io.spring.training.boot.server.DTOs.genre.GenreRequestDto;
 import io.spring.training.boot.server.models.Genre;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.Set;

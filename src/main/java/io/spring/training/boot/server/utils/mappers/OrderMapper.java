@@ -1,6 +1,7 @@
 package io.spring.training.boot.server.utils.mappers;
 
-import io.spring.training.boot.server.DTOs.*;
+import io.spring.training.boot.server.DTOs.order.*;
+import io.spring.training.boot.server.DTOs.user.UserResponseDto;
 import io.spring.training.boot.server.models.Order;
 
 import java.util.List;

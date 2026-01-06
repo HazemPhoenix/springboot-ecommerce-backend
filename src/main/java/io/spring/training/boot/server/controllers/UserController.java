@@ -1,8 +1,7 @@
 package io.spring.training.boot.server.controllers;
 
-import io.spring.training.boot.server.DTOs.UserRequestDto;
-import io.spring.training.boot.server.DTOs.UserResponseDto;
-import io.spring.training.boot.server.models.User;
+import io.spring.training.boot.server.DTOs.user.UserRequestDto;
+import io.spring.training.boot.server.DTOs.user.UserResponseDto;
 import io.spring.training.boot.server.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

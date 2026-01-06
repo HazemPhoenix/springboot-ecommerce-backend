@@ -1,7 +1,7 @@
 package io.spring.training.boot.server.services.implementations;
 
-import io.spring.training.boot.server.DTOs.UserRequestDto;
-import io.spring.training.boot.server.DTOs.UserResponseDto;
+import io.spring.training.boot.server.DTOs.user.UserRequestDto;
+import io.spring.training.boot.server.DTOs.user.UserResponseDto;
 import io.spring.training.boot.server.exceptions.DuplicateResourceException;
 import io.spring.training.boot.server.exceptions.UserNotFoundException;
 import io.spring.training.boot.server.models.User;
@@ -13,9 +13,6 @@ import io.spring.training.boot.server.utils.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashSet;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

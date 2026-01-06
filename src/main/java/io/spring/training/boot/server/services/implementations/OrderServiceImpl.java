@@ -1,6 +1,6 @@
 package io.spring.training.boot.server.services.implementations;
 
-import io.spring.training.boot.server.DTOs.*;
+import io.spring.training.boot.server.DTOs.order.*;
 import io.spring.training.boot.server.exceptions.BookNotFoundException;
 import io.spring.training.boot.server.exceptions.InsufficientStockException;
 import io.spring.training.boot.server.exceptions.OrderNotFoundException;
@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

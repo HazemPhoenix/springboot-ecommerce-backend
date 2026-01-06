@@ -1,7 +1,7 @@
 package io.spring.training.boot.server.controllers;
 
-import io.spring.training.boot.server.DTOs.ReviewRequestDto;
-import io.spring.training.boot.server.DTOs.ReviewResponseDto;
+import io.spring.training.boot.server.DTOs.review.ReviewRequestDto;
+import io.spring.training.boot.server.DTOs.review.ReviewResponseDto;
 import io.spring.training.boot.server.services.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

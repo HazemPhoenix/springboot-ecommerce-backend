@@ -1,4 +1,4 @@
-package io.spring.training.boot.server.DTOs;
+package io.spring.training.boot.server.DTOs.user;
 
 public record UserSummaryAdminDto(Long id,
                                   String username,

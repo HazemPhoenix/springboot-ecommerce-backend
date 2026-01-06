@@ -1,7 +1,7 @@
 package io.spring.training.boot.server.controllers;
 
-import io.spring.training.boot.server.DTOs.AuthorResponseDto;
-import io.spring.training.boot.server.DTOs.AuthorRequestDto;
+import io.spring.training.boot.server.DTOs.author.AuthorResponseDto;
+import io.spring.training.boot.server.DTOs.author.AuthorRequestDto;
 import io.spring.training.boot.server.services.AuthorService;
 import io.spring.training.boot.server.services.implementations.AuthorServiceImpl;
 import jakarta.validation.Valid;

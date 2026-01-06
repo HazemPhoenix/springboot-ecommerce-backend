@@ -1,4 +1,4 @@
-package io.spring.training.boot.server.DTOs;
+package io.spring.training.boot.server.DTOs.book;
 
 import java.math.BigDecimal;
 import java.util.List;

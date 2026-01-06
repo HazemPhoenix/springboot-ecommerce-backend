@@ -1,6 +1,9 @@
 package io.spring.training.boot.server.controllers;
 
-import io.spring.training.boot.server.DTOs.*;
+import io.spring.training.boot.server.DTOs.book.BookCreationResponseDto;
+import io.spring.training.boot.server.DTOs.book.BookRequestDto;
+import io.spring.training.boot.server.DTOs.book.BookResponseWithStats;
+import io.spring.training.boot.server.DTOs.book.BookSummaryDto;
 import io.spring.training.boot.server.services.BookService;
 import io.spring.training.boot.server.services.implementations.BookServiceImpl;
 import jakarta.validation.Valid;

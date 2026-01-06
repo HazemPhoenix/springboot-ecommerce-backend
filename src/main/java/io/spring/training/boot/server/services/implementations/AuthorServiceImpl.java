@@ -1,7 +1,7 @@
 package io.spring.training.boot.server.services.implementations;
 
-import io.spring.training.boot.server.DTOs.AuthorResponseDto;
-import io.spring.training.boot.server.DTOs.AuthorRequestDto;
+import io.spring.training.boot.server.DTOs.author.AuthorResponseDto;
+import io.spring.training.boot.server.DTOs.author.AuthorRequestDto;
 import io.spring.training.boot.server.exceptions.AuthorNotFoundException;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Genre;

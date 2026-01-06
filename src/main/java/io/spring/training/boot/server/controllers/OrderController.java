@@ -1,6 +1,9 @@
 package io.spring.training.boot.server.controllers;
 
-import io.spring.training.boot.server.DTOs.*;
+import io.spring.training.boot.server.DTOs.order.OrderRequestDto;
+import io.spring.training.boot.server.DTOs.order.OrderSummaryDto;
+import io.spring.training.boot.server.DTOs.order.OrderUpdateRequestDto;
+import io.spring.training.boot.server.DTOs.order.OrderUserResponseDto;
 import io.spring.training.boot.server.services.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

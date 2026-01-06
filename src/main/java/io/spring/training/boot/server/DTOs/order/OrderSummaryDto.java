@@ -1,4 +1,4 @@
-package io.spring.training.boot.server.DTOs;
+package io.spring.training.boot.server.DTOs.order;
 
 import io.spring.training.boot.server.models.enums.OrderStatus;
 import io.spring.training.boot.server.models.enums.PaymentMethod;

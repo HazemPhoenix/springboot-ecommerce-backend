@@ -1,6 +1,5 @@
-package io.spring.training.boot.server.DTOs;
+package io.spring.training.boot.server.DTOs.book;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

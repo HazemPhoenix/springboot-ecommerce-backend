@@ -1,8 +1,8 @@
-package io.spring.training.boot.server.DTOs;
+package io.spring.training.boot.server.DTOs.user;
 
+import io.spring.training.boot.server.DTOs.address.AddressResponseDto;
 import io.spring.training.boot.server.models.enums.RoleType;
 
-import java.util.List;
 import java.util.Set;
 
 public record UserDetailsAdminDto(Long id,

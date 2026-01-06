@@ -1,4 +1,6 @@
-package io.spring.training.boot.server.DTOs;
+package io.spring.training.boot.server.DTOs.order;
+
+import io.spring.training.boot.server.DTOs.book.BookOrderSummaryDto;
 
 import java.math.BigDecimal;
 

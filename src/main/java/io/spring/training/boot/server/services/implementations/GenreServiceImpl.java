@@ -1,7 +1,7 @@
 package io.spring.training.boot.server.services.implementations;
 
-import io.spring.training.boot.server.DTOs.GenreRequestDto;
-import io.spring.training.boot.server.DTOs.GenreResponseDto;
+import io.spring.training.boot.server.DTOs.genre.GenreRequestDto;
+import io.spring.training.boot.server.DTOs.genre.GenreResponseDto;
 import io.spring.training.boot.server.exceptions.GenreNotFoundException;
 import io.spring.training.boot.server.models.Genre;
 import io.spring.training.boot.server.repositories.GenreRepo;

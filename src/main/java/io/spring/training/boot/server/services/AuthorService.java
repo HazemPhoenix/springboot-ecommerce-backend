@@ -1,7 +1,7 @@
 package io.spring.training.boot.server.services;
 
-import io.spring.training.boot.server.DTOs.AuthorResponseDto;
-import io.spring.training.boot.server.DTOs.AuthorRequestDto;
+import io.spring.training.boot.server.DTOs.author.AuthorResponseDto;
+import io.spring.training.boot.server.DTOs.author.AuthorRequestDto;
 import io.spring.training.boot.server.models.Author;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

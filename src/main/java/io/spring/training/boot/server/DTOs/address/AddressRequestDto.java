@@ -1,4 +1,4 @@
-package io.spring.training.boot.server.DTOs;
+package io.spring.training.boot.server.DTOs.address;
 
 import jakarta.validation.constraints.NotBlank;
 

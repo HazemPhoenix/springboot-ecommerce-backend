@@ -1,9 +1,7 @@
-package io.spring.training.boot.server.DTOs;
+package io.spring.training.boot.server.DTOs.user;
 
+import io.spring.training.boot.server.DTOs.address.AddressRequestDto;
 import jakarta.validation.constraints.*;
-import org.hibernate.validator.constraints.Length;
-
-import java.util.List;
 
 public record UserRequestDto(@NotBlank(message = "Username is required")
                              @Size(min = 6, max = 20, message = "Username should be between 6 and 20 characters long")

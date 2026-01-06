@@ -1,7 +1,6 @@
 package io.spring.training.boot.server.exceptions;
 
-import io.spring.training.boot.server.DTOs.ErrorResponse;
-import org.apache.coyote.Response;
+import io.spring.training.boot.server.DTOs.error.ErrorResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

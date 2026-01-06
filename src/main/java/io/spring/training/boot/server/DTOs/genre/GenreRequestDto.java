@@ -1,4 +1,4 @@
-package io.spring.training.boot.server.DTOs;
+package io.spring.training.boot.server.DTOs.genre;
 
 import jakarta.validation.constraints.NotBlank;
 

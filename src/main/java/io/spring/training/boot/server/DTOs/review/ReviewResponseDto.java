@@ -1,4 +1,4 @@
-package io.spring.training.boot.server.DTOs;
+package io.spring.training.boot.server.DTOs.review;
 
 public record ReviewResponseDto(Long userId,
                                 Long bookId,
