@@ -58,7 +58,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookResponseWithStats findBookById(long id){
-        BookWithStats book = bookRepo.findBookByIdWithStats(id).orElseThrow(() -> new BookNotFoundException("No book found with the id: " + id));
+        BookWithStats book = bookRepo.findBookByIdWithStats(id).orElseThrow(() -> new BookNotFoundException(id));
         return BookMapper.toBookResponseWithStats(book);
     }
 
@@ -76,7 +76,7 @@ public class BookServiceImpl implements BookService {
         Optional<Book> oldBook = bookRepo.findById(id);
 
         if(oldBook.isEmpty()){
-            throw new BookNotFoundException("No book found with the id: " + id);
+            throw new BookNotFoundException(id);
         }
 
         Book newBook = BookMapper.fromBookRequestDto(bookRequest);
@@ -114,7 +114,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public ReviewResponseDto createReviewForBook(Long bookId, ReviewRequestDto reviewRequestDto) {
-        if(!bookRepo.existsById(bookId)) throw new BookNotFoundException("No book found with the id: " + bookId);
+        if(!bookRepo.existsById(bookId)) throw new BookNotFoundException(bookId);
         Review newReview = ReviewMapper.fromReviewRequestDto(reviewRequestDto);
         // TODO: the user id should be the actual principal id when i add security
         ReviewId reviewId = new ReviewId(17L, bookId);
@@ -126,7 +126,7 @@ public class BookServiceImpl implements BookService {
     // TODO: PreAuthorize this method to make sure the user principal is actually the review author before updating
     @Override
     public ReviewResponseDto updateReviewForBook(Long bookId, ReviewRequestDto reviewRequestDto) {
-        if(!bookRepo.existsById(bookId)) throw new BookNotFoundException("No book found with the id: " + bookId);
+        if(!bookRepo.existsById(bookId)) throw new BookNotFoundException(bookId);
         ReviewId reviewId = new ReviewId(17L, bookId);
 
         // check if the review exists

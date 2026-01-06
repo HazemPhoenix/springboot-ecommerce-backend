@@ -41,7 +41,7 @@ public class AuthorServiceImpl implements AuthorService {
     public AuthorResponseDto getAuthorById(Long id) {
         return authorRepo.findById(id)
                 .map(AuthorMapper::toAuthorResponseDto)
-                .orElseThrow(() -> new AuthorNotFoundException("No author found with the id: " + id));
+                .orElseThrow(() -> new AuthorNotFoundException(id));
     }
 
     @Override
@@ -66,7 +66,7 @@ public class AuthorServiceImpl implements AuthorService {
         Optional<Author> oldAuthor = authorRepo.findById(id);
 
         if(oldAuthor.isEmpty()) {
-            throw new AuthorNotFoundException("No author found with the id: " + id);
+            throw new AuthorNotFoundException(id);
         }
 
         Author newAuthor = AuthorMapper.fromAuthorRequestDto(authorRequestDto);

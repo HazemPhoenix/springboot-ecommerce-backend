@@ -77,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
     private List<OrderItem> constructOrderItems(List<OrderItemRequestDto> orderItemRequestDtos, Order order) {
         return orderItemRequestDtos.stream().map(orderItemRequestDto -> {
                 Long bookId = orderItemRequestDto.bookId();
-                Book book = bookRepo.findById(bookId).orElseThrow(() -> new BookNotFoundException("No book found with the id: " + bookId));
+                Book book = bookRepo.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
                 OrderItem orderItem = OrderItemMapper.fromOrderItemRequestDto(orderItemRequestDto);
                 orderItem.setBook(book);
                 orderItem.setOrder(order);
@@ -101,14 +101,14 @@ public class OrderServiceImpl implements OrderService {
     public OrderUserResponseDto getOrderById(Long orderId){
         return orderRepo.findById(orderId)
                 .map(OrderMapper::toOrderUserResponseDto)
-                .orElseThrow(() -> new OrderNotFoundException("No order found with the id: " + orderId));
+                .orElseThrow(() -> new OrderNotFoundException(orderId));
     }
 
     // TODO: PreAuthorize this
     @Override
     @Transactional
     public OrderUserResponseDto updateOrderById(Long orderId, OrderUpdateRequestDto orderUpdateRequestDto) {
-        Order oldOrder = orderRepo.findById(orderId).orElseThrow(() -> new OrderNotFoundException("No order found with the id: " + orderId));
+        Order oldOrder = orderRepo.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
 
         Order newOrder = OrderMapper.fromOrderUpdateRequestDto(orderUpdateRequestDto);
 

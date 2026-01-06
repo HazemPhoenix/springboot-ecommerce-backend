@@ -25,7 +25,7 @@ public class GenreServiceImpl implements GenreService {
         return genreRepo
                 .findById(id)
                 .map(GenreMapper::toGenreResponseDto)
-                .orElseThrow(() -> new GenreNotFoundException("No genre found with the id: " + id));
+                .orElseThrow(() -> new GenreNotFoundException(id));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class GenreServiceImpl implements GenreService {
         Optional<Genre> oldGenre = genreRepo.findById(id);
 
         if(oldGenre.isEmpty()) {
-            throw new GenreNotFoundException("No genre found with the id: " + id);
+            throw new GenreNotFoundException(id);
         }
 
         Genre newGenre = GenreMapper.fromGenreRequestDto(genreRequestDto);
