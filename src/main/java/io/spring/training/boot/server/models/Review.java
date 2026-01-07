@@ -2,15 +2,15 @@ package io.spring.training.boot.server.models;
 
 import io.spring.training.boot.server.models.embeddables.ReviewId;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "user_reviews")
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Review {
     @EmbeddedId
     private ReviewId id;
