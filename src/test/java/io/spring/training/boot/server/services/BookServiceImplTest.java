@@ -31,11 +31,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import static org.assertj.core.api.Assertions.*;
 
-import java.awt.print.Pageable;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
@@ -367,6 +367,61 @@ public class BookServiceImplTest {
                 .isInstanceOf(ReviewNotFoundException.class);
 
         verify(reviewRepo, never()).save(any(Review.class));
+    }
+
+    @Test
+    public void givenNoKeyword_whenGetReviewsForBookIsCalled_thenReturnPageOfReviews() {
+        // Arrange
+        Long bookId = 1L;
+        PageRequest pageable = PageRequest.of(0, 10);
+        Review review = Review.builder()
+                .id(new ReviewId(17L, bookId))
+                .rating(5)
+                .content("nice")
+                .build();
+
+        when(reviewRepo.findById_BookId(pageable, bookId)).thenReturn(new PageImpl<>(List.of(review)));
+
+        // Act
+        Page<ReviewResponseDto> result = bookService.getReviewsForBook(bookId, pageable, null);
+
+        // Assert
+        assertThat(result).hasSize(1);
+        assertThat(result.getContent().get(0).content()).isEqualTo("nice");
+        verify(reviewRepo).findById_BookId(pageable, bookId);
+        verify(reviewRepo, never()).findById_BookIdAndKeyword(eq(pageable), eq(bookId), any(String.class));
+    }
+
+    @Test
+    public void givenKeyword_whenGetReviewsForBookIsCalled_thenReturnFilteredPageOfReviews() {
+        // Arrange
+        Long bookId = 1L;
+        String keyword = "nice";
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        Review review1 = Review.builder()
+                .id(new ReviewId(17L, bookId))
+                .rating(5)
+                .content("nice")
+                .build();
+
+        Review review2 = Review.builder()
+                .id(new ReviewId(18L, bookId))
+                .rating(0)
+                .content("bad")
+                .build();
+
+        when(reviewRepo.findById_BookIdAndKeyword(pageable, bookId, keyword)).thenReturn(new PageImpl<>(List.of(review1)));
+
+        // Act
+        Page<ReviewResponseDto> result = bookService.getReviewsForBook(bookId, pageable, keyword);
+
+        // Assert
+        verify(reviewRepo).findById_BookIdAndKeyword(pageable, bookId, keyword);
+        verify(reviewRepo, never()).findById_BookId(any(Pageable.class), any(Long.class));
+        assertThat(result).hasSize(1);
+        assertThat(result.map(ReviewResponseDto::content)).contains(review1.getContent());
+        assertThat(result.map(ReviewResponseDto::content)).doesNotContain(review2.getContent());
     }
 
 }
