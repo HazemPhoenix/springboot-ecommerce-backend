@@ -19,7 +19,8 @@ public class BookMapper {
         if(book.getReviews() != null) {
           reviewResponseDtos = book.getReviews().stream().map(ReviewMapper::toReviewResponseDto).toList();
         }
-        String bookImage = ServletUriComponentsBuilder.fromCurrentContextPath().build() + "/uploads/" + (book.getImage() != null ? book.getImage() : "");
+//        String bookImage = ServletUriComponentsBuilder.fromCurrentContextPath().build() + "/uploads/" + (book.getImage() != null ? book.getImage() : "");
+        String bookImage = "http://localhost:8080//uploads/" + book.getImage();
         return new BookCreationResponseDto(book.getId(), book.getTitle(), book.getDescription(), book.getPrice(), book.getNumberOfPages(), book.getStock(),bookImage, authorResponseDtos, genreResponseDtos, reviewResponseDtos);
     }
 
@@ -30,7 +31,8 @@ public class BookMapper {
         if(bookWithStats.getBook().getReviews() != null) {
             reviewResponseDtos = bookWithStats.getBook().getReviews().stream().map(ReviewMapper::toReviewResponseDto).toList();
         }
-        String bookImage = ServletUriComponentsBuilder.fromCurrentContextPath().build() + "/uploads/" + (bookWithStats.getBook().getImage() != null ? bookWithStats.getBook().getImage() : "");
+//        String bookImage = ServletUriComponentsBuilder.fromCurrentContextPath().build() + "/uploads/" + (bookWithStats.getBook().getImage() != null ? bookWithStats.getBook().getImage() : "");
+        String bookImage = "http://localhost:8080//uploads/" + bookWithStats.getBook().getImage();
         return new BookResponseWithStats(bookWithStats.getBook().getId(),
                 bookWithStats.getBook().getTitle(),
                 bookWithStats.getBook().getDescription(),
