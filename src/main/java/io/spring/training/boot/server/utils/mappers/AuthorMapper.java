@@ -11,8 +11,8 @@ import java.util.List;
 
 public class AuthorMapper {
     public static AuthorResponseDto toAuthorResponseDto(Author author){
-//        String imageName = ServletUriComponentsBuilder.fromCurrentContextPath().build() + "/uploads/" + (author.getPhoto() !=  null ? author.getPhoto() : "");
-        String imageName = "http://localhost:8080/" + "/uploads/" + (author.getPhoto() !=  null ? author.getPhoto() : "");
+        String imageName = ServletUriComponentsBuilder.fromCurrentContextPath().build() + "/uploads/" + (author.getPhoto() !=  null ? author.getPhoto() : "");
+//        String imageName = "http://localhost:8080/" + "/uploads/" + (author.getPhoto() !=  null ? author.getPhoto() : ""); // for testing since i don't have a context path in that environment
         List<GenreResponseDto> genreResponseDtos = author.getGenres().stream().map(GenreMapper::toGenreResponseDto).toList();
         return new AuthorResponseDto(author.getId(), author.getName(), author.getBio(), author.getNationality(), imageName, genreResponseDtos);
     }

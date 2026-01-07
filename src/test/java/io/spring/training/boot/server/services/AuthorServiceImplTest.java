@@ -224,4 +224,36 @@ public class AuthorServiceImplTest {
         assertThat(authorResponseDto.photo()).isEqualTo("http://localhost:8080//uploads/photo.png");
     }
 
+    @Test
+    public void givenAnExistingId_whenDeleteAuthorByIdIsCalled_thenReturnsNothing(){
+        // Arrange
+        when(authorRepo.findById(any(Long.class))).thenReturn(Optional.of(authors.get(0)));
+        doNothing().when(imageStorageService).deleteAuthorImage(any(String.class));
+        doNothing().when(authorRepo).delete(any(Author.class));
+
+        // Act
+        authorService.deleteAuthorById(authors.get(0).getId());
+
+        // Assert
+        verify(authorRepo).findById(authors.get(0).getId());
+        verify(imageStorageService).deleteAuthorImage("first photo.png");
+        verify(authorRepo).delete(authors.get(0));
+    }
+
+    @Test
+    public void givenASetOfExistingIds_whenFindAuthorsByIdsIsCalled_thenReturnsCorrectSetOfAuthors(){
+        // Arrange
+        when(authorRepo.findAllById(any(Iterable.class))).thenReturn(authors);
+
+        // Act
+        Set<Long> authorIds = Set.of(1L, 2L);
+        Set<Author> authorSet = authorService.findAuthorsByIds(authorIds);
+
+        // Assert
+        verify(authorRepo).findAllById(authorIds);
+
+        assertThat(authorSet.size()).isEqualTo(2);
+        assertThat(authorSet.stream().map(Author::getId).toList()).containsAll(authors.stream().map(Author::getId).toList());
+    }
+
 }
