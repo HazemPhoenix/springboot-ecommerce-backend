@@ -30,7 +30,7 @@ public class AuthorRepoTest {
                 .bio("test bio")
                 .nationality("test nat")
                 .photo("test photo")
-                .books(Set.of(new Book(), new Book()))
+                .books(Set.of(new Book()))
                 .genres(Set.of(new Genre(), new Genre())).build();
         List<Author> authorList = new ArrayList<>();
         authorList.add(firstAuthor);
@@ -41,7 +41,7 @@ public class AuthorRepoTest {
                     .bio("test bio")
                     .nationality("test nat")
                     .photo("test photo")
-                    .books(Set.of(new Book(), new Book()))
+                    .books(Set.of(new Book()))
                     .genres(Set.of(new Genre(), new Genre())).build();
             authorList.add(author);
         }

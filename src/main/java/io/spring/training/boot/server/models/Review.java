@@ -8,6 +8,7 @@ import lombok.*;
 @Table(name = "user_reviews")
 @Getter
 @Setter
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

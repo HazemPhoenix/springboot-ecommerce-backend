@@ -11,6 +11,7 @@ import java.util.Set;
 @Table(name = "books")
 @Getter
 @Setter
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
