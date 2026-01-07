@@ -3,9 +3,7 @@ package io.spring.training.boot.server.models;
 import io.spring.training.boot.server.models.enums.OrderStatus;
 import io.spring.training.boot.server.models.enums.PaymentMethod;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,6 +14,8 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
