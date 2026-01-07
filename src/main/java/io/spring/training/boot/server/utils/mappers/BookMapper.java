@@ -49,7 +49,8 @@ public class BookMapper {
 
     public static BookSummaryDto toBookSummaryDto(Book book, int totalReviews, double averageRating) {
         List<String> authorDtos = book.getAuthors().stream().map(Author::getName).toList();
-        String bookImage = ServletUriComponentsBuilder.fromCurrentContextPath().build() + "/uploads/" + (book.getImage() != null ? book.getImage() : "");
+//        String bookImage = ServletUriComponentsBuilder.fromCurrentContextPath().build() + "/uploads/" + (book.getImage() != null ? book.getImage() : "");
+        String bookImage = "http://localhost:8080//uploads/" + book.getImage();
         return new BookSummaryDto(book.getId(), book.getTitle(), book.getPrice(), bookImage, authorDtos, totalReviews, averageRating);
     }
 
