@@ -6,10 +6,13 @@ import io.spring.training.boot.server.DTOs.book.BookRequestDto;
 import io.spring.training.boot.server.DTOs.book.BookResponseWithStats;
 import io.spring.training.boot.server.DTOs.book.BookSummaryDto;
 import io.spring.training.boot.server.DTOs.genre.GenreResponseDto;
+import io.spring.training.boot.server.DTOs.review.ReviewRequestDto;
+import io.spring.training.boot.server.DTOs.review.ReviewResponseDto;
 import io.spring.training.boot.server.exceptions.BookNotFoundException;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.models.Genre;
+import io.spring.training.boot.server.models.Review;
 import io.spring.training.boot.server.models.projections.BookWithStats;
 import io.spring.training.boot.server.repositories.BookRepo;
 import io.spring.training.boot.server.repositories.ReviewRepo;
@@ -289,6 +292,39 @@ public class BookServiceImplTest {
         // Assert
         verify(imageStorageService).deleteBookImage("image.png");
         verify(bookRepo).delete(bookToDelete);
+    }
+
+    @Test
+    public void givenValidBookIdAndReviewRequest_whenCreateReviewForBookIsCalled_thenReturnReviewResponse() {
+        // Arrange
+        Long bookId = 1L;
+        ReviewRequestDto reviewRequest = new ReviewRequestDto(5, "great book", "such a great book!");
+
+        when(bookRepo.existsById(bookId)).thenReturn(true);
+        when(reviewRepo.save(any(Review.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // Act
+        ReviewResponseDto response = bookService.createReviewForBook(bookId, reviewRequest);
+
+        // Assert
+        verify(reviewRepo).save(any(Review.class));
+        assertThat(response.rating()).isEqualTo(5);
+        assertThat(response.content()).isEqualTo("such a great book!");
+    }
+
+    @Test
+    public void givenInvalidBookId_whenCreateReviewForBookIsCalled_thenThrowBookNotFoundException() {
+        // Arrange
+        Long bookId = 999L;
+        ReviewRequestDto reviewRequest = new ReviewRequestDto(5, "great book", "such a great book!");
+
+        when(bookRepo.existsById(bookId)).thenReturn(false);
+
+        // Act & Assert
+        assertThatThrownBy(() -> bookService.createReviewForBook(bookId, reviewRequest))
+                .isInstanceOf(BookNotFoundException.class);
+
+        verify(reviewRepo, never()).save(any(Review.class));
     }
 
 }
