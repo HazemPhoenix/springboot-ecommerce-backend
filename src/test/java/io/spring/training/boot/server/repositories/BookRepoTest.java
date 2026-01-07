@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
@@ -37,8 +38,9 @@ class BookRepoTest {
     private Genre genre;
     private Author author;
     private Book book;
+
     @BeforeEach
-    public void setup(){
+    public void setup() {
         user1 = userRepo.save(User.builder().username("test").email("test@test.com").password("test").build());
         user2 = userRepo.save(User.builder().username("test2").email("test2@test.com").password("test").build());
 
@@ -106,4 +108,56 @@ class BookRepoTest {
         assertThat(bookWithStats.getAverageRating()).isEqualTo(0.0);
     }
 
+    @Test
+    public void givenExistingBooksWithReviews_whenFindAllBooksWithStatsContainingIsCalledWithKeyword_thenReturnsStatForMatchingBooks() {
+        // Arrange
+        Book b1 = Book.builder()
+                .title("apple is the keyword")
+                .description("test")
+                .price(BigDecimal.TEN)
+                .numberOfPages(300)
+                .stock(20)
+                .genres(Set.of(genre))
+                .authors(Set.of(author))
+                .image("test.png").build();
+
+        Book book1 = bookRepo.save(b1);
+
+        Book b2 = Book.builder()
+                .title("does not contain the keyword")
+                .description("test")
+                .price(BigDecimal.TEN)
+                .numberOfPages(300)
+                .stock(20)
+                .genres(Set.of(genre))
+                .authors(Set.of(author))
+                .image("test.png").build();
+
+        Book book2 = bookRepo.save(b2);
+
+        ReviewId reviewId1 = new ReviewId(user1.getId(), book1.getId());
+        ReviewId reviewId2 = new ReviewId(user2.getId(), book1.getId());
+
+        ReviewId reviewId3 = new ReviewId(user1.getId(), book2.getId());
+        ReviewId reviewId4 = new ReviewId(user2.getId(), book2.getId());
+
+        Review rev1 = Review.builder().book(book1).id(reviewId1).rating(5).build();
+        Review rev2 = Review.builder().book(book1).id(reviewId2).rating(4).build();
+
+        Review rev3 = Review.builder().book(book2).id(reviewId3).rating(1).build();
+        Review rev4 = Review.builder().book(book2).id(reviewId4).rating(1).build();
+
+        reviewRepo.saveAll(List.of(rev1, rev2, rev3, rev4));
+
+        // Act
+        Page<BookWithStats> booksWithStats = bookRepo.findAllBooksWithStatsContaining(Pageable.unpaged(), "apple");
+
+        // Assert
+        assertThat(booksWithStats).isNotNull();
+        assertThat(booksWithStats.getSize()).isEqualTo(1);
+        BookWithStats bookWithStats = booksWithStats.getContent().getFirst();
+        assertThat(bookWithStats.getBook().getTitle()).isEqualTo(book1.getTitle());
+        assertThat(bookWithStats.getTotalReviews()).isEqualTo(2);
+        assertThat(bookWithStats.getAverageRating()).isEqualTo(4.5);
+    }
 }
