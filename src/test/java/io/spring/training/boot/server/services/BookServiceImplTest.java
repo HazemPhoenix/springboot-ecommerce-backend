@@ -276,4 +276,19 @@ public class BookServiceImplTest {
         verify(bookRepo, never()).save(any(Book.class));
     }
 
+    @Test
+    public void givenValidId_whenDeleteBookByIdIsCalled_thenDeleteImageAndBook() {
+        // Arrange
+        Long id = 1L;
+        Book bookToDelete = books.get(0); // Has "image.png"
+        when(bookRepo.findById(id)).thenReturn(Optional.of(bookToDelete));
+
+        // Act
+        bookService.deleteBookById(id);
+
+        // Assert
+        verify(imageStorageService).deleteBookImage("image.png");
+        verify(bookRepo).delete(bookToDelete);
+    }
+
 }
