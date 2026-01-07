@@ -2,6 +2,7 @@ package io.spring.training.boot.server.services;
 
 import io.spring.training.boot.server.DTOs.author.AuthorResponseDto;
 import io.spring.training.boot.server.config.StorageProperties;
+import io.spring.training.boot.server.exceptions.AuthorNotFoundException;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.models.Genre;
@@ -9,6 +10,7 @@ import io.spring.training.boot.server.repositories.AuthorRepo;
 import io.spring.training.boot.server.services.implementations.AuthorServiceImpl;
 import io.spring.training.boot.server.services.implementations.GenreServiceImpl;
 import io.spring.training.boot.server.utils.mappers.AuthorMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.mockito.Mockito.*;
@@ -36,10 +39,10 @@ public class AuthorServiceImplTest {
     @InjectMocks
     private AuthorServiceImpl authorService;
 
-    @Test
-    public void givenExistingAuthors_whenGetAllAuthorsIsCalled_thenReturnsAPageOfAuthorResponseDtos(){
+    private List<Author> authors;
 
-        // Arrange
+    @BeforeEach
+    public void setup(){
         Author firstAuthor = Author.builder()
                 .id(1L)
                 .name("first author")
@@ -55,6 +58,16 @@ public class AuthorServiceImplTest {
                 .nationality("second nat")
                 .genres(Set.of(new Genre("horror")))
                 .photo("second photo.png").build();
+
+        authors = List.of(firstAuthor, secondAuthor);
+    }
+
+    @Test
+    public void givenExistingAuthors_whenGetAllAuthorsIsCalled_thenReturnsAPageOfAuthorResponseDtos(){
+
+        // Arrange
+        Author firstAuthor = authors.get(0);
+        Author secondAuthor = authors.get(1);
 
         Page<Author> authorPage = new PageImpl<>(List.of(firstAuthor, secondAuthor));
 
@@ -75,6 +88,32 @@ public class AuthorServiceImplTest {
         assertThat(authorResponseDtos2.getSize()).isEqualTo(1);
         assertThat(authorResponseDtos2.getContent().getFirst().name()).isEqualTo(firstAuthor.getName());
         assertThat(authorResponseDtos2.getContent().getFirst().photo()).isEqualTo("http://localhost:8080//uploads/" + firstAuthor.getPhoto());
+    }
+
+    @Test
+    public void givenExistingAuthors_whenGetAuthorByIdIsCalledWithAnExistingId_thenReturnsCorrectAuthor(){
+        // Arrange
+        when(authorRepo.findById(1L)).thenReturn(Optional.of(authors.get(0)));
+
+        // Act
+        AuthorResponseDto authorResponseDto = authorService.getAuthorById(1L);
+
+        // Assert
+        verify(authorRepo).findById(1L);
+        assertThat(authorResponseDto).isNotNull();
+        assertThat(authorResponseDto.name()).isEqualTo(authors.get(0).getName());
+    }
+
+    @Test
+    public void givenExistingAuthors_whenGetAuthorByIdIsCalledWithANonExistentId_thenThrowsCorrectException(){
+        // Arrange
+        when(authorRepo.findById(10L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThatThrownBy(() -> authorService.getAuthorById(10L)).isExactlyInstanceOf(AuthorNotFoundException.class);
+
+        verify(authorRepo).findById(10L);
+
     }
 
 }
