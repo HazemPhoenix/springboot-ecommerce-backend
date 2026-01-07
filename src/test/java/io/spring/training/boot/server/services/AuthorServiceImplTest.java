@@ -164,5 +164,64 @@ public class AuthorServiceImplTest {
         assertThat(authorResponseDto.photo()).isEqualTo("http://localhost:8080//uploads/image.png");
     }
 
+    @Test
+    public void givenIdOfNonExistentAuthor_whenUpdateAuthorIsCalled_thenThrowsCorrectException(){
+        // Arrange
+        when(authorRepo.findById(any(Long.class))).thenReturn(Optional.empty());
+
+        // Act
+        AuthorRequestDto authorRequestDto = new AuthorRequestDto("test", "test", "test", Set.of(1L, 2L));
+        MultipartFile multipartFile = new MockMultipartFile("test", new byte[] {1,2,3});
+
+        // Assert
+        assertThatThrownBy(() -> authorService.updateAuthor(10L, authorRequestDto, multipartFile)).isExactlyInstanceOf(AuthorNotFoundException.class);
+        verify(authorRepo).findById(10L);
+    }
+
+    @Test
+    public void givenValidIdAndAuthorRequestDto_whenUpdateAuthorIsCalled_thenReturnUpdatedAuthorDto(){
+        // Arrange
+        when(authorRepo.findById(any(Long.class))).thenReturn(Optional.of(authors.get(0)));
+        when(genreService.findGenresByIds(any(Set.class))).thenReturn(authors.get(0).getGenres());
+        doNothing().when(imageStorageService).deleteAuthorImage(any(String.class));
+        when(imageStorageService.storeAuthorImage(any(MultipartFile.class))).thenReturn("photo.png");
+
+        String newName = "test";
+        String newBio = "test";
+        String newNat = "test";
+
+        Set<Genre> newGenres = Set.of(new Genre("Horror"), new Genre("Drama"));
+        Author author = Author.builder()
+                .id(3L)
+                .photo("photo.png")
+                .genres(newGenres)
+                .name(newName)
+                .bio(newBio)
+                .nationality(newNat).build();
+
+        when(authorRepo.save(any(Author.class))).thenReturn(author);
+
+        Set<Long> genres = Set.of(1L, 2L);
+        AuthorRequestDto authorRequestDto = new AuthorRequestDto(newName, newBio, newNat, genres);
+        MultipartFile multipartFile = new MockMultipartFile("photo.png", new byte[] {1,2,3});
+
+        // Act
+        AuthorResponseDto authorResponseDto = authorService.updateAuthor(1L, authorRequestDto, multipartFile);
+
+        // Assert
+        verify(authorRepo).findById(1L);
+        verify(genreService).findGenresByIds(genres);
+        verify(imageStorageService).deleteAuthorImage("first photo.png");
+        verify(imageStorageService).storeAuthorImage(multipartFile);
+        verify(authorRepo).save(any(Author.class));
+
+        assertThat(authorResponseDto).isNotNull();
+        assertThat(authorResponseDto.id()).isEqualTo(3L);
+        assertThat(authorResponseDto.name()).isEqualTo(newName);
+        assertThat(authorResponseDto.bio()).isEqualTo(newBio);
+        assertThat(authorResponseDto.nationality()).isEqualTo(newNat);
+        assertThat(authorResponseDto.genres().stream().map(GenreResponseDto::name).toList()).containsAll(newGenres.stream().map(Genre::getName).toList());
+        assertThat(authorResponseDto.photo()).isEqualTo("http://localhost:8080//uploads/photo.png");
+    }
 
 }
