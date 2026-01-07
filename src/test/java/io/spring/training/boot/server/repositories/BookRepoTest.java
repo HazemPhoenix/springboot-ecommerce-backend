@@ -160,4 +160,55 @@ class BookRepoTest {
         assertThat(bookWithStats.getTotalReviews()).isEqualTo(2);
         assertThat(bookWithStats.getAverageRating()).isEqualTo(4.5);
     }
+
+    @Test
+    public void givenExistingBookWithStats_whenFindBookByIdWithStatsIsCalled_thenReturnsCorrectBookWithCorrectStats(){
+        // Arrange
+        Book b1 = Book.builder()
+                .title("apple is the keyword")
+                .description("test")
+                .price(BigDecimal.TEN)
+                .numberOfPages(300)
+                .stock(20)
+                .genres(Set.of(genre))
+                .authors(Set.of(author))
+                .image("test.png").build();
+
+        Book book1 = bookRepo.save(b1);
+
+        Book b2 = Book.builder()
+                .title("does not contain the keyword")
+                .description("test")
+                .price(BigDecimal.TEN)
+                .numberOfPages(300)
+                .stock(20)
+                .genres(Set.of(genre))
+                .authors(Set.of(author))
+                .image("test.png").build();
+
+        Book book2 = bookRepo.save(b2);
+
+        ReviewId reviewId1 = new ReviewId(user1.getId(), book1.getId());
+        ReviewId reviewId2 = new ReviewId(user2.getId(), book1.getId());
+
+        ReviewId reviewId3= new ReviewId(user1.getId(), book2.getId());
+        ReviewId reviewId4 = new ReviewId(user2.getId(), book2.getId());
+
+        Review rev1 = Review.builder().book(book1).id(reviewId1).rating(5).build();
+        Review rev2 = Review.builder().book(book1).id(reviewId2).rating(4).build();
+
+        Review rev3 = Review.builder().book(book2).id(reviewId3).rating(1).build();
+        Review rev4 = Review.builder().book(book2).id(reviewId4).rating(1).build();
+
+        reviewRepo.saveAll(List.of(rev1, rev2, rev3, rev4));
+
+        // Act
+        BookWithStats bookWithStats = bookRepo.findBookByIdWithStats(book2.getId()).get();
+
+        // Assert
+        assertThat(bookWithStats).isNotNull();
+        assertThat(bookWithStats.getBook().getTitle()).isEqualTo(book2.getTitle());
+        assertThat(bookWithStats.getTotalReviews()).isEqualTo(2);
+        assertThat(bookWithStats.getAverageRating()).isEqualTo(1);
+    }
 }
