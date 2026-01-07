@@ -424,4 +424,17 @@ public class BookServiceImplTest {
         assertThat(result.map(ReviewResponseDto::content)).doesNotContain(review2.getContent());
     }
 
+    @Test
+    public void givenIds_whenDeleteReviewIsCalled_thenCallDeleteById() {
+        // Arrange
+        Long bookId = 1L;
+        Long userId = 17L;
+
+        // Act
+        bookService.deleteReview(bookId, userId);
+
+        // Assert
+        verify(reviewRepo).deleteById(new ReviewId(userId, bookId));
+    }
+
 }
