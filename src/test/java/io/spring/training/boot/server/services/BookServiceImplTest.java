@@ -9,10 +9,12 @@ import io.spring.training.boot.server.DTOs.genre.GenreResponseDto;
 import io.spring.training.boot.server.DTOs.review.ReviewRequestDto;
 import io.spring.training.boot.server.DTOs.review.ReviewResponseDto;
 import io.spring.training.boot.server.exceptions.BookNotFoundException;
+import io.spring.training.boot.server.exceptions.ReviewNotFoundException;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.models.Genre;
 import io.spring.training.boot.server.models.Review;
+import io.spring.training.boot.server.models.embeddables.ReviewId;
 import io.spring.training.boot.server.models.projections.BookWithStats;
 import io.spring.training.boot.server.repositories.BookRepo;
 import io.spring.training.boot.server.repositories.ReviewRepo;
@@ -323,6 +325,46 @@ public class BookServiceImplTest {
         // Act & Assert
         assertThatThrownBy(() -> bookService.createReviewForBook(bookId, reviewRequest))
                 .isInstanceOf(BookNotFoundException.class);
+
+        verify(reviewRepo, never()).save(any(Review.class));
+    }
+
+    @Test
+    public void givenValidIds_whenUpdateReviewForBookIsCalled_thenReturnUpdatedReviewResponse() {
+        // Arrange
+        Long bookId = 1L;
+        ReviewRequestDto reviewRequest = new ReviewRequestDto(4, "updated comment", "i updated to content lol");
+        ReviewId reviewId = new ReviewId(17L, bookId);
+
+        when(bookRepo.existsById(bookId)).thenReturn(true);
+        when(reviewRepo.existsById(reviewId)).thenReturn(true);
+        when(reviewRepo.save(any(Review.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // Act
+        ReviewResponseDto response = bookService.updateReviewForBook(bookId, reviewRequest);
+
+        // Assert
+        assertThat(response.rating()).isEqualTo(4);
+        assertThat(response.title()).isEqualTo("updated comment");
+        assertThat(response.content()).isEqualTo("i updated to content lol");
+        verify(reviewRepo).save(any(Review.class));
+        verify(reviewRepo).existsById(reviewId);
+        verify(bookRepo).existsById(bookId);
+    }
+
+    @Test
+    public void givenMissingReview_whenUpdateReviewForBookIsCalled_thenThrowReviewNotFoundException() {
+        // Arrange
+        Long bookId = 1L;
+        ReviewRequestDto reviewRequest = new ReviewRequestDto(4, "updated comment", "i updated to content lol");
+        ReviewId reviewId = new ReviewId(17L, bookId);
+
+        when(bookRepo.existsById(bookId)).thenReturn(true);
+        when(reviewRepo.existsById(reviewId)).thenReturn(false);
+
+        // Act & Assert
+        assertThatThrownBy(() -> bookService.updateReviewForBook(bookId, reviewRequest))
+                .isInstanceOf(ReviewNotFoundException.class);
 
         verify(reviewRepo, never()).save(any(Review.class));
     }
