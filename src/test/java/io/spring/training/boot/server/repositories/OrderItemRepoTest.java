@@ -80,10 +80,11 @@ public class OrderItemRepoTest {
 
         // Act
         List<OrderItem> orderItemList = orderItemRepo.findAllByOrderId(savedOrder1.getId());
+        orderItemList.forEach(System.out::println);
 
         // Assert
         assertThat(orderItemList.size()).isEqualTo(2);
-        assertThat(orderItemList.getFirst().getBook().getTitle()).isEqualTo(book1.getTitle());
+        assertThat(orderItemList.stream().map(OrderItem::getBook).toList()).contains(book1, book2);
         assertThat(orderItemList.stream().map(OrderItem::getTotalItemPrice).reduce(BigDecimal.ZERO, BigDecimal::add)).isEqualTo(order1.getTotalAmount());
     }
 
