@@ -131,8 +131,8 @@ public class BookServiceImplTest {
         verify(bookRepo).save(any(Book.class));
 
         assertThat(bookCreationResponseDto).isNotNull();
-        assertThat(bookCreationResponseDto.title()).isEqualTo("test title");
-        assertThat(bookCreationResponseDto.description()).isEqualTo("test desc");
+        assertThat(bookCreationResponseDto.title()).isEqualTo("first book title");
+        assertThat(bookCreationResponseDto.description()).isEqualTo("first book desc");
         assertThat(bookCreationResponseDto.price()).isEqualTo(BigDecimal.valueOf(29.99));
         assertThat(bookCreationResponseDto.numberOfPages()).isEqualTo(300);
         assertThat(bookCreationResponseDto.stock()).isEqualTo(30);
@@ -157,7 +157,7 @@ public class BookServiceImplTest {
         verify(bookRepo).findBookByIdWithStats(1L);
 
         assertThat(response).isNotNull();
-        assertThat(response.title()).isEqualTo("test title");
+        assertThat(response.title()).isEqualTo("first book title");
         assertThat(response.totalReviews()).isEqualTo(5L);
         assertThat(response.averageRating()).isEqualTo(4.5);
     }
@@ -230,6 +230,50 @@ public class BookServiceImplTest {
         assertThat(result).hasSize(2);
         assertThat(result.getContent().stream().map(BookSummaryDto::title).toList())
                 .containsExactlyInAnyOrder("first book title", "second book title");
+    }
+
+    @Test
+    public void givenValidIdAndRequest_whenUpdateBookByIdIsCalled_thenReturnUpdatedBookResponse() {
+        // Arrange
+        Long id = 1L;
+        Book oldBook = books.get(0); // has "image.png"
+
+        Set<Long> authorIds = Set.of(1L, 2L);
+        Set<Long> genreIds = Set.of(1L, 2L);
+        BookRequestDto bookRequestDto = new BookRequestDto("updated title", "updated desc", BigDecimal.valueOf(50.00), 500, 50, authorIds, genreIds);
+        MultipartFile newImage = new MockMultipartFile("new_image.png", new byte[]{1,2,3});
+
+        when(bookRepo.findById(id)).thenReturn(Optional.of(oldBook));
+        when(authorService.findAuthorsByIds(authorIds)).thenReturn(new HashSet<>(authors));
+        when(genreService.findGenresByIds(genreIds)).thenReturn(genres);
+        when(imageStorageService.storeBookImage(newImage)).thenReturn("new_image.png");
+
+        when(bookRepo.save(any(Book.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // Act
+        BookCreationResponseDto response = bookService.updateBookById(id, bookRequestDto, newImage);
+
+        // Assert
+        verify(imageStorageService).deleteBookImage("image.png");
+        verify(bookRepo).save(any(Book.class));
+        assertThat(response.title()).isEqualTo("updated title");
+        assertThat(response.image()).contains("new_image.png");
+    }
+
+    @Test
+    public void givenInvalidId_whenUpdateBookByIdIsCalled_thenThrowBookNotFoundException() {
+        // Arrange
+        Long id = 10L;
+        BookRequestDto bookRequestDto = new BookRequestDto("title", "desc", BigDecimal.TEN, 100, 10, Set.of(), Set.of());
+
+        when(bookRepo.findById(id)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThatThrownBy(() -> bookService.updateBookById(id, bookRequestDto, null))
+                .isInstanceOf(BookNotFoundException.class);
+
+        verify(bookRepo).findById(id);
+        verify(bookRepo, never()).save(any(Book.class));
     }
 
 }
