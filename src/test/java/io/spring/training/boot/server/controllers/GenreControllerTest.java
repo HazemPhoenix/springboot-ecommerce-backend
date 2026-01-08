@@ -189,6 +189,18 @@ public class GenreControllerTest {
         verify(genreService, never()).updateGenre(anyLong(), any());
     }
 
+    @Test
+    public void givenGenreId_whenDeleteGenreIsCalled_thenReturnsNoContentResponse() throws Exception {
+        // Arrange
+        Long id = 1L;
 
+        doNothing().when(genreService).deleteGenreById(id);
+
+        // Act and Assert
+        mockMvc.perform(delete(baseUrl + "/" + id))
+                .andExpect(status().isNoContent());
+
+        verify(genreService).deleteGenreById(id);
+    }
 
 }
