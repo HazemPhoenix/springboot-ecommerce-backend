@@ -3,6 +3,7 @@ package io.spring.training.boot.server.controllers;
 import io.spring.training.boot.server.DTOs.genre.GenreResponseDto;
 import io.spring.training.boot.server.DTOs.genre.GenreRequestDto;
 import io.spring.training.boot.server.services.GenreService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -30,7 +31,7 @@ public class GenreController {
     }
 
     @PostMapping
-    public ResponseEntity<GenreResponseDto> createGenre(@RequestBody GenreRequestDto genreRequestDto){
+    public ResponseEntity<GenreResponseDto> createGenre(@Valid @RequestBody GenreRequestDto genreRequestDto){
         GenreResponseDto newGenre = genreService.createGenre(genreRequestDto);
         URI newGenreLocation = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()

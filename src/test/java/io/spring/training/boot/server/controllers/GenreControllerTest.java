@@ -2,6 +2,7 @@ package io.spring.training.boot.server.controllers;
 
 
 import io.spring.training.boot.server.DTOs.error.ErrorResponse;
+import io.spring.training.boot.server.DTOs.genre.GenreRequestDto;
 import io.spring.training.boot.server.DTOs.genre.GenreResponseDto;
 import io.spring.training.boot.server.config.StorageProperties;
 import io.spring.training.boot.server.exceptions.GenreNotFoundException;
@@ -20,7 +21,7 @@ import tools.jackson.databind.ObjectMapper;
 
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -104,6 +105,38 @@ public class GenreControllerTest {
                 .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
                 .andExpect(jsonPath("$.error").value(HttpStatus.NOT_FOUND.getReasonPhrase()));
     }
+
+    @Test
+    public void givenValidGenreRequestDto_whenCreateGenreIsCalled_thenReturnsCorrectGenreResponseDto() throws Exception {
+        // Arrange
+        GenreRequestDto request = new GenreRequestDto("Romance");
+        GenreResponseDto response = new GenreResponseDto(3L, "Romance");
+        when(genreService.createGenre(any(GenreRequestDto.class))).thenReturn(response);
+
+
+        // Act & Assert
+        mockMvc.perform(post(baseUrl)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(3))
+                .andExpect(jsonPath("$.name").value("Romance"));
+    }
+    @Test
+    public void givenInvalidRequestDto_whenCreateGenreIsCalled_thenReturnsBadRequestResponse() throws Exception {
+        // Arrange
+        GenreRequestDto request = new GenreRequestDto("");
+
+        // Act & Assert
+        mockMvc.perform(post(baseUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnprocessableContent())
+                .andExpect(jsonPath("$.status").value(HttpStatus.UNPROCESSABLE_CONTENT.value()));
+
+        verify(genreService, never()).createGenre(any());
+    }
+
 
 
 }
