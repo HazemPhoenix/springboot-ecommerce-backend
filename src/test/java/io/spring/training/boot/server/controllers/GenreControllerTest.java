@@ -121,8 +121,9 @@ public class GenreControllerTest {
                 .andExpect(jsonPath("$.id").value(3))
                 .andExpect(jsonPath("$.name").value("Romance"));
     }
+
     @Test
-    public void givenInvalidGenreRequestDto_whenCreateGenreIsCalled_thenReturnsBadRequestResponse() throws Exception {
+    public void givenInvalidGenreRequestDto_whenCreateGenreIsCalled_thenReturnsUnprocessableContentResponse() throws Exception {
         // Arrange
         GenreRequestDto request = new GenreRequestDto("");
 
@@ -134,6 +135,58 @@ public class GenreControllerTest {
                 .andExpect(jsonPath("$.status").value(HttpStatus.UNPROCESSABLE_CONTENT.value()));
 
         verify(genreService, never()).createGenre(any());
+    }
+
+    @Test
+    public void givenValidIdAndGenreRequestDto_whenUpdateGenreIsCalled_thenReturnsCorrectGenreResponseDto() throws Exception {
+        // Arrange
+        Long id = 1L;
+        GenreRequestDto request = new GenreRequestDto("Romance");
+        GenreResponseDto response = new GenreResponseDto(1L, "Romance");
+
+        when(genreService.updateGenre(id, request)).thenReturn(response);
+
+        // Act & Assert
+        mockMvc.perform(put(baseUrl + "/" + id)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(response.id()))
+                .andExpect(jsonPath("$.name").value(response.name()));
+    }
+
+    @Test
+    public void givenInvalidIdButCorrectGenreRequestDto_whenUpdateGenreIsCalled_thenReturnsNotFoundResponse() throws Exception {
+        // Arrange
+        Long id = 10L;
+        GenreRequestDto request = new GenreRequestDto("Romance");
+
+        when(genreService.updateGenre(id, request)).thenThrow(GenreNotFoundException.class);
+
+        // Act & Assert
+        mockMvc.perform(put(baseUrl + "/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    public void givenValidIdButInvalidGenreRequestDto_whenUpdateGenreIsCalled_thenReturnsUnprocessableContentResponse() throws Exception {
+        // Arrange
+        Long id = 1L;
+        GenreRequestDto request = new GenreRequestDto("");
+
+        when(genreService.updateGenre(anyLong(), any(GenreRequestDto.class))).thenReturn(new GenreResponseDto(id, ""));
+
+        // Act and Assert
+        mockMvc.perform(put(baseUrl + "/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnprocessableContent())
+                .andExpect(jsonPath("$.status").value(HttpStatus.UNPROCESSABLE_CONTENT.value()));
+
+        verify(genreService, never()).updateGenre(anyLong(), any());
     }
 
 

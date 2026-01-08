@@ -41,8 +41,8 @@ public class GenreController {
     }
 
     @PutMapping("/{genreId}")
-    public ResponseEntity<GenreResponseDto> updateGenre(@PathVariable Long id, @Valid @RequestBody GenreRequestDto genreRequestDto){
-        GenreResponseDto newGenre = genreService.updateGenre(id, genreRequestDto);
+    public ResponseEntity<GenreResponseDto> updateGenre(@PathVariable Long genreId, @Valid @RequestBody GenreRequestDto genreRequestDto){
+        GenreResponseDto newGenre = genreService.updateGenre(genreId, genreRequestDto);
         return ResponseEntity.ok(newGenre);
     }
 
