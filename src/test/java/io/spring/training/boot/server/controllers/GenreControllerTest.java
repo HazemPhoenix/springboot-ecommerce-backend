@@ -1,7 +1,6 @@
 package io.spring.training.boot.server.controllers;
 
 
-import io.spring.training.boot.server.DTOs.error.ErrorResponse;
 import io.spring.training.boot.server.DTOs.genre.GenreRequestDto;
 import io.spring.training.boot.server.DTOs.genre.GenreResponseDto;
 import io.spring.training.boot.server.config.StorageProperties;
@@ -123,7 +122,7 @@ public class GenreControllerTest {
                 .andExpect(jsonPath("$.name").value("Romance"));
     }
     @Test
-    public void givenInvalidRequestDto_whenCreateGenreIsCalled_thenReturnsBadRequestResponse() throws Exception {
+    public void givenInvalidGenreRequestDto_whenCreateGenreIsCalled_thenReturnsBadRequestResponse() throws Exception {
         // Arrange
         GenreRequestDto request = new GenreRequestDto("");
 
