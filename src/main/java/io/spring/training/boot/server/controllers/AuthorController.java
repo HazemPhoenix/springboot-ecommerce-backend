@@ -20,7 +20,7 @@ import java.net.URI;
 public class AuthorController {
     private final AuthorService authorService;
 
-    public AuthorController(AuthorServiceImpl authorService) {
+    public AuthorController(AuthorService authorService) {
         this.authorService = authorService;
     }
 
