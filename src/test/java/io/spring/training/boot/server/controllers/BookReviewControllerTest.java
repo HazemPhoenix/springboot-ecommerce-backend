@@ -297,5 +297,4 @@ public class BookReviewControllerTest {
 
         verify(bookService, never()).updateReviewForBook(anyLong(), any(ReviewRequestDto.class));
     }
-
 }

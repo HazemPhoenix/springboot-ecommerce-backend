@@ -425,16 +425,28 @@ public class BookServiceImplTest {
     }
 
     @Test
-    public void givenIds_whenDeleteReviewIsCalled_thenCallDeleteById() {
+    public void givenIds_whenDeleteReviewForAdminIsCalled_thenCallDeleteById() {
         // Arrange
         Long bookId = 1L;
         Long userId = 17L;
 
         // Act
-        bookService.deleteReview(bookId, userId);
+        bookService.deleteReviewForAdmin(bookId, userId);
 
         // Assert
         verify(reviewRepo).deleteById(new ReviewId(userId, bookId));
+    }
+
+    @Test
+    public void givenIds_whenDeleteReviewForUserIsCalled_thenCallDeleteById() {
+        // Arrange
+        Long bookId = 1L;
+
+        // Act
+        bookService.deleteReviewForUser(bookId);
+
+        // Assert
+        verify(reviewRepo).deleteById(new ReviewId(17L, bookId));
     }
 
 }
