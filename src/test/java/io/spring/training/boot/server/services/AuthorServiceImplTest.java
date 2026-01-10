@@ -93,10 +93,10 @@ public class AuthorServiceImplTest {
 
         assertThat(authorResponseDtos1.getSize()).isEqualTo(2);
         assertThat(authorResponseDtos1.map(AuthorResponseDto::name).toList()).containsAll(List.of(firstAuthor.getName(), secondAuthor.getName()));
-        assertThat(authorResponseDtos1.map(AuthorResponseDto::photo).toList()).allMatch(image -> image.contains("http://localhost:8080//uploads/"));
+        assertThat(authorResponseDtos1.map(AuthorResponseDto::photo).toList()).allMatch(image -> image.contains("http://localhost:8080/uploads/"));
         assertThat(authorResponseDtos2.getSize()).isEqualTo(1);
         assertThat(authorResponseDtos2.getContent().getFirst().name()).isEqualTo(firstAuthor.getName());
-        assertThat(authorResponseDtos2.getContent().getFirst().photo()).isEqualTo("http://localhost:8080//uploads/" + firstAuthor.getPhoto());
+        assertThat(authorResponseDtos2.getContent().getFirst().photo()).isEqualTo("http://localhost:8080/uploads/" + firstAuthor.getPhoto());
     }
 
     @Test
@@ -161,7 +161,7 @@ public class AuthorServiceImplTest {
         assertThat(authorResponseDto.bio()).isEqualTo("test");
         assertThat(authorResponseDto.nationality()).isEqualTo("test");
         assertThat(authorResponseDto.genres().stream().map(GenreResponseDto::name).toList()).containsAll(List.of("Horror", "Drama"));
-        assertThat(authorResponseDto.photo()).isEqualTo("http://localhost:8080//uploads/image.png");
+        assertThat(authorResponseDto.photo()).isEqualTo("http://localhost:8080/uploads/image.png");
     }
 
     @Test
@@ -221,7 +221,7 @@ public class AuthorServiceImplTest {
         assertThat(authorResponseDto.bio()).isEqualTo(newBio);
         assertThat(authorResponseDto.nationality()).isEqualTo(newNat);
         assertThat(authorResponseDto.genres().stream().map(GenreResponseDto::name).toList()).containsAll(newGenres.stream().map(Genre::getName).toList());
-        assertThat(authorResponseDto.photo()).isEqualTo("http://localhost:8080//uploads/photo.png");
+        assertThat(authorResponseDto.photo()).isEqualTo("http://localhost:8080/uploads/photo.png");
     }
 
     @Test

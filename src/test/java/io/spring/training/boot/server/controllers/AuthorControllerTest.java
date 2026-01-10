@@ -8,6 +8,7 @@ import io.spring.training.boot.server.config.StorageProperties;
 import io.spring.training.boot.server.exceptions.AuthorNotFoundException;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Genre;
+import io.spring.training.boot.server.repositories.AuthorRepo;
 import io.spring.training.boot.server.services.AuthorService;
 import io.spring.training.boot.server.utils.mappers.AuthorMapper;
 import io.spring.training.boot.server.utils.mappers.GenreMapper;
@@ -54,7 +55,7 @@ public class AuthorControllerTest {
     private final String baseUrl = "/api/v1/authors";
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         Author a1 = Author.builder()
                 .id(1L)
                 .name("first author")
@@ -171,4 +172,119 @@ public class AuthorControllerTest {
         verify(authorService, never()).createAuthor(any(AuthorRequestDto.class), any(MultipartFile.class));
     }
 
+    @Test
+    public void givenValidIdAndAuthorRequestDto_whenUpdateAuthorIsCalled_thenReturnsCorrectAuthorResponseDto() throws Exception {
+        // arrange
+        Long id = 1L;
+        Author author = Author.builder()
+                .id(id)
+                .name("updated author")
+                .bio("updated bio")
+                .nationality("updated nat")
+                .genres(Set.of(new Genre("Sci-Fi"))).build();
+
+        AuthorRequestDto request = new AuthorRequestDto(
+                author.getName(),
+                author.getBio(),
+                author.getNationality(),
+                Set.of(4L));
+
+        AuthorResponseDto response = AuthorMapper.toAuthorResponseDto(author);
+
+        when(authorService.updateAuthor(anyLong(), any(AuthorRequestDto.class), any(MultipartFile.class))).thenReturn(response);
+
+        MockMultipartFile image = new MockMultipartFile("authorImage", "test.png", MediaType.TEXT_PLAIN_VALUE, "123".getBytes());
+        MockMultipartFile authorData = new MockMultipartFile("authorData", "", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(request).getBytes());
+
+        // act and assert
+        mockMvc.perform(multipart(baseUrl + "/" + id)
+                        .file(authorData)
+                        .file(image)
+                        .with(req -> {
+                            req.setMethod("PUT");
+                            return req;
+                        }))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.name").value(response.name()));
+
+        verify(authorService).updateAuthor(anyLong(), any(AuthorRequestDto.class), any(MultipartFile.class));
+    }
+
+    @Test
+    public void givenInvalidAuthorIdButValidAuthorRequestDto_whenUpdateAuthorIsCalled_thenReturnsNotFoundResponse() throws Exception {
+        // arrange
+        Long id = 10L;
+        Author author = Author.builder()
+                .id(id)
+                .name("updated author")
+                .bio("updated bio")
+                .nationality("updated nat")
+                .genres(Set.of(new Genre("Sci-Fi"))).build();
+
+        AuthorRequestDto request = new AuthorRequestDto(
+                author.getName(),
+                author.getBio(),
+                author.getNationality(),
+                Set.of(4L));
+
+        when(authorService.updateAuthor(anyLong(), any(AuthorRequestDto.class), any(MultipartFile.class))).thenThrow(AuthorNotFoundException.class);
+
+        MockMultipartFile image = new MockMultipartFile("authorImage", "test.png", MediaType.TEXT_PLAIN_VALUE, "123".getBytes());
+        MockMultipartFile authorData = new MockMultipartFile("authorData", "", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(request).getBytes());
+
+        // act and assert
+        mockMvc.perform(multipart(baseUrl + "/" + id)
+                        .file(authorData)
+                        .file(image)
+                        .with(req -> {
+                            req.setMethod("PUT");
+                            return req;
+                        }))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()));
+
+        verify(authorService).updateAuthor(anyLong(), any(AuthorRequestDto.class), any(MultipartFile.class));
+    }
+
+    @Test
+    public void givenValidAuthorIdButInvalidAuthorRequestDto_whenUpdateAuthorIsCalled_thenReturnsUnprocessableEntityResponse() throws Exception {
+        // arrange
+        Long id = 1L;
+        Author author = Author.builder()
+                .id(id)
+                .name("updated author")
+                .bio("updated bio")
+                .nationality("updated nat")
+                .genres(Set.of(new Genre("Sci-Fi"))).build();
+
+        AuthorRequestDto request = new AuthorRequestDto(
+                "",
+                author.getBio(),
+                author.getNationality(),
+                Set.of(4L));
+
+        AuthorResponseDto response = AuthorMapper.toAuthorResponseDto(author);
+
+        when(authorService.updateAuthor(anyLong(), any(AuthorRequestDto.class), any(MultipartFile.class))).thenReturn(response);
+
+        // act and assert
+        MockMultipartFile image = new MockMultipartFile("authorImage", "test.png", MediaType.TEXT_PLAIN_VALUE, "123".getBytes());
+        MockMultipartFile authorData = new MockMultipartFile("authorData", "", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(request).getBytes());
+
+        mockMvc.perform(multipart(baseUrl + "/" + id)
+                        .file(authorData)
+                        .file(image)
+                        .with(req -> {
+                            req.setMethod("PUT");
+                            return req;
+                        }))
+                .andExpect(status().isUnprocessableContent())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(HttpStatus.UNPROCESSABLE_CONTENT.value()));
+
+        verify(authorService, never()).updateAuthor(anyLong(), any(AuthorRequestDto.class), any(MultipartFile.class));
+    }
 }
+

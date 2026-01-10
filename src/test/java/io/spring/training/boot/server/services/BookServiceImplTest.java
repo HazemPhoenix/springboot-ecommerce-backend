@@ -141,7 +141,7 @@ public class BookServiceImplTest {
         assertThat(bookCreationResponseDto.price()).isEqualTo(BigDecimal.valueOf(29.99));
         assertThat(bookCreationResponseDto.numberOfPages()).isEqualTo(300);
         assertThat(bookCreationResponseDto.stock()).isEqualTo(30);
-        assertThat(bookCreationResponseDto.image()).isEqualTo("http://localhost:8080//uploads/image.png");
+        assertThat(bookCreationResponseDto.image()).isEqualTo("http://localhost:8080/uploads/image.png");
         assertThat(bookCreationResponseDto.authors().stream().map(AuthorResponseDto::name).toList()).containsAll(authors.stream().map(Author::getName).toList());
         assertThat(bookCreationResponseDto.genres().stream().map(GenreResponseDto::name).toList()).isEqualTo(genres.stream().map(Genre::getName).toList());
     }
