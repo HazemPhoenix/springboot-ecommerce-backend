@@ -2,6 +2,7 @@ package io.spring.training.boot.server.controllers;
 
 import io.spring.training.boot.server.DTOs.order.OrderItemRequestDto;
 import io.spring.training.boot.server.DTOs.order.OrderRequestDto;
+import io.spring.training.boot.server.DTOs.order.OrderSummaryDto;
 import io.spring.training.boot.server.DTOs.order.OrderUserResponseDto;
 import io.spring.training.boot.server.config.StorageProperties;
 import io.spring.training.boot.server.models.*;
@@ -15,6 +16,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
@@ -49,6 +54,18 @@ public class OrderControllerTest {
 
     @BeforeEach
     public void setup(){
+        User u1 = User.builder()
+                .id(1L)
+                .username("firstuser")
+                .password("firstpass")
+                .email("first@email.com").build();
+
+        User u2 = User.builder()
+                .id(2L)
+                .username("seconduser")
+                .password("secondpass")
+                .email("second@email.com").build();
+
         Author a1 = Author.builder()
                 .id(1L)
                 .name("first author")
@@ -100,7 +117,7 @@ public class OrderControllerTest {
 
         o1 = Order.builder()
                 .id(1L)
-                .user(new User())
+                .user(u1)
                 .status(OrderStatus.PROCESSING)
                 .paymentMethod(PaymentMethod.COD)
                 .orderItems(Set.of(oi1))
@@ -119,7 +136,7 @@ public class OrderControllerTest {
 
         o2 = Order.builder()
                 .id(2L)
-                .user(new User())
+                .user(u2)
                 .status(OrderStatus.PROCESSING)
                 .paymentMethod(PaymentMethod.CREDIT_CARD)
                 .orderItems(Set.of(oi2))
@@ -163,5 +180,30 @@ public class OrderControllerTest {
                 .andExpect(status().isUnprocessableContent());
 
         verify(orderService, never()).createOrder(any(OrderRequestDto.class));
+    }
+
+    @Test
+    public void givenExistingUser_whenGetUserOrdersIsCalled_thenReturnsPaginatedOrderSummaryDtoList() throws Exception {
+        // arrange
+        Pageable pageable = PageRequest.of(1, 20);
+
+        List<OrderSummaryDto> orderSummaryDtos = orders.
+                stream().
+                filter(order -> order.getUser().getId() == 1L).
+                map(OrderMapper::toOrderSummaryDto).
+                toList();
+
+        Page<OrderSummaryDto> response = new PageImpl<>(orderSummaryDtos, pageable, orderSummaryDtos.size());
+
+        when(orderService.getUserOrders(any(Pageable.class))).thenReturn(response);
+
+        // act and assert
+        mockMvc.perform(get(baseUrl)
+                .contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(orderSummaryDtos.size()))
+                .andExpect(jsonPath("$.content[0].id").value(orderSummaryDtos.get(0).id()));
+
+        verify(orderService).getUserOrders(any(Pageable.class));
     }
 }
