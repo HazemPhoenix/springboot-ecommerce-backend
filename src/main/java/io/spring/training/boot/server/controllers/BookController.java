@@ -23,7 +23,7 @@ import java.net.URI;
 public class BookController {
     private final BookService bookService;
 
-    public BookController(BookServiceImpl bookService) {
+    public BookController(BookService bookService) {
         this.bookService = bookService;
     }
 
