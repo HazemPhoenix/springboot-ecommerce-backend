@@ -155,7 +155,14 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void deleteReview(Long bookId, Long userId) {
+    public void deleteReviewForAdmin(Long bookId, Long userId) {
+        reviewRepo.deleteById(new ReviewId(userId, bookId));
+    }
+
+    // TODO: PreAuthorize this method to make sure the user principal is actually the review author before deleting
+    @Override
+    public void deleteReviewForUser(Long bookId) {
+        Long userId = 17L; // TODO: the user id should be the actual principal id when i add security
         reviewRepo.deleteById(new ReviewId(userId, bookId));
     }
 }

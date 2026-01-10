@@ -49,8 +49,12 @@ public class BookReviewController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteReview(@PathVariable Long bookId, @PathVariable Long userId){
-        bookService.deleteReview(bookId, userId);
+    public ResponseEntity<Void> deleteReview(@PathVariable Long bookId, @PathVariable(required = false) Long userId){
+        if(userId != null){
+            bookService.deleteReviewForAdmin(bookId, userId);
+        } else {
+            bookService.deleteReviewForUser(bookId);
+        }
         return ResponseEntity.noContent().build();
     }
 }
