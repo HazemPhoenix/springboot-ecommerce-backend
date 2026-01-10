@@ -112,15 +112,15 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void givenValidId_whenGetUserProfileIsCalled_thenReturnUserResponseDto() {
+    public void givenLoggedInUser_whenGetUserProfileIsCalled_thenReturnUserResponseDto() {
         // Arrange
-        when(userRepo.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepo.findById(anyLong())).thenReturn(Optional.of(user));
 
         // Act
-        UserResponseDto response = userService.getUserProfile(1L);
+        UserResponseDto response = userService.getUserProfile();
 
         // Assert
-        verify(userRepo).findById(1L);
+        verify(userRepo).findById(anyLong());
         assertThat(response.username()).isEqualTo("testUser");
         assertThat(response.email()).isEqualTo("test@test.com");
     }
@@ -128,12 +128,12 @@ public class UserServiceImplTest {
     @Test
     public void givenInvalidId_whenGetUserProfileIsCalled_thenThrowUserNotFoundException() {
         // Arrange
-        when(userRepo.findById(10L)).thenReturn(Optional.empty());
+        when(userRepo.findById(anyLong())).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThatThrownBy(() -> userService.getUserProfile(10L))
+        assertThatThrownBy(() -> userService.getUserProfile())
                 .isInstanceOf(UserNotFoundException.class);
 
-        verify(userRepo).findById(10L);
+        verify(userRepo).findById(anyLong());
     }
 }

@@ -35,8 +35,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto getUserProfile(Long userId){
+    public UserResponseDto getUserProfile (){
+        // TODO: get user id from security context
+        Long userId = 17L;
         User user = userRepo.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         return UserMapper.toUserResponseDto(user);
     }
+
+    // TODO: implement another method to get user details by id for admin use
 }

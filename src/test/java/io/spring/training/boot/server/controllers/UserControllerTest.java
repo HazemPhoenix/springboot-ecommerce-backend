@@ -44,7 +44,7 @@ public class UserControllerTest {
 
     private List<User> users;
 
-    private final String baseUrl = "api/v1/users";
+    private final String baseUrl = "/api/v1/users";
 
 
 
@@ -60,6 +60,9 @@ public class UserControllerTest {
                 .phoneNumber("201014656945")
                 .build();
 
+        UserAddress a1 = new UserAddress(1L, u1, "456 St", "city 1", "country 1", "54321");
+        u1.setAddress(a1);
+
         User u2 = User.builder()
                 .id(2L)
                 .username("seconduser")
@@ -69,6 +72,9 @@ public class UserControllerTest {
                 .verified(true)
                 .phoneNumber("201014656946")
                 .build();
+
+        UserAddress a2 = new UserAddress(2L, u2, "789 St", "city 2", "country 2", "67890");
+        u2.setAddress(a2);
 
         users = List.of(u1, u2);
     }
@@ -132,5 +138,21 @@ public class UserControllerTest {
         verify(userService, never()).registerUser(any(UserRequestDto.class));
     }
 
+    @Test
+    public void givenLoggedInUser_whenGetUserProfileIsCalled_thenReturnsUserResponseDto() throws Exception {
+        // arrange
+        User user = users.get(0);
+        UserResponseDto response = UserMapper.toUserResponseDto(user);
+
+        when(userService.getUserProfile()).thenReturn(response);
+
+        // act and assert
+        mockMvc.perform(get(baseUrl))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(user.getId()))
+                .andExpect(jsonPath("$.username").value(user.getUsername()));
+
+        verify(userService).getUserProfile();
+    }
 
 }
