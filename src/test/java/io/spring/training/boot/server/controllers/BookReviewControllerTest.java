@@ -15,12 +15,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -109,7 +113,17 @@ public class BookReviewControllerTest {
                 .book(b2)
                 .build();
 
-        reviews = List.of(r1, r2);
+        ReviewId reviewId3 = new ReviewId(3L, 1L);
+        Review r3 = Review.builder()
+                .id(reviewId3)
+                .rating(3)
+                .title("Average Book")
+                .content("It was an okay read, nothing special.")
+                .edited(false)
+                .book(b1)
+                .build();
+
+        reviews = List.of(r1, r2, r3);
     }
 
     @Test
@@ -165,4 +179,71 @@ public class BookReviewControllerTest {
 
         verify(bookService, never()).createReviewForBook(anyLong(), any(ReviewRequestDto.class));
     }
+
+    @Test
+    public void givenValidBookIdAndNoKeyword_whenGetReviewsForBookIsCalled_thenReturnsPaginatedReviews() throws Exception {
+        // arrange
+        Long bookId = 1L;
+        var pageable = PageRequest.of(0, 20);
+        var response = new PageImpl<>(
+                reviews.stream().filter(review -> Objects.equals(review.getId().getBookId(), bookId)).map(ReviewMapper::toReviewResponseDto).toList(),
+                pageable,
+                2
+        );
+
+        when(bookService.getReviewsForBook(eq(bookId), any(Pageable.class), isNull())).thenReturn(response);
+
+        // act and assert
+        mockMvc.perform(get(baseUrl, bookId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(2))
+                .andExpect(jsonPath("$.content[0].title").value("Great Book"))
+                .andExpect(jsonPath("$.content[1].title").value("Average Book"));
+
+        verify(bookService).getReviewsForBook(eq(bookId), any(Pageable.class), isNull());
+    }
+
+    @Test
+    public void givenValidBookIdAndKeyword_whenGetReviewsForBookIsCalled_thenReturnsFilteredPaginatedReviews() throws Exception {
+        // arrange
+        Long bookId = 1L;
+        String keyword = "okay";
+        var pageable = PageRequest.of(0, 20);
+        var response = new PageImpl<>(
+                reviews.stream()
+                        .filter(review -> Objects.equals(review.getId().getBookId(), bookId))
+                        .filter(review -> review.getTitle().contains(keyword) || review.getContent().contains(keyword))
+                        .map(ReviewMapper::toReviewResponseDto)
+                        .toList(),
+                pageable,
+                1
+        );
+
+        when(bookService.getReviewsForBook(eq(bookId), any(Pageable.class), eq(keyword))).thenReturn(response);
+
+        // act and assert
+        mockMvc.perform(get(baseUrl, bookId)
+                        .param("keyword", keyword))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].title").value("Average Book"));
+
+        verify(bookService).getReviewsForBook(eq(bookId), any(Pageable.class), eq(keyword));
+    }
+
+    @Test
+    public void givenInvalidBookId_whenGetReviewsForBookIsCalled_thenReturnsNotFound() throws Exception {
+        // arrange
+        Long bookId = 10L;
+
+        when(bookService.getReviewsForBook(eq(bookId), any(Pageable.class), isNull()))
+                .thenThrow(BookNotFoundException.class);
+
+        // act and assert
+        mockMvc.perform(get(baseUrl, bookId))
+                .andExpect(status().isNotFound());
+
+        verify(bookService).getReviewsForBook(eq(bookId), any(Pageable.class), isNull());
+    }
+
 }
