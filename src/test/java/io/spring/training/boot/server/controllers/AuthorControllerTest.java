@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -73,6 +74,47 @@ public class AuthorControllerTest {
                 .photo("second.png").build();
 
         authors = List.of(a1, a2);
+    }
+
+    @Test
+    public void givenExistingAuthorsAndNoKeyword_whenGetAllAuthorsIsCalled_thenReturnsPaginatedAuthorResponseDtos() throws Exception {
+        // arrange
+        PageRequest pageable = PageRequest.of(0, 20);
+        List<AuthorResponseDto> authorResponseDtos = authors.stream().map(AuthorMapper::toAuthorResponseDto).toList();
+        Page<AuthorResponseDto> response = new PageImpl<>(authorResponseDtos, pageable, authorResponseDtos.size());
+        when(authorService.getAllAuthors(any(Pageable.class), isNull())).thenReturn(response);
+
+        // act and assert
+        mockMvc.perform(get(baseUrl))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.length()").value(authors.size()))
+                .andExpect(jsonPath("$.content[0].name").value(authors.get(0).getName()))
+                .andExpect(jsonPath("$.content[1].name").value(authors.get(1).getName()));
+
+        verify(authorService).getAllAuthors(any(Pageable.class), isNull());
+    }
+
+    @Test
+    public void givenExistingAuthorsAndKeyword_whenGetAllAuthorsIsCalled_thenReturnsFilteredPaginatedAuthorResponseDtos() throws Exception {
+        // arrange
+        String keyword = "first";
+        PageRequest pageable = PageRequest.of(0, 20);
+        List<AuthorResponseDto> authorResponseDtos = authors.stream()
+                .filter(a -> a.getName().toLowerCase().contains(keyword.toLowerCase()))
+                .map(AuthorMapper::toAuthorResponseDto)
+                .toList();
+        Page<AuthorResponseDto> response = new PageImpl<>(authorResponseDtos, pageable, authorResponseDtos.size());
+        when(authorService.getAllAuthors(any(Pageable.class), eq(keyword))).thenReturn(response);
+
+        // act and assert
+        mockMvc.perform(get(baseUrl).param("keyword", keyword))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].name").value(authors.get(0).getName()));
+
+        verify(authorService).getAllAuthors(any(Pageable.class), eq(keyword));
     }
 
     @Test
