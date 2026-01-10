@@ -154,6 +154,7 @@ public class BookServiceImpl implements BookService {
             return reviewRepo.findById_BookIdAndKeyword(pageable, bookId, keyword).map(ReviewMapper::toReviewResponseDto);
     }
 
+    // TODO: PreAuthorize this method to make sure only admins can delete reviews for other users
     @Override
     public void deleteReviewForAdmin(Long bookId, Long userId) {
         reviewRepo.deleteById(new ReviewId(userId, bookId));

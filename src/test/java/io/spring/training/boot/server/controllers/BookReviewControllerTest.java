@@ -297,4 +297,35 @@ public class BookReviewControllerTest {
 
         verify(bookService, never()).updateReviewForBook(anyLong(), any(ReviewRequestDto.class));
     }
+
+    @Test
+    public void givenValidBookIdAndUserId_whenDeleteReviewIsCalled_thenCallsAdminVersionAndReturnsNoContent() throws Exception {
+        // arrange
+        Long bookId = 1L;
+        Long userId = 1L;
+
+        doNothing().when(bookService).deleteReviewForAdmin(anyLong(), anyLong());
+
+        // act and assert
+        mockMvc.perform(delete(baseUrl, bookId)
+                        .queryParam("userId", String.valueOf(userId)))
+                .andExpect(status().isNoContent());
+
+        verify(bookService).deleteReviewForAdmin(eq(bookId), eq(userId));
+        verify(bookService, never()).deleteReviewForUser(anyLong());
+    }
+
+    @Test
+    public void givenValidBookIdWithoutUserId_whenDeleteReviewIsCalled_thenCallsUserVersionAndReturnsNoContent() throws Exception {
+        // arrange
+        Long bookId = 1L;
+        doNothing().when(bookService).deleteReviewForUser(anyLong());
+
+        // act and assert
+        mockMvc.perform(delete(baseUrl, bookId))
+                .andExpect(status().isNoContent());
+
+        verify(bookService).deleteReviewForUser(eq(bookId));
+        verify(bookService, never()).deleteReviewForAdmin(anyLong(), anyLong());
+    }
 }
