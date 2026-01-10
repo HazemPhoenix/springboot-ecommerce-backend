@@ -108,11 +108,11 @@ public class UserControllerTest {
         when(userService.registerUser(any(UserRequestDto.class))).thenReturn(response);
 
         // act and assert
-        mockMvc.perform(post("/" + baseUrl)
+        mockMvc.perform(post(baseUrl)
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "http://localhost/" + baseUrl + "/3"))
+                .andExpect(header().string("Location", "http://localhost" + baseUrl + "/3"))
                 .andExpect(jsonPath("$.id").value(3L));
 
         verify(userService, times(1)).registerUser(any(UserRequestDto.class));
@@ -130,7 +130,7 @@ public class UserControllerTest {
         );
 
         // act and assert
-        mockMvc.perform(post("/" + baseUrl)
+        mockMvc.perform(post(baseUrl)
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnprocessableContent());
