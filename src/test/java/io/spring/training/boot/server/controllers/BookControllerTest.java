@@ -418,4 +418,17 @@ public class BookControllerTest {
         verify(bookService, never()).updateBookById(eq(bookId), any(BookRequestDto.class), any(MultipartFile.class));
     }
 
+    @Test
+    public void givenBookId_whenDeleteBookIsCalled_thenReturnsNoContentResponse() throws Exception {
+        // arrange
+        Long bookId = 1L;
+
+        doNothing().when(bookService).deleteBookById(eq(bookId));
+
+        // act and assert
+        mockMvc.perform(delete(baseUrl + "/{id}", bookId))
+                .andExpect(status().isNoContent());
+
+        verify(bookService).deleteBookById(eq(bookId));
+    }
 }
