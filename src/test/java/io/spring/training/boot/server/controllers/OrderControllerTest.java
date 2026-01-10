@@ -5,6 +5,7 @@ import io.spring.training.boot.server.DTOs.order.OrderRequestDto;
 import io.spring.training.boot.server.DTOs.order.OrderSummaryDto;
 import io.spring.training.boot.server.DTOs.order.OrderUserResponseDto;
 import io.spring.training.boot.server.config.StorageProperties;
+import io.spring.training.boot.server.exceptions.OrderNotFoundException;
 import io.spring.training.boot.server.models.*;
 import io.spring.training.boot.server.models.enums.OrderStatus;
 import io.spring.training.boot.server.models.enums.PaymentMethod;
@@ -205,5 +206,37 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.content[0].id").value(orderSummaryDtos.get(0).id()));
 
         verify(orderService).getUserOrders(any(Pageable.class));
+    }
+
+    @Test
+    public void givenValidOrderId_whenGetOrderDetailsIsCalled_thenReturnsOrderUserResponseDto() throws Exception {
+        // arrange
+        Order order = orders.get(0);
+        OrderUserResponseDto response = OrderMapper.toOrderUserResponseDto(order);
+
+        when(orderService.getOrderById(eq(order.getId()))).thenReturn(response);
+
+        // act and assert
+        mockMvc.perform(get(baseUrl + "/{orderId}", order.getId())
+                .contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(response)));
+
+        verify(orderService).getOrderById(eq(order.getId()));
+    }
+
+    @Test
+    public void givenInvalidOrderId_whenGetOrderDetailsIsCalled_thenReturnsNotFound() throws Exception {
+        // arrange
+        Long invalidOrderId = 10L;
+
+        when(orderService.getOrderById(eq(invalidOrderId))).thenThrow(OrderNotFoundException.class);
+
+        // act and assert
+        mockMvc.perform(get(baseUrl + "/{orderId}", invalidOrderId)
+                .contentType("application/json"))
+                .andExpect(status().isNotFound());
+
+        verify(orderService).getOrderById(invalidOrderId);
     }
 }
