@@ -1,6 +1,7 @@
 package io.spring.training.boot.server.DTOs.user;
 
 import io.spring.training.boot.server.DTOs.address.AddressRequestDto;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 public record UserRequestDto(@NotBlank(message = "Username is required")
@@ -19,6 +20,6 @@ public record UserRequestDto(@NotBlank(message = "Username is required")
                              @NotBlank(message = "Phone number is required")
                              @Pattern(regexp = "^\\d{12}$", message = "Phone number must be exactly 12 digits")
                              String phone,
-                             @NotNull(message = "Address is required")
+                             @Valid @NotNull(message = "Address is required")
                              AddressRequestDto address) {
 }
