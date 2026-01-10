@@ -1,9 +1,6 @@
 package io.spring.training.boot.server.controllers;
 
-import io.spring.training.boot.server.DTOs.order.OrderItemRequestDto;
-import io.spring.training.boot.server.DTOs.order.OrderRequestDto;
-import io.spring.training.boot.server.DTOs.order.OrderSummaryDto;
-import io.spring.training.boot.server.DTOs.order.OrderUserResponseDto;
+import io.spring.training.boot.server.DTOs.order.*;
 import io.spring.training.boot.server.config.StorageProperties;
 import io.spring.training.boot.server.exceptions.OrderNotFoundException;
 import io.spring.training.boot.server.models.*;
@@ -238,5 +235,73 @@ public class OrderControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(orderService).getOrderById(invalidOrderId);
+    }
+
+    @Test
+    public void givenValidOrderIdAndValidOrderUpdateRequestDto_whenUpdateOrderIsCalled_thenReturnsOrderUserResponseDto() throws Exception {
+        // arrange
+        Order order = orders.get(0);
+
+        Order updatedOrder = Order.builder()
+                .id(order.getId())
+                .user(order.getUser())
+                .status(OrderStatus.PROCESSING)
+                .paymentMethod(order.getPaymentMethod())
+                .orderItems(orders.get(1).getOrderItems())
+                .totalAmount(orders.get(1).getTotalAmount())
+                .date(order.getDate())
+                .build();
+
+
+        OrderUpdateRequestDto request = new OrderUpdateRequestDto(orders.get(1).getOrderItems().stream().map(oi -> new OrderItemRequestDto(oi.getBook().getId(), oi.getQuantity())).toList());
+        OrderUserResponseDto response = OrderMapper.toOrderUserResponseDto(updatedOrder);
+
+        when(orderService.updateOrderById(order.getId(), request))
+                .thenReturn(response);
+
+        // act and assert
+        mockMvc.perform(put(baseUrl + "/{orderId}", order.getId())
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(response)));
+
+        verify(orderService).updateOrderById(order.getId(), request);
+    }
+
+    // update order: invalid order id -> 404 Not Found
+    @Test
+    public void givenInvalidOrderIdAndValidOrderUpdateRequestDto_whenUpdateOrderIsCalled_thenReturnsNotFound() throws Exception {
+        // arrange
+        Long invalidOrderId = 10L;
+
+        Order order = orders.get(0);
+        OrderUpdateRequestDto request = new OrderUpdateRequestDto(orders.get(1).getOrderItems().stream().map(oi -> new OrderItemRequestDto(oi.getBook().getId(), oi.getQuantity())).toList());
+
+        when(orderService.updateOrderById(eq(invalidOrderId), any(OrderUpdateRequestDto.class)))
+                .thenThrow(OrderNotFoundException.class);
+
+        // act and assert
+        mockMvc.perform(put(baseUrl + "/{orderId}", invalidOrderId)
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound());
+
+        verify(orderService).updateOrderById(invalidOrderId, request);
+    }
+
+    @Test
+    public void givenValidOrderIdAndInvalidOrderUpdateRequestDto_whenUpdateOrderIsCalled_thenReturnsUnprocessableContent() throws Exception {
+        // arrange
+        Order order = orders.get(0);
+        OrderUpdateRequestDto request = new OrderUpdateRequestDto(List.of(new OrderItemRequestDto(-1L, -5)));
+
+        // act and assert
+        mockMvc.perform(put(baseUrl + "/{orderId}", order.getId())
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnprocessableContent());
+
+        verify(orderService, never()).updateOrderById(anyLong(), any(OrderUpdateRequestDto.class));
     }
 }
