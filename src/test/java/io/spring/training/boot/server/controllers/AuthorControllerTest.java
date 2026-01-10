@@ -286,5 +286,19 @@ public class AuthorControllerTest {
 
         verify(authorService, never()).updateAuthor(anyLong(), any(AuthorRequestDto.class), any(MultipartFile.class));
     }
+
+    @Test
+    public void givenAuthorId_whenDeleteAuthorIsCalled_thenReturnsNoContentResponse() throws Exception {
+        // arrange
+        Long id = 1L;
+        doNothing().when(authorService).deleteAuthorById(anyLong());
+
+        // act and assert
+        mockMvc.perform(delete(baseUrl + "/" + id))
+                .andExpect(status().isNoContent());
+
+        verify(authorService).deleteAuthorById(id);
+    }
+
 }
 
