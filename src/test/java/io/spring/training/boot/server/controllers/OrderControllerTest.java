@@ -304,4 +304,19 @@ public class OrderControllerTest {
 
         verify(orderService, never()).updateOrderById(anyLong(), any(OrderUpdateRequestDto.class));
     }
+
+    @Test
+    public void givenOrderId_whenCancelOrderIsCalled_thenReturnsNoContent() throws Exception {
+        // arrange
+        Order order = orders.get(0);
+
+        doNothing().when(orderService).cancelOrderById(order.getId());
+
+        // act and assert
+        mockMvc.perform(delete(baseUrl + "/{orderId}", order.getId())
+                .contentType("application/json"))
+                .andExpect(status().isNoContent());
+
+        verify(orderService).cancelOrderById(order.getId());
+    }
 }
