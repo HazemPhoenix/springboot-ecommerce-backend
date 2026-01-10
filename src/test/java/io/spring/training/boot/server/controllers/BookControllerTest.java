@@ -2,9 +2,11 @@ package io.spring.training.boot.server.controllers;
 
 import io.spring.training.boot.server.DTOs.book.BookSummaryDto;
 import io.spring.training.boot.server.config.StorageProperties;
+import io.spring.training.boot.server.exceptions.BookNotFoundException;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.models.Genre;
+import io.spring.training.boot.server.models.projections.BookWithStats;
 import io.spring.training.boot.server.services.BookService;
 import io.spring.training.boot.server.utils.mappers.BookMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -119,4 +121,53 @@ public class BookControllerTest {
                 .andExpect(jsonPath("$.content[0].title").value("Book One"));
 
     }
+
+    @Test
+    public void givenValidBookId_whenGetBookByIdIsCalled_thenReturnsBookResponseWithStats() throws Exception {
+        // arrange
+        Long bookId = 1L;
+        var bookResponseWithStats = BookMapper.toBookResponseWithStats(new BookWithStats() {
+            @Override
+            public Book getBook() {
+                return books.getFirst();
+            }
+
+            @Override
+            public int getTotalReviews() {
+                return 5;
+            }
+
+            @Override
+            public double getAverageRating() {
+                return 4.2;
+            }
+        });
+
+        when(bookService.findBookById(eq(bookId))).thenReturn(bookResponseWithStats);
+
+        // act and assert
+        mockMvc.perform(get(baseUrl + "/{id}", bookId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(bookId))
+                .andExpect(jsonPath("$.title").value("Book One"))
+                .andExpect(jsonPath("$.totalReviews").value(5))
+                .andExpect(jsonPath("$.averageRating").value(4.2));
+
+        verify(bookService).findBookById(eq(bookId));
+    }
+
+    @Test
+    public void givenInvalidBookId_whenGetBookByIdIsCalled_thenReturnsNotFound() throws Exception {
+        // arrange
+        Long bookId = 10L;
+
+        when(bookService.findBookById(eq(bookId))).thenThrow(BookNotFoundException.class);
+
+        // act and assert
+        mockMvc.perform(get(baseUrl + "/{id}", bookId))
+                .andExpect(status().isNotFound());
+
+        verify(bookService).findBookById(eq(bookId));
+    }
+
 }
