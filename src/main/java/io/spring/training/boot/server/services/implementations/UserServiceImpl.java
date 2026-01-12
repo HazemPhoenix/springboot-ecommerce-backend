@@ -4,6 +4,7 @@ import io.spring.training.boot.server.DTOs.user.UserRequestDto;
 import io.spring.training.boot.server.DTOs.user.UserResponseDto;
 import io.spring.training.boot.server.exceptions.DuplicateResourceException;
 import io.spring.training.boot.server.exceptions.UserNotFoundException;
+import io.spring.training.boot.server.models.Role;
 import io.spring.training.boot.server.models.User;
 import io.spring.training.boot.server.models.UserAddress;
 import io.spring.training.boot.server.repositories.UserRepo;
@@ -11,6 +12,10 @@ import io.spring.training.boot.server.services.UserService;
 import io.spring.training.boot.server.utils.mappers.AddressMapper;
 import io.spring.training.boot.server.utils.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -31,6 +37,9 @@ public class UserServiceImpl implements UserService {
         User user = UserMapper.fromUserRequestDto(requestDto);
         UserAddress addresses = AddressMapper.fromAddressRequestDto(requestDto.address(), user);
         user.setAddress(addresses);
+        String unencodedPassword = user.getPassword();
+        String encodedPassword = passwordEncoder.encode(unencodedPassword);
+        user.setPassword(encodedPassword);
         return UserMapper.toUserResponseDto(userRepo.save(user));
     }
 
