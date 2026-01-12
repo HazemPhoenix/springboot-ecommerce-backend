@@ -3,7 +3,6 @@ package io.spring.training.boot.server.security;
 import io.spring.training.boot.server.models.User;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
-import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,13 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
 @RequiredArgsConstructor
-public class CustomUserDetails implements UserDetails, CredentialsContainer {
+public class CustomUserDetails implements UserDetails {
     private final User user;
-
-    @Override
-    public void eraseCredentials() {
-        user.setPassword("");
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -33,7 +27,7 @@ public class CustomUserDetails implements UserDetails, CredentialsContainer {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getEmail();
     }
 
     @Override
