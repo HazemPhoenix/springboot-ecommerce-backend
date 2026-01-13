@@ -1,7 +1,7 @@
 package io.spring.training.boot.server.services;
 
 import io.spring.training.boot.server.DTOs.address.AddressRequestDto;
-import io.spring.training.boot.server.DTOs.user.UserRequestDto;
+import io.spring.training.boot.server.DTOs.auth.RegisterRequestDto;
 import io.spring.training.boot.server.DTOs.user.UserResponseDto;
 import io.spring.training.boot.server.exceptions.DuplicateResourceException;
 import io.spring.training.boot.server.exceptions.UserNotFoundException;
@@ -30,13 +30,13 @@ public class UserServiceImplTest {
     private UserServiceImpl userService;
 
     private User user;
-    private UserRequestDto userRequestDto;
+    private RegisterRequestDto registerRequestDto;
 
     @BeforeEach
     public void setup(){
         AddressRequestDto addressRequestDto = new AddressRequestDto("123 Main St", "City", "Country", "12345");
 
-        userRequestDto = new UserRequestDto(
+        registerRequestDto = new RegisterRequestDto(
                 "testUser",
                 "password123",
                 "test@test.com",
@@ -72,7 +72,7 @@ public class UserServiceImplTest {
         when(userRepo.save(any(User.class))).thenReturn(user);
 
         // Act
-        UserResponseDto response = userService.registerUser(userRequestDto);
+        UserResponseDto response = userService.registerUser(registerRequestDto);
 
         // Assert
         verify(userRepo).existsByUsername("testUser");
@@ -90,7 +90,7 @@ public class UserServiceImplTest {
         when(userRepo.existsByUsername("testUser")).thenReturn(true);
 
         // Act & Assert
-        assertThatThrownBy(() -> userService.registerUser(userRequestDto))
+        assertThatThrownBy(() -> userService.registerUser(registerRequestDto))
                 .isExactlyInstanceOf(DuplicateResourceException.class)
                 .hasMessage("Username already exists");
 
@@ -104,7 +104,7 @@ public class UserServiceImplTest {
         when(userRepo.existsByEmail("test@test.com")).thenReturn(true);
 
         // Act & Assert
-        assertThatThrownBy(() -> userService.registerUser(userRequestDto))
+        assertThatThrownBy(() -> userService.registerUser(registerRequestDto))
                 .isExactlyInstanceOf(DuplicateResourceException.class)
                 .hasMessage("Email already exists");
 

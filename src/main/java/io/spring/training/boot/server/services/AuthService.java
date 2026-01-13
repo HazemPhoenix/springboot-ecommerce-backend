@@ -3,6 +3,6 @@ package io.spring.training.boot.server.services;
 import io.spring.training.boot.server.DTOs.auth.RegisterRequestDto;
 import io.spring.training.boot.server.DTOs.user.UserResponseDto;
 
-public interface UserService {
-    UserResponseDto getUserProfile();
+public interface AuthService {
+    UserResponseDto register(RegisterRequestDto request);
 }

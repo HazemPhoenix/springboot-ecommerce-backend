@@ -1,10 +1,9 @@
 package io.spring.training.boot.server.services.implementations;
 
-import io.spring.training.boot.server.DTOs.user.UserRequestDto;
+import io.spring.training.boot.server.DTOs.auth.RegisterRequestDto;
 import io.spring.training.boot.server.DTOs.user.UserResponseDto;
 import io.spring.training.boot.server.exceptions.DuplicateResourceException;
 import io.spring.training.boot.server.exceptions.UserNotFoundException;
-import io.spring.training.boot.server.models.Role;
 import io.spring.training.boot.server.models.User;
 import io.spring.training.boot.server.models.UserAddress;
 import io.spring.training.boot.server.repositories.UserRepo;
@@ -12,9 +11,6 @@ import io.spring.training.boot.server.services.UserService;
 import io.spring.training.boot.server.utils.mappers.AddressMapper;
 import io.spring.training.boot.server.utils.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserResponseDto registerUser(UserRequestDto requestDto) {
+    public UserResponseDto registerUser(RegisterRequestDto requestDto) {
         if(userRepo.existsByUsername(requestDto.username())){
             throw new DuplicateResourceException("Username already exists");
         }
