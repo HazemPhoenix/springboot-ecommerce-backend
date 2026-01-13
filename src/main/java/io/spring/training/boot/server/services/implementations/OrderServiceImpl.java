@@ -188,4 +188,9 @@ public class OrderServiceImpl implements OrderService {
         bookRepo.saveAll(updatedBooks);
         orderItemRepo.deleteAll(orderItems);
     }
+
+    @Override
+    public void updateOrderStatus(Long orderId, OrderStatus status) {
+        orderRepo.updateOrderStatus(orderId, status);
+    }
 }

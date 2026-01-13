@@ -104,7 +104,14 @@ public class OrderControllerTest {
                 .genres(Set.of(new Genre("Drama")))
                 .build();
 
-        Order o1 = null;
+        Order o1 = Order.builder()
+                .id(1L)
+                .user(u1)
+                .status(OrderStatus.PROCESSING)
+                .paymentMethod(PaymentMethod.COD)
+                .date(LocalDate.now())
+                .build();
+
         OrderItem oi1 = OrderItem.builder()
                 .id(1L)
                 .order(o1)
@@ -113,17 +120,17 @@ public class OrderControllerTest {
                 .totalItemPrice(BigDecimal.valueOf(5).multiply(BigDecimal.valueOf(29.99)))
                 .build();
 
-        o1 = Order.builder()
-                .id(1L)
-                .user(u1)
+        o1.setOrderItems(Set.of(oi1));
+        o1.setTotalAmount(oi1.getTotalItemPrice());
+
+        Order o2 = Order.builder()
+                .id(2L)
+                .user(u2)
                 .status(OrderStatus.PROCESSING)
-                .paymentMethod(PaymentMethod.COD)
-                .orderItems(Set.of(oi1))
-                .totalAmount(oi1.getTotalItemPrice())
+                .paymentMethod(PaymentMethod.CREDIT_CARD)
                 .date(LocalDate.now())
                 .build();
 
-        Order o2 = null;
         OrderItem oi2 = OrderItem.builder()
                 .id(2L)
                 .order(o2)
@@ -132,15 +139,8 @@ public class OrderControllerTest {
                 .totalItemPrice(BigDecimal.valueOf(2).multiply(BigDecimal.valueOf(39.99)))
                 .build();
 
-        o2 = Order.builder()
-                .id(2L)
-                .user(u2)
-                .status(OrderStatus.PROCESSING)
-                .paymentMethod(PaymentMethod.CREDIT_CARD)
-                .orderItems(Set.of(oi2))
-                .totalAmount(oi2.getTotalItemPrice())
-                .date(LocalDate.now())
-                .build();
+        o2.setOrderItems(Set.of(oi2));
+        o2.setTotalAmount(oi2.getTotalItemPrice());
 
         orders = List.of(o1, o2);
     }

@@ -30,19 +30,9 @@ public class UserServiceImplTest {
     private UserServiceImpl userService;
 
     private User user;
-    private RegisterRequestDto registerRequestDto;
 
     @BeforeEach
     public void setup(){
-        AddressRequestDto addressRequestDto = new AddressRequestDto("123 Main St", "City", "Country", "12345");
-
-        registerRequestDto = new RegisterRequestDto(
-                "testUser",
-                "password123",
-                "test@test.com",
-                "201014656945",
-                addressRequestDto
-        );
 
         UserAddress address = UserAddress.builder()
                 .id(1L)
@@ -62,53 +52,6 @@ public class UserServiceImplTest {
                 .build();
 
         address.setUser(user);
-    }
-
-    @Test
-    public void givenValidRequest_whenRegisterUserIsCalled_thenReturnUserResponseDto() {
-        // Arrange
-        when(userRepo.existsByUsername("testUser")).thenReturn(false);
-        when(userRepo.existsByEmail("test@test.com")).thenReturn(false);
-        when(userRepo.save(any(User.class))).thenReturn(user);
-
-        // Act
-        UserResponseDto response = userService.registerUser(registerRequestDto);
-
-        // Assert
-        verify(userRepo).existsByUsername("testUser");
-        verify(userRepo).existsByEmail("test@test.com");
-        verify(userRepo).save(any(User.class));
-
-        assertThat(response).isNotNull();
-        assertThat(response.username()).isEqualTo("testUser");
-        assertThat(response.email()).isEqualTo("test@test.com");
-    }
-
-    @Test
-    public void givenDuplicateUsername_whenRegisterUserIsCalled_thenThrowDuplicateResourceException() {
-        // Arrange
-        when(userRepo.existsByUsername("testUser")).thenReturn(true);
-
-        // Act & Assert
-        assertThatThrownBy(() -> userService.registerUser(registerRequestDto))
-                .isExactlyInstanceOf(DuplicateResourceException.class)
-                .hasMessage("Username already exists");
-
-        verify(userRepo, never()).save(any(User.class));
-    }
-
-    @Test
-    public void givenDuplicateEmail_whenRegisterUserIsCalled_thenThrowDuplicateResourceException() {
-        // Arrange
-        when(userRepo.existsByUsername("testUser")).thenReturn(false);
-        when(userRepo.existsByEmail("test@test.com")).thenReturn(true);
-
-        // Act & Assert
-        assertThatThrownBy(() -> userService.registerUser(registerRequestDto))
-                .isExactlyInstanceOf(DuplicateResourceException.class)
-                .hasMessage("Email already exists");
-
-        verify(userRepo, never()).save(any(User.class));
     }
 
     @Test

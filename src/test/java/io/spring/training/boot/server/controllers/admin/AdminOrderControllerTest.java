@@ -1,10 +1,12 @@
 package io.spring.training.boot.server.controllers.admin;
 
+import io.spring.training.boot.server.DTOs.order.OrderSummaryDto;
 import io.spring.training.boot.server.config.StorageProperties;
 import io.spring.training.boot.server.models.*;
 import io.spring.training.boot.server.models.enums.OrderStatus;
 import io.spring.training.boot.server.models.enums.PaymentMethod;
 import io.spring.training.boot.server.services.OrderService;
+import io.spring.training.boot.server.utils.mappers.OrderMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,29 +155,17 @@ public class AdminOrderControllerTest {
     }
 
     @Test
-    public void givenValidOrderIdAndStatus_whenUpdateOrderStatusIsCalled_thenReturnsUpdatedOrder() throws Exception {
+    public void givenValidOrderIdAndStatus_whenUpdateOrderStatusIsCalled_thenReturnsNoContent() throws Exception {
         // arrange
         Order order = orders.get(0);
         OrderStatus newStatus = OrderStatus.ON_THE_WAY;
 
-        when(orderService.updateOrderStatus(order.getId(), newStatus)).thenReturn(
-                Order.builder()
-                        .id(order.getId())
-                        .user(order.getUser())
-                        .status(newStatus)
-                        .paymentMethod(order.getPaymentMethod())
-                        .orderItems(order.getOrderItems())
-                        .totalAmount(order.getTotalAmount())
-                        .date(order.getDate())
-                        .build()
-        );
+        doNothing().when(orderService).updateOrderStatus(order.getId(), newStatus);
 
         // act and assert
         mockMvc.perform(patch(baseUrl + "/{orderId}", order.getId())
                     .param("status", newStatus.name()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(order.getId()))
-                .andExpect(jsonPath("$.status").value(newStatus.name()));
+                .andExpect(status().isNoContent());
 
         verify(orderService).updateOrderStatus(order.getId(), newStatus);
     }

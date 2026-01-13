@@ -22,24 +22,6 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    @Transactional
-    public UserResponseDto registerUser(RegisterRequestDto requestDto) {
-        if(userRepo.existsByUsername(requestDto.username())){
-            throw new DuplicateResourceException("Username already exists");
-        }
-        if(userRepo.existsByEmail(requestDto.email())){
-            throw new DuplicateResourceException("Email already exists");
-        }
-        User user = UserMapper.fromUserRequestDto(requestDto);
-        UserAddress addresses = AddressMapper.fromAddressRequestDto(requestDto.address(), user);
-        user.setAddress(addresses);
-        String unencodedPassword = user.getPassword();
-        String encodedPassword = passwordEncoder.encode(unencodedPassword);
-        user.setPassword(encodedPassword);
-        return UserMapper.toUserResponseDto(userRepo.save(user));
-    }
-
-    @Override
     public UserResponseDto getUserProfile (){
         // TODO: get user id from security context
         Long userId = 17L;

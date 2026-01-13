@@ -5,14 +5,12 @@ import io.spring.training.boot.server.DTOs.user.UserResponseDto;
 import io.spring.training.boot.server.services.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -23,11 +21,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> registerUser(@Valid @RequestBody RegisterRequestDto requestDto){
         UserResponseDto responseDto = authService.register(requestDto);
-        URI userUri = ServletUriComponentsBuilder
-                .fromCurrentRequestUri()
-                .path("/{userId}")
-                .build(responseDto.id());
-        return ResponseEntity.created(userUri).body(responseDto);
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
     // TODO: add another endpoint for login

@@ -23,7 +23,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth
                             .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.POST,"/api/v1/users/register").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/genres/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/books/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/authors/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/books/*/reviews").permitAll()
                             .anyRequest().authenticated();
                 })
                 .csrf(AbstractHttpConfigurer::disable)

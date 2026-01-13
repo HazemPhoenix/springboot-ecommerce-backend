@@ -193,16 +193,123 @@ public class BookReviewControllerTest {
     }
 
     @Test
-    public void givenValidBookIdWithoutUserId_whenDeleteReviewIsCalled_thenCallsUserVersionAndReturnsNoContent() throws Exception {
+    public void givenValidReviewRequestDtoAndBookId_whenCreateReviewIsCalled_thenReturnsCorrectReviewResponseDto() throws Exception {
         // arrange
         Long bookId = 1L;
-        doNothing().when(bookService).deleteReviewForUser(anyLong());
+        ReviewRequestDto request = new ReviewRequestDto(5, "Great Book", "I really enjoyed reading this book.");
+        ReviewResponseDto response = ReviewMapper.toReviewResponseDto(reviews.get(0));
+
+        when(bookService.createReviewForBook(anyLong(), any(ReviewRequestDto.class))).thenReturn(response);
+
+        // act and assert
+        mockMvc.perform(post(baseUrl, bookId)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.rating").value(response.rating()))
+                .andExpect(jsonPath("$.title").value(response.title()))
+                .andExpect(jsonPath("$.content").value(response.content()));
+
+        verify(bookService).createReviewForBook(eq(bookId), any(ReviewRequestDto.class));
+    }
+
+    @Test
+    public void givenValidReviewRequestDtoButInvalidBookId_whenCreateReviewIsCalled_thenReturnsNotFound() throws Exception {
+        // arrange
+        Long bookId = 10L;
+        ReviewRequestDto request = new ReviewRequestDto(5, "Great Book", "I really enjoyed reading this book.");
+
+        when(bookService.createReviewForBook(anyLong(), any(ReviewRequestDto.class)))
+                .thenThrow(BookNotFoundException.class);
+
+        // act and assert
+        mockMvc.perform(post(baseUrl, bookId)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound());
+
+        verify(bookService).createReviewForBook(eq(bookId), any(ReviewRequestDto.class));
+    }
+
+    @Test
+    public void givenInvalidReviewRequestDtoAndValidBookId_whenCreateReviewIsCalled_thenReturnsUnProcessableContent() throws Exception {
+        // arrange
+        Long bookId = 1L;
+        ReviewRequestDto request = new ReviewRequestDto(100, "Great Book", "I really enjoyed reading this book.");
+
+        // act and assert
+        mockMvc.perform(post(baseUrl, bookId)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnprocessableContent());
+
+        verify(bookService, never()).createReviewForBook(anyLong(), any(ReviewRequestDto.class));
+    }
+
+    @Test
+    public void givenValidReviewRequestDtoAndBookId_whenUpdateReviewIsCalled_thenReturnsCorrectReviewResponseDto() throws Exception {
+        // arrange
+        Long bookId = 1L;
+        ReviewRequestDto request = new ReviewRequestDto(4, "Good Book", "I enjoyed reading this book.");
+        ReviewResponseDto response = ReviewMapper.toReviewResponseDto(reviews.get(0));
+
+        when(bookService.updateReviewForBook(anyLong(), any(ReviewRequestDto.class))).thenReturn(response);
+
+        // act and assert
+        mockMvc.perform(put(baseUrl, bookId)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.rating").value(response.rating()))
+                .andExpect(jsonPath("$.title").value(response.title()))
+                .andExpect(jsonPath("$.content").value(response.content()));
+
+        verify(bookService).updateReviewForBook(eq(bookId), any(ReviewRequestDto.class));
+    }
+
+    @Test
+    public void givenValidReviewRequestDtoButInvalidBookId_whenUpdateReviewIsCalled_thenReturnsNotFound() throws Exception {
+        // arrange
+        Long bookId = 10L;
+        ReviewRequestDto request = new ReviewRequestDto(4, "Good Book", "I enjoyed reading this book.");
+        when(bookService.updateReviewForBook(anyLong(), any(ReviewRequestDto.class)))
+                .thenThrow(BookNotFoundException.class);
+
+        // act and assert
+        mockMvc.perform(put(baseUrl, bookId)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound());
+        verify(bookService).updateReviewForBook(eq(bookId), any(ReviewRequestDto.class));
+    }
+
+    @Test
+    public void givenInvalidReviewRequestDtoAndValidBookId_whenUpdateReviewIsCalled_thenReturnsUnProcessableContent() throws Exception  {
+        // arrange
+        Long bookId = 1L;
+        ReviewRequestDto request = new ReviewRequestDto(-10, "Terrible book", "I did not like this book at all.");
+
+        // act and assert
+        mockMvc.perform(put(baseUrl, bookId)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnprocessableContent());
+
+        verify(bookService, never()).updateReviewForBook(anyLong(), any(ReviewRequestDto.class));
+    }
+
+    @Test
+    public void givenValidBookId_whenDeleteReviewIsCalled_thenCallsUserVersionAndReturnsNoContent() throws Exception {
+        // arrange
+        Long bookId = 1L;
+
+        doNothing().when(bookService).deleteReviewForUser(bookId);
 
         // act and assert
         mockMvc.perform(delete(baseUrl, bookId))
                 .andExpect(status().isNoContent());
 
-        verify(bookService).deleteReviewForUser(eq(bookId));
         verify(bookService, never()).deleteReviewForAdmin(anyLong(), anyLong());
+        verify(bookService).deleteReviewForUser(bookId);
     }
 }

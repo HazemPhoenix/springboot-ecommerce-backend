@@ -15,4 +15,8 @@ public interface OrderRepo extends JpaRepository<Order, Long> {
     Page<Order> findByStatus(OrderStatus status, Pageable pageable);
     Page<Order> findByPaymentMethod(PaymentMethod paymentMethod, Pageable pageable);
     Page<Order> findByUserId(Long userId, Pageable pageable);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update Order o set o.status = :status where o.id = :orderId")
+    void updateOrderStatus(Long orderId, OrderStatus status);
 }

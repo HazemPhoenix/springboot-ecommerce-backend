@@ -5,4 +5,6 @@ import io.spring.training.boot.server.DTOs.user.UserResponseDto;
 
 public interface AuthService {
     UserResponseDto register(RegisterRequestDto request);
+
+    String login(String email, String password);
 }

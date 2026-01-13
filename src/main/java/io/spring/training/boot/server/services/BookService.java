@@ -28,7 +28,7 @@ public interface BookService {
 
     Page<ReviewResponseDto> getReviewsForBook(Long bookId, Pageable pageable, String keyword);
 
-    void deleteReviewForAdmin(Long bookId, Long reviewId);
+    void deleteReviewForAdmin(Long bookId, Long userId);
 
     void deleteReviewForUser(Long bookId);
 }
