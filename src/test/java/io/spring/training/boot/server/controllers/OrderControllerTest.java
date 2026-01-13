@@ -269,7 +269,6 @@ public class OrderControllerTest {
         verify(orderService).updateOrderById(order.getId(), request);
     }
 
-    // update order: invalid order id -> 404 Not Found
     @Test
     public void givenInvalidOrderIdAndValidOrderUpdateRequestDto_whenUpdateOrderIsCalled_thenReturnsNotFound() throws Exception {
         // arrange
