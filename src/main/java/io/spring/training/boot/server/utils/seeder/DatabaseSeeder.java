@@ -1,4 +1,4 @@
-package io.spring.training.boot.server.seeder;
+package io.spring.training.boot.server.utils.seeder;
 
 import com.github.javafaker.Faker;
 import io.spring.training.boot.server.models.Author;
