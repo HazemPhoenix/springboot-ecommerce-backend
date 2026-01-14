@@ -1,4 +1,4 @@
-package io.spring.training.boot.server.security;
+package io.spring.training.boot.server.security.services;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

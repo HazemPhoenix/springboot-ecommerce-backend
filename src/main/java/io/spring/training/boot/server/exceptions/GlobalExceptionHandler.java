@@ -65,6 +65,11 @@ public class GlobalExceptionHandler {
         return formatErrorResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), request);
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException exception, WebRequest request){
+        return formatErrorResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), request);
+    }
+
     private ResponseEntity<ErrorResponse> formatErrorResponse(HttpStatus status, String message, WebRequest request){
         return new ResponseEntity<>(new ErrorResponse(
                 status.value(),

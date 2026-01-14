@@ -1,7 +1,8 @@
-package io.spring.training.boot.server.security;
+package io.spring.training.boot.server.security.services;
 
 import io.spring.training.boot.server.models.User;
 import io.spring.training.boot.server.repositories.UserRepo;
+import io.spring.training.boot.server.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
