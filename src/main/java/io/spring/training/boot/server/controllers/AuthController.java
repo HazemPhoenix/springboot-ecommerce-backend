@@ -1,6 +1,7 @@
 package io.spring.training.boot.server.controllers;
 
 import io.spring.training.boot.server.DTOs.auth.LoginRequestDto;
+import io.spring.training.boot.server.DTOs.auth.LoginResponseDto;
 import io.spring.training.boot.server.DTOs.auth.RegisterRequestDto;
 import io.spring.training.boot.server.services.AuthService;
 import jakarta.validation.Valid;
@@ -24,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@Valid @RequestBody LoginRequestDto requestDto){
+    public ResponseEntity<LoginResponseDto> loginUser(@Valid @RequestBody LoginRequestDto requestDto){
         return ResponseEntity.ok(authService.login(requestDto));
     }
 }

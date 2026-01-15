@@ -2,6 +2,7 @@ package io.spring.training.boot.server.controllers;
 
 import io.spring.training.boot.server.DTOs.address.AddressRequestDto;
 import io.spring.training.boot.server.DTOs.auth.LoginRequestDto;
+import io.spring.training.boot.server.DTOs.auth.LoginResponseDto;
 import io.spring.training.boot.server.DTOs.auth.RegisterRequestDto;
 import io.spring.training.boot.server.DTOs.user.UserResponseDto;
 import io.spring.training.boot.server.config.StorageProperties;
@@ -15,6 +16,7 @@ import io.spring.training.boot.server.utils.mappers.UserMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -119,16 +121,40 @@ public class AuthControllerTest {
         String password = "Password123!";
         LoginRequestDto request = new LoginRequestDto(email, password);
         String testToken = "asdhjkasdmnakdnajksndksadkjaskj";
+        LoginResponseDto response = new LoginResponseDto(email, testToken);
 
-        when(authService.login(any(LoginRequestDto.class))).thenReturn(testToken);
+        when(authService.login(any(LoginRequestDto.class))).thenReturn(response);
 
         // act and assert
         mockMvc.perform(post(baseUrl + "/login")
-                    .content(objectMapper.writeValueAsString(request)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value(testToken));
+                .andExpect(jsonPath("$.email").value(response.email()))
+                .andExpect(jsonPath("$.token").value(response.token()));
 
         verify(authService).login(request);
+    }
+
+    @Test
+    public void givenInvalidLoginRequestDto_whenLoginUserIsCalled_thenReturnsUnProcessableContentResponse() throws Exception {
+        // arrange
+        String email = "test"; // invalid email
+        String password = "123456789"; // invalid password
+        LoginRequestDto request = new LoginRequestDto(email, password);
+
+        String testToken = "asdhjkasdmnakdnajksndksadkjaskj";
+        LoginResponseDto response = new LoginResponseDto(email, testToken);
+
+        when(authService.login(any(LoginRequestDto.class))).thenReturn(response);
+
+        // act and assert
+        mockMvc.perform(post(baseUrl + "/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnprocessableContent());
+
+        verify(authService, never()).login(any(LoginRequestDto.class));
     }
 
 }
