@@ -69,23 +69,19 @@ public class AuthServiceImplTest {
     }
 
     @Test
-    public void givenValidRegisterRequestDto_whenRegisterIsCalled_thenReturnsCorrectUserResponseDto() {
+    public void givenValidRegisterRequestDto_whenRegisterIsCalled_thenReturnsNoContentResponse() {
         // Arrange
         when(userRepo.existsByUsername("testUser")).thenReturn(false);
         when(userRepo.existsByEmail("test@test.com")).thenReturn(false);
         when(userRepo.save(any(User.class))).thenReturn(user);
 
         // Act
-        UserResponseDto response = authService.register(registerRequestDto);
+        authService.register(registerRequestDto);
 
         // Assert
         verify(userRepo).existsByUsername("testUser");
         verify(userRepo).existsByEmail("test@test.com");
         verify(userRepo).save(any(User.class));
-
-        assertThat(response).isNotNull();
-        assertThat(response.username()).isEqualTo("testUser");
-        assertThat(response.email()).isEqualTo("test@test.com");
     }
 
     @Test

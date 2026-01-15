@@ -7,6 +7,9 @@ import io.spring.training.boot.server.config.StorageProperties;
 import io.spring.training.boot.server.exceptions.AuthorNotFoundException;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Genre;
+import io.spring.training.boot.server.security.filters.JwtFilter;
+import io.spring.training.boot.server.security.services.JwtService;
+import io.spring.training.boot.server.security.services.UserDetailsServiceImpl;
 import io.spring.training.boot.server.services.AuthorService;
 import io.spring.training.boot.server.utils.mappers.AuthorMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +49,15 @@ public class AdminAuthorControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private JwtFilter jwtFilter;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private UserDetailsServiceImpl userDetailsService;
 
     private List<Author> authors;
 

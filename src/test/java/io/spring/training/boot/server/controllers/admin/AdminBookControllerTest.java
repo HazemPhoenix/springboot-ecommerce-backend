@@ -7,6 +7,9 @@ import io.spring.training.boot.server.exceptions.BookNotFoundException;
 import io.spring.training.boot.server.models.Author;
 import io.spring.training.boot.server.models.Book;
 import io.spring.training.boot.server.models.Genre;
+import io.spring.training.boot.server.security.filters.JwtFilter;
+import io.spring.training.boot.server.security.services.JwtService;
+import io.spring.training.boot.server.security.services.UserDetailsServiceImpl;
 import io.spring.training.boot.server.services.BookService;
 import io.spring.training.boot.server.utils.mappers.AuthorMapper;
 import io.spring.training.boot.server.utils.mappers.GenreMapper;
@@ -45,6 +48,15 @@ public class AdminBookControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private JwtFilter jwtFilter;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private UserDetailsServiceImpl userDetailsService;
 
     private List<Book> books;
 

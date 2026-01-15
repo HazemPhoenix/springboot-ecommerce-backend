@@ -1,16 +1,21 @@
 package io.spring.training.boot.server.controllers;
 
 import io.spring.training.boot.server.DTOs.address.AddressRequestDto;
+import io.spring.training.boot.server.DTOs.auth.LoginRequestDto;
 import io.spring.training.boot.server.DTOs.auth.RegisterRequestDto;
 import io.spring.training.boot.server.DTOs.user.UserResponseDto;
 import io.spring.training.boot.server.config.StorageProperties;
 import io.spring.training.boot.server.models.User;
 import io.spring.training.boot.server.models.UserAddress;
+import io.spring.training.boot.server.security.filters.JwtFilter;
+import io.spring.training.boot.server.security.services.JwtService;
+import io.spring.training.boot.server.security.services.UserDetailsServiceImpl;
 import io.spring.training.boot.server.services.AuthService;
 import io.spring.training.boot.server.utils.mappers.UserMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
@@ -37,12 +42,22 @@ public class AuthControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private JwtFilter jwtFilter;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private UserDetailsServiceImpl userDetailsService;
+
+
     private List<User> users;
 
     private final String baseUrl = "/api/v1/auth";
 
     @Test
-    public void givenValidUserRequestDto_whenRegisterUserIsCalled_thenReturnsUserResponseDto() throws Exception {
+    public void givenValidUserRequestDto_whenRegisterUserIsCalled_thenReturnsNoContentResponse() throws Exception {
         // arrange
         User newUser = User.builder()
                 .id(3L)
@@ -66,16 +81,15 @@ public class AuthControllerTest {
 
         UserResponseDto response = UserMapper.toUserResponseDto(newUser);
 
-        when(authService.register(any(RegisterRequestDto.class))).thenReturn(response);
+        doNothing().when(authService).register(any(RegisterRequestDto.class));
 
         // act and assert
         mockMvc.perform(post(baseUrl + "/register")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(3L));
+                .andExpect(status().isNoContent());
 
-        verify(authService, times(1)).register(any(RegisterRequestDto.class));
+        verify(authService).register(any(RegisterRequestDto.class));
     }
 
     @Test
@@ -96,6 +110,25 @@ public class AuthControllerTest {
                 .andExpect(status().isUnprocessableContent());
 
         verify(authService, never()).register(any(RegisterRequestDto.class));
+    }
+
+    @Test
+    public void givenValidLoginRequestDto_whenLoginIsCalled_thenReturnsJwtToken() throws Exception {
+        // arrange
+        String email = "test@email.com";
+        String password = "Password123!";
+        LoginRequestDto request = new LoginRequestDto(email, password);
+        String testToken = "asdhjkasdmnakdnajksndksadkjaskj";
+
+        when(authService.login(any(LoginRequestDto.class))).thenReturn(testToken);
+
+        // act and assert
+        mockMvc.perform(post(baseUrl + "/login")
+                    .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value(testToken));
+
+        verify(authService).login(request);
     }
 
 }

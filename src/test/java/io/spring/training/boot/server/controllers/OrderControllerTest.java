@@ -6,6 +6,9 @@ import io.spring.training.boot.server.exceptions.OrderNotFoundException;
 import io.spring.training.boot.server.models.*;
 import io.spring.training.boot.server.models.enums.OrderStatus;
 import io.spring.training.boot.server.models.enums.PaymentMethod;
+import io.spring.training.boot.server.security.filters.JwtFilter;
+import io.spring.training.boot.server.security.services.JwtService;
+import io.spring.training.boot.server.security.services.UserDetailsServiceImpl;
 import io.spring.training.boot.server.services.BookService;
 import io.spring.training.boot.server.services.OrderService;
 import io.spring.training.boot.server.utils.mappers.OrderItemMapper;
@@ -45,6 +48,15 @@ public class OrderControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private JwtFilter jwtFilter;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private UserDetailsServiceImpl userDetailsService;
 
     private List<Order> orders;
 

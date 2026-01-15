@@ -1,11 +1,10 @@
 package io.spring.training.boot.server.controllers;
 
+import io.spring.training.boot.server.DTOs.auth.LoginRequestDto;
 import io.spring.training.boot.server.DTOs.auth.RegisterRequestDto;
-import io.spring.training.boot.server.DTOs.user.UserResponseDto;
 import io.spring.training.boot.server.services.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,10 +18,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> registerUser(@Valid @RequestBody RegisterRequestDto requestDto){
-        UserResponseDto responseDto = authService.register(requestDto);
-        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+    public ResponseEntity<Void> registerUser(@Valid @RequestBody RegisterRequestDto requestDto){
+        authService.register(requestDto);
+        return ResponseEntity.noContent().build();
     }
 
-    // TODO: add another endpoint for login
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@Valid @RequestBody LoginRequestDto requestDto){
+        return ResponseEntity.ok(authService.login(requestDto));
+    }
 }
