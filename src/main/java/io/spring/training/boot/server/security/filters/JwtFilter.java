@@ -75,6 +75,7 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private String extractTokenFromHeader(String header){
+        if(!header.contains("Bearer")) return header.trim();
         String bearer = "Bearer ";
         return header.trim().substring(header.indexOf(bearer) + bearer.length());
     }
