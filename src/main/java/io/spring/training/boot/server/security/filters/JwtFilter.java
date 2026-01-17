@@ -1,6 +1,7 @@
 package io.spring.training.boot.server.security.filters;
 
 import io.spring.training.boot.server.exceptions.UnauthorizedException;
+import io.spring.training.boot.server.security.CustomUserDetails;
 import io.spring.training.boot.server.security.services.JwtService;
 import io.spring.training.boot.server.security.services.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
@@ -54,9 +55,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if(email != null && SecurityContextHolder.getContext().getAuthentication() == null){
             try {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+                CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(email);
                 if(jwtService.isTokenValid(token)){
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, null, userDetails.getAuthorities());
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 } else {
                     exceptionResolver.resolveException(request, response, null, new UnauthorizedException("Invalid or expired token"));

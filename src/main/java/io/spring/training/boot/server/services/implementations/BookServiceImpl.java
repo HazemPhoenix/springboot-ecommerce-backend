@@ -16,6 +16,7 @@ import io.spring.training.boot.server.models.embeddables.ReviewId;
 import io.spring.training.boot.server.models.projections.BookWithStats;
 import io.spring.training.boot.server.repositories.BookRepo;
 import io.spring.training.boot.server.repositories.ReviewRepo;
+import io.spring.training.boot.server.security.CustomUserDetails;
 import io.spring.training.boot.server.services.AuthorService;
 import io.spring.training.boot.server.services.BookService;
 import io.spring.training.boot.server.services.GenreService;
@@ -26,6 +27,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -120,19 +123,26 @@ public class BookServiceImpl implements BookService {
     @Override
     public ReviewResponseDto createReviewForBook(Long bookId, ReviewRequestDto reviewRequestDto) {
         if(!bookRepo.existsById(bookId)) throw new BookNotFoundException(bookId);
+
         Review newReview = ReviewMapper.fromReviewRequestDto(reviewRequestDto);
-        // TODO: the user id should be the actual principal id when i add security
-        ReviewId reviewId = new ReviewId(17L, bookId);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        long userId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+
+        ReviewId reviewId = new ReviewId(userId, bookId);
         newReview.setId(reviewId);
         newReview.setEdited(false);
         return ReviewMapper.toReviewResponseDto(reviewRepo.save(newReview));
     }
 
-    // TODO: PreAuthorize this method to make sure the user principal is actually the review author before updating
     @Override
     public ReviewResponseDto updateReviewForBook(Long bookId, ReviewRequestDto reviewRequestDto) {
         if(!bookRepo.existsById(bookId)) throw new BookNotFoundException(bookId);
-        ReviewId reviewId = new ReviewId(17L, bookId);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        long userId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+
+        ReviewId reviewId = new ReviewId(userId, bookId);
 
         // check if the review exists
         if(!reviewRepo.existsById(reviewId)) {
@@ -154,16 +164,15 @@ public class BookServiceImpl implements BookService {
             return reviewRepo.findById_BookIdAndKeyword(pageable, bookId, keyword).map(ReviewMapper::toReviewResponseDto);
     }
 
-    // TODO: PreAuthorize this method to make sure only admins can delete reviews for other users
     @Override
     public void deleteReviewForAdmin(Long bookId, Long userId) {
         reviewRepo.deleteById(new ReviewId(userId, bookId));
     }
 
-    // TODO: PreAuthorize this method to make sure the user principal is actually the review author before deleting
     @Override
     public void deleteReviewForUser(Long bookId) {
-        Long userId = 17L; // TODO: the user id should be the actual principal id when i add security
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         reviewRepo.deleteById(new ReviewId(userId, bookId));
     }
 }

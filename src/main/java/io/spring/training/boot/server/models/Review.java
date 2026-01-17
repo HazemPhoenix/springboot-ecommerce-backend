@@ -4,11 +4,12 @@ import io.spring.training.boot.server.models.embeddables.ReviewId;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "user_reviews")
 @Getter
 @Setter
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -27,5 +28,16 @@ public class Review {
         this.rating = rating;
         this.title = title;
         this.content = content;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Review review)) return false;
+        return Objects.equals(id, review.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
