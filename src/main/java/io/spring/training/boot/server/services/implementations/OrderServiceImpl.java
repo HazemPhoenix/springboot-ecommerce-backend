@@ -13,6 +13,7 @@ import io.spring.training.boot.server.repositories.BookRepo;
 import io.spring.training.boot.server.repositories.OrderItemRepo;
 import io.spring.training.boot.server.repositories.UserRepo;
 import io.spring.training.boot.server.repositories.OrderRepo;
+import io.spring.training.boot.server.security.CustomUserDetails;
 import io.spring.training.boot.server.services.OrderService;
 import io.spring.training.boot.server.utils.mappers.OrderItemMapper;
 import io.spring.training.boot.server.utils.mappers.OrderMapper;
@@ -20,12 +21,17 @@ import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,8 +47,8 @@ public class OrderServiceImpl implements OrderService {
         // create the order object and set the status to PROCESSING
         Order order = OrderMapper.fromOrderRequestDto(orderRequestDto);
         order.setStatus(OrderStatus.PROCESSING);
-        // TODO: the current user principal should be the order's user
-        User user = userRepo.findById(17L).get();
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepo.findById(userDetails.getId()).get();
         order.setUser(user);
         // set the date to today's
         order.setDate(LocalDate.now());
@@ -91,23 +97,33 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public @Nullable Page<OrderSummaryDto> getUserOrders(Pageable pageable) {
-        // TODO: get the current principal's user id
-        Long userId = 17L;
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = userDetails.getId();
         return orderRepo.findByUserId(userId, pageable).map(OrderMapper::toOrderSummaryDto);
     }
 
     @Override
+    @PostAuthorize("returnObject.email() == principal.getUsername() or hasRole('ADMIN')")
     public OrderUserResponseDto getOrderById(Long orderId){
         return orderRepo.findById(orderId)
                 .map(OrderMapper::toOrderUserResponseDto)
                 .orElseThrow(() -> new OrderNotFoundException(orderId));
     }
 
-    // TODO: PreAuthorize this
     @Override
     @Transactional
     public OrderUserResponseDto updateOrderById(Long orderId, OrderUpdateRequestDto orderUpdateRequestDto) {
         Order oldOrder = orderRepo.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
+
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User owner = oldOrder.getUser();
+        if(owner != null && owner.getId() != userDetails.getId()) {
+            throw new AccessDeniedException("You are not authorized to update this order.");
+        }
+
+        if(oldOrder.getStatus() != OrderStatus.PROCESSING) {
+            throw new IllegalStateException("Cannot update the order since it has already been processed.");
+        }
 
         Order newOrder = OrderMapper.fromOrderUpdateRequestDto(orderUpdateRequestDto);
 
@@ -119,8 +135,7 @@ public class OrderServiceImpl implements OrderService {
 
         newOrder.setOrderItems(new HashSet<>(orderItems));
 
-        // TODO: get the user from the current principal
-        User user = userRepo.findById(17L).get();
+        User user = userRepo.findById(userDetails.getId()).get();
         newOrder.setUser(user);
         newOrder.setDate(oldOrder.getDate());
 
@@ -174,12 +189,25 @@ public class OrderServiceImpl implements OrderService {
         return updatedBooks;
     }
 
-    // TODO: PreAuthorize this, only admins and the order's owner should be able to cancel
     @Override
     public void cancelOrderById(Long orderId) {
-        // TODO: check the order status, if the user is not an admin they can only cancel if the status is still OrderStatus.PROCESSING
         Order order = orderRepo.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
+
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        boolean isAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(auth -> Objects.equals(auth.getAuthority(), "ROLE_ADMIN"));
+
+        if(!Objects.equals(userDetails.getId(), order.getUser().getId()) && !isAdmin)  {
+            throw new AccessDeniedException("You are not authorized to cancel this order.");
+        }
+
+        if(order.getStatus() != OrderStatus.PROCESSING && order.getStatus() != OrderStatus.CANCELLED && !isAdmin){
+            throw new IllegalStateException("Cannot cancel an order after it is finished processing.");
+        }
+
         order.setStatus(OrderStatus.CANCELLED);
+
         // update the inventory
         List<OrderItem> orderItems = new ArrayList<>(order.getOrderItems());
         List<Long> oldBookIds = orderItems.stream().mapToLong(oi -> oi.getBook().getId()).boxed().toList();

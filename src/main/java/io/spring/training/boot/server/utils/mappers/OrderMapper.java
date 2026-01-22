@@ -15,7 +15,7 @@ public class OrderMapper {
 
     public static OrderUserResponseDto toOrderUserResponseDto(Order order){
         List<OrderItemResponseDto> orderItemResponseDtoList = order.getOrderItems().stream().map(OrderItemMapper::toOrderItemResponseDto).toList();
-        return new OrderUserResponseDto(order.getId(), order.getStatus(), order.getPaymentMethod(), order.getTotalAmount(), order.getDate(), orderItemResponseDtoList);
+        return new OrderUserResponseDto(order.getId(), order.getUser().getEmail(), order.getStatus(), order.getPaymentMethod(), order.getTotalAmount(), order.getDate(), orderItemResponseDtoList);
     }
 
     public static OrderSummaryDto toOrderSummaryDto(Order order){

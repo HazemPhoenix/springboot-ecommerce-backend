@@ -1,6 +1,7 @@
 package io.spring.training.boot.server.exceptions;
 
 import io.spring.training.boot.server.DTOs.error.ErrorResponse;
+import org.apache.coyote.Response;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,8 +67,8 @@ public class GlobalExceptionHandler {
         return formatErrorResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), request);
     }
 
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException exception, WebRequest request){
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(AccessDeniedException exception, WebRequest request){
         return formatErrorResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), request);
     }
 

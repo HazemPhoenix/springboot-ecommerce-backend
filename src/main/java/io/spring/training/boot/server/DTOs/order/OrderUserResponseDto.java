@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record OrderUserResponseDto(Long id,
+                                   String email,
                                    OrderStatus status,
                                    PaymentMethod paymentMethod,
                                    BigDecimal totalAmount,
