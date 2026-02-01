@@ -53,7 +53,6 @@ public class AuthServiceImpl implements AuthService {
         userRepo.save(user);
     }
 
-
     @Override
     public LoginResponseDto login(LoginRequestDto request) {
         String email = request.email();
