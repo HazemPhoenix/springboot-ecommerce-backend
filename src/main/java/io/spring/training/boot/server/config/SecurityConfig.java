@@ -44,10 +44,12 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.GET, "/api/v1/books/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/v1/authors/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/v1/books/*/reviews").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
                             .requestMatchers("/error").permitAll()
                             .anyRequest().authenticated();
                 })
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(withDefaults())
                 .sessionManagement(sm -> sm
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .logout(withDefaults())
